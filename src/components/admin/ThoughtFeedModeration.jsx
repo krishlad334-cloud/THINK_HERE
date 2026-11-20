@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { calculateTimeRemaining, timeAgo } from '../../utils/formatters';
+import { calculateTimeRemaining } from '../../utils/formatters';
 import {
   ListTodo,
   Search,
-  Filter,
   Sparkles,
-  Clock,
-  CheckCircle,
-  UserCheck,
-  Trash2,
-  ExternalLink,
-  ChevronRight,
-  ShieldCheck
+  Clock
 } from 'lucide-react';
 
 export default function ThoughtFeedModeration() {
-  const { thoughts, consultants, triggerAIFallback, setSelectedThoughtId, claimThought } = useApp();
+  const { thoughts, triggerAIFallback, setSelectedThoughtId } = useApp();
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -39,14 +32,14 @@ export default function ThoughtFeedModeration() {
   return (
     <div className="space-y-6 w-full pb-16">
       {/* Top Banner (Freelancer.com Admin Style) */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845]">
+            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
               <ListTodo className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Platform Thought Queue & Moderation
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -57,7 +50,7 @@ export default function ThoughtFeedModeration() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold overflow-x-auto whitespace-nowrap max-w-full scrollbar-none">
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-3 py-1.5 rounded-lg transition-all ${

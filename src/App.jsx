@@ -106,13 +106,13 @@ function AppContent() {
   const isEdgeToEdge = (activeTab === 'chat' && role === 'client') || activeTab === 'messages';
 
   return (
-    <div className="h-screen w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
+    <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
       {/* Top Header - 100% full viewport width */}
       <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
       {/* Main Container - 100% full width, edge-to-edge */}
-      <div className="flex-1 flex w-full h-[calc(100vh-4rem)] overflow-hidden">
-        {/* Left Sidebar - Fixed flush to left edge */}
+      <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">
+        {/* Left Sidebar - Fixed drawer on mobile, flush left on desktop */}
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
@@ -120,10 +120,10 @@ function AppContent() {
 
         {/* Viewport Content Area - Fills 100% remaining width */}
         <main
-          className={`flex-1 min-w-0 h-full overflow-y-auto flex flex-col ${
+          className={`flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden flex flex-col ${
             isEdgeToEdge
               ? 'p-0 bg-white'
-              : 'p-4 sm:p-6 lg:p-8 bg-slate-50/60'
+              : 'p-3.5 sm:p-6 lg:p-8 bg-slate-50/60'
           }`}
         >
           {renderCurrentView()}

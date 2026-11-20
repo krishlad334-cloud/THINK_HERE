@@ -13,9 +13,9 @@ export default function Navbar({ onToggleSidebar }) {
 
   return (
     <header className="sticky top-0 z-40 w-full h-16 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex-shrink-0">
-      <div className="w-full px-4 sm:px-6 h-full flex items-center justify-between gap-4">
+      <div className="w-full px-3 sm:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Mobile hamburger + Brand Logo */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button
             onClick={onToggleSidebar}
             className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 lg:hidden cursor-pointer transition-colors"

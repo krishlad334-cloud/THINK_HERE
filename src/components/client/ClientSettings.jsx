@@ -3,18 +3,13 @@ import { useApp } from '../../context/AppContext';
 import {
   User,
   Shield,
-  Bell,
   CheckCircle,
   Lock,
   Save,
-  Mail,
-  MapPin,
-  Sparkles,
   Camera,
   ShieldCheck,
-  Eye,
   Clock,
-  Key
+  Sparkles
 } from 'lucide-react';
 
 export default function ClientSettings() {
@@ -69,7 +64,7 @@ export default function ClientSettings() {
         {/* Left Column: User Profile Overview Card */}
         <div className="lg:col-span-1 space-y-6">
           {/* Identity Card */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs space-y-5 text-center">
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-5 text-center">
             <div className="relative inline-block mx-auto">
               <img
                 src={clientUser.avatar}
@@ -141,7 +136,7 @@ export default function ClientSettings() {
         {/* Right Column: Settings & Forms */}
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information Card */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 space-y-5 shadow-xs">
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-7 space-y-5 shadow-xs">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <User className="w-4 h-4 text-[#004845]" />

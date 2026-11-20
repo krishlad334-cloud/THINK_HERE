@@ -3,24 +3,14 @@ import { useApp } from '../../context/AppContext';
 import {
   Shield,
   Users,
-  CheckCircle,
-  Clock,
   Sparkles,
-  AlertTriangle,
-  ArrowRight,
-  TrendingUp,
-  FileText,
-  Settings,
-  ShieldCheck,
-  UserCheck,
-  ListTodo
+  ShieldCheck
 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const {
     thoughts,
     consultants,
-    auditLogs,
     setActiveTab,
     triggerAIFallback,
     setSelectedThoughtId
@@ -35,16 +25,16 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 w-full pb-16">
       {/* Admin Operations Top Bar (Freelancer.com Admin Style) */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845]">
+            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
               <Shield className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex flex-wrap items-center gap-2">
                 Platform Operations & Governance
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                   Admin & Consultant Mode
                 </span>
               </h1>
@@ -59,14 +49,14 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
             onClick={() => setActiveTab('admin_users')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold transition-all flex items-center gap-1.5"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Users className="w-3.5 h-3.5 text-[#004845]" />
             <span>User Approvals ({consultants.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('admin_audit')}
-            className="px-3.5 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold transition-all shadow-xs flex items-center gap-1.5"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-[#16a34a]" />
             <span>Privacy & Security Logs</span>
@@ -75,7 +65,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI Metrics Ribbon */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Submissions</span>
           <p className="text-2xl font-black text-slate-900 mt-1">{totalThoughts}</p>

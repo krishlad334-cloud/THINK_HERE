@@ -110,19 +110,19 @@ export default function NewThoughtModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in duration-150">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-[#e6f2f1] text-[#004845] rounded-xl">
+            <div className="p-2 bg-[#e6f2f1] text-[#004845] rounded-xl flex-shrink-0">
               <Sparkles className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900">
                 Share a Thought, Problem or Business Idea
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-[11px] sm:text-xs text-slate-500">
                 Guaranteed response by human consultants or AI within 24 hours
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function NewThoughtModal() {
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               What is on your mind? (Your Core Thought or Question) *
@@ -147,7 +147,7 @@ export default function NewThoughtModal() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. I am a Python developer but not getting interview calls. How to fix my portfolio?"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all font-medium placeholder:text-slate-400"
+              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all font-medium placeholder:text-slate-400"
             />
           </div>
 
@@ -176,7 +176,7 @@ export default function NewThoughtModal() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Provide more background: what you have tried, specific blockers, target outcome, budget or industry details..."
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all placeholder:text-slate-400"
+              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all placeholder:text-slate-400"
             />
           </div>
 

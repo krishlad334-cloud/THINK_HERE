@@ -8,11 +8,7 @@ import {
   CheckCircle,
   PlusCircle,
   Search,
-  Filter,
-  FileText,
-  Image as ImageIcon,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 
 export default function MyThoughtsView({ filterMode = 'all' }) {
@@ -132,7 +128,7 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
             return (
               <div
                 key={thought.id}
-                className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
               >
                 <div className="space-y-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bell, CheckCheck, Clock, Sparkles, MessageSquare } from 'lucide-react';
+import { Bell, CheckCheck, Clock, Sparkles } from 'lucide-react';
 import { timeAgo } from '../../utils/formatters';
 
 export default function NotificationDropdown() {
-  const { notifications, markNotificationRead, markAllNotificationsRead, setSelectedThoughtId, setActiveTab } = useApp();
+  const { notifications, markNotificationRead, markAllNotificationsRead, setSelectedThoughtId } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -57,7 +57,7 @@ export default function NotificationDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+        <div className="absolute -right-8 sm:right-0 mt-2 w-[calc(100vw-1.5rem)] sm:w-96 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
               <h4 className="text-sm font-bold text-slate-900">Notifications</h4>

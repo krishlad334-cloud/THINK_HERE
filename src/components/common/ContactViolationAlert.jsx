@@ -8,7 +8,7 @@ export default function ContactViolationAlert() {
   if (!privacyAlert) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 max-w-md bg-white border border-amber-300 rounded-xl p-4 shadow-xl shadow-amber-500/10 animate-in slide-in-from-bottom-5">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-50 bg-white border border-amber-300 rounded-2xl p-4 shadow-xl shadow-amber-500/10 animate-in slide-in-from-bottom-5">
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-amber-100 text-amber-700 flex-shrink-0">
           <ShieldAlert className="w-5 h-5" />

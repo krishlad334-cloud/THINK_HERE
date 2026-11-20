@@ -1,25 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { TOPIC_SUGGESTIONS } from '../../data/mockSeedData';
-import { calculateTimeRemaining, timeAgo, formatDate } from '../../utils/formatters';
+import { timeAgo } from '../../utils/formatters';
 import {
   Sparkles,
   Paperclip,
-  Image as ImageIcon,
   Mic,
-  MicOff,
   Send,
-  Clock,
-  CheckCircle,
   FileText,
   Bookmark,
   Printer,
   PhoneCall,
   Video,
   ArrowRight,
-  ShieldCheck,
-  User,
-  Bot,
   Trash2,
   Bell,
   BellOff,
@@ -28,7 +21,8 @@ import {
   Copy,
   Check,
   CheckCheck,
-  MessageSquare
+  MessageSquare,
+  ChevronDown
 } from 'lucide-react';
 
 export default function ClientChatView() {
@@ -43,7 +37,6 @@ export default function ClientChatView() {
     mutedThoughtIds,
     submitThought,
     activeChatThoughtId,
-    setActiveChatThoughtId,
     openChatWithThought,
     setSelectedThoughtId,
     setActiveTab,
@@ -102,7 +95,7 @@ export default function ClientChatView() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [thoughtMessages, activeThought]);
+  }, [thoughtMessages.length, activeThought?.id]);
 
   // Voice speech-to-text
   const toggleVoice = () => {
@@ -172,27 +165,29 @@ export default function ClientChatView() {
     setInputVal(prompt);
   };
 
-  const timeInfo = activeThought ? calculateTimeRemaining(activeThought.createdAt, activeThought.deadlineHours || 24) : null;
   const latestSolution = activeThought?.solutions?.[0];
 
   return (
     <div className="flex flex-col h-full w-full bg-white flex-1 overflow-hidden">
       {/* Top Header of Chat View - Seamless Edge to Edge */}
       {activeThought ? (
-        <div className="px-6 py-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-white flex-shrink-0 z-10 w-full">
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#e6f2f1] text-[#004845]">
+        <div className="px-3 sm:px-6 py-2 sm:py-3 border-b border-slate-100 flex items-center justify-between gap-2 sm:gap-3 bg-white flex-shrink-0 z-10 w-full">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#e6f2f1] text-[#004845] flex-shrink-0">
               {activeThought.category}
             </span>
 
             {activeThought.assignedConsultantName && (
-              <span className="text-xs text-slate-600 font-semibold flex items-center gap-1.5">
+              <span className="text-xs text-slate-600 font-semibold flex items-center gap-1.5 truncate">
                 <img
                   src={activeThought.assignedConsultantAvatar}
                   alt={activeThought.assignedConsultantName}
-                  className="w-4 h-4 rounded-full object-cover"
+                  className="w-4 h-4 rounded-full object-cover flex-shrink-0"
                 />
-                <span>Consultant: {activeThought.assignedConsultantName}</span>
+                <span className="truncate">
+                  <span className="hidden sm:inline">Consultant: </span>
+                  {activeThought.assignedConsultantName}
+                </span>
               </span>
             )}
           </div>
@@ -526,8 +521,8 @@ export default function ClientChatView() {
                           setActiveMsgMenuId(isMenuOpen ? null : msg.id);
                         }}
                         className={`absolute top-2 ${
-                          isMine ? '-left-7' : '-right-7'
-                        } p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer`}
+                          isMine ? '-left-6 sm:-left-7' : '-right-6 sm:-right-7'
+                        } p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer`}
                         title="Message options"
                       >
                         <MoreVertical className="w-3.5 h-3.5" />
@@ -537,7 +532,7 @@ export default function ClientChatView() {
                       {isMenuOpen && (
                         <div
                           onClick={(e) => e.stopPropagation()}
-                          className={`absolute z-30 mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-1.5 animate-in fade-in zoom-in-95 duration-100 ${
+                          className={`absolute z-30 mt-1.5 w-48 max-w-[80vw] bg-white rounded-2xl shadow-xl border border-slate-200/90 py-1.5 animate-in fade-in zoom-in-95 duration-100 ${
                             isMine ? 'right-0' : 'left-0'
                           }`}
                         >
@@ -634,7 +629,7 @@ export default function ClientChatView() {
       </div>
 
       {/* Bottom Fixed ChatGPT Input Bar - 100% Width Container */}
-      <div className="p-4 bg-white border-t border-slate-100 flex-shrink-0 w-full">
+      <div className="p-2.5 sm:p-4 bg-white border-t border-slate-100 flex-shrink-0 w-full">
         <form onSubmit={handleSend} className="max-w-3xl mx-auto w-full">
           {attachments.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-2">
@@ -684,7 +679,7 @@ export default function ClientChatView() {
               placeholder={
                 activeThought
                   ? "Ask follow-ups, request code, or discuss with consultant..."
-                  : "Message THINK (e.g. I need help launching my SaaS MVP)..."
+                  : "Please enter your thought, question, or business idea to start the consultation..."
               }
               className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
             />

@@ -6,21 +6,14 @@ import {
   Clock,
   CheckCircle,
   Search,
-  Filter,
   Image as ImageIcon,
   Video,
   FileText,
   Star,
-  MapPin,
   ShieldCheck,
   Send,
   Sparkles,
-  ArrowRight,
-  TrendingUp,
-  Tag,
-  SlidersHorizontal,
-  ChevronDown,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 import SolutionProposalModal from './SolutionProposalModal';
 
@@ -62,16 +55,16 @@ export default function BrowseClientThoughts() {
   return (
     <div className="space-y-6 w-full pb-16">
       {/* Freelancer.com Top Sub-Header & Banner */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845]">
+            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
               <FileSearch className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex flex-wrap items-center gap-2">
                 Browse Client Thoughts & Problem Feed
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
+                <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
                   Freelancer Marketplace
                 </span>
               </h1>
@@ -83,20 +76,20 @@ export default function BrowseClientThoughts() {
         </div>
 
         {/* Quick KPI stats on right */}
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-center">
+        <div className="grid grid-cols-2 sm:flex items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+          <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-center flex-1 sm:flex-initial">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Submissions</span>
-            <span className="text-lg font-black text-slate-900">{thoughts.length}</span>
+            <span className="text-base sm:text-lg font-black text-slate-900">{thoughts.length}</span>
           </div>
-          <div className="px-4 py-2.5 bg-[#f0fdf4] rounded-xl border border-[#16a34a]/20 text-center">
+          <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#f0fdf4] rounded-xl border border-[#16a34a]/20 text-center flex-1 sm:flex-initial">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#16a34a] block">24h SLA Guarantee</span>
-            <span className="text-lg font-black text-[#16a34a]">99.8%</span>
+            <span className="text-base sm:text-lg font-black text-[#16a34a]">99.8%</span>
           </div>
         </div>
       </div>
 
       {/* Freelancer.com Horizontal Filter & Search Toolbar (No double-sidebar clutter!) */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs space-y-3.5">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs space-y-3.5">
         {/* Top search & quick toggles */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search bar */}
@@ -112,12 +105,12 @@ export default function BrowseClientThoughts() {
           </div>
 
           {/* Quick Dropdown Filters */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:flex md:flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto">
             {/* Urgency */}
             <select
               value={filterUrgency}
               onChange={(e) => setFilterUrgency(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
+              className="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
             >
               <option value="All">All Priorities</option>
               <option value="High (Urgent)">Urgent Expedited</option>
@@ -128,7 +121,7 @@ export default function BrowseClientThoughts() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
+              className="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
             >
               <option value="All">All Statuses</option>
               <option value="Open">Open for Solutions</option>
@@ -139,7 +132,7 @@ export default function BrowseClientThoughts() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
+              className="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845]"
             >
               <option value="latest">Sort: Latest Submissions</option>
               <option value="deadline">Sort: 24h Deadline (Expiring Soon)</option>

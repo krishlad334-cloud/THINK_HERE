@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { calculateTimeRemaining, formatDate, timeAgo } from '../../utils/formatters';
+import { calculateTimeRemaining, timeAgo } from '../../utils/formatters';
 import {
   X,
   Clock,
   Sparkles,
-  UserCheck,
-  CheckCircle,
   FileText,
-  Image as ImageIcon,
   Video,
   Bookmark,
-  Share2,
   MessageSquare,
   PhoneCall,
-  AlertCircle,
-  Printer,
-  ChevronRight
+  Printer
 } from 'lucide-react';
 
 export default function ThoughtDetailModal() {
@@ -27,8 +21,7 @@ export default function ThoughtDetailModal() {
     triggerAIFallback,
     toggleSaveThought,
     setActiveTab,
-    startCall,
-    role
+    startCall
   } = useApp();
 
   const [timeRemaining, setTimeRemaining] = useState(null);
@@ -75,23 +68,23 @@ export default function ThoughtDetailModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in duration-150">
+      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+        <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-indigo-100 text-indigo-700">
               {thought.category}
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-[11px] sm:text-xs text-slate-400">
               Submitted {timeAgo(thought.createdAt)}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => toggleSaveThought(thought.id)}
-              className={`p-2 rounded-xl border transition-colors ${
+              className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer ${
                 thought.isSaved
                   ? 'bg-amber-50 text-amber-600 border-amber-200'
                   : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100 border-slate-200'
@@ -102,14 +95,14 @@ export default function ThoughtDetailModal() {
             </button>
             <button
               onClick={printSolution}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 cursor-pointer"
               title="Print Solution"
             >
               <Printer className="w-4 h-4" />
             </button>
             <button
               onClick={() => setSelectedThoughtId(null)}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -117,7 +110,7 @@ export default function ThoughtDetailModal() {
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 flex-1">
           {/* 24-Hour Guarantee & Countdown Banner */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-md">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

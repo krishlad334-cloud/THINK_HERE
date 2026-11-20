@@ -3,13 +3,8 @@ import { useApp } from '../../context/AppContext';
 import {
   Star,
   ShieldCheck,
-  Clock,
   MessageSquare,
-  Search,
-  CheckCircle,
-  Briefcase,
-  ChevronRight,
-  Sparkles
+  Search
 } from 'lucide-react';
 
 export default function ClientFindConsultants() {
@@ -90,7 +85,7 @@ export default function ClientFindConsultants() {
         {filtered.map((c) => (
           <div
             key={c.id}
-            className="p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-lg transition-all flex flex-col justify-between"
+            className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-lg transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start gap-4">

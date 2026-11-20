@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bookmark, Sparkles, UserCheck, ArrowRight, Printer, Share2 } from 'lucide-react';
+import { Bookmark, ArrowRight, Printer } from 'lucide-react';
 
 export default function SavedSolutionsView() {
   const { thoughts, setSelectedThoughtId, toggleSaveThought } = useApp();
@@ -45,7 +45,7 @@ export default function SavedSolutionsView() {
             return (
               <div
                 key={thought.id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col justify-between"
+                className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">

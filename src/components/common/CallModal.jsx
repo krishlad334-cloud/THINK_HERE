@@ -7,10 +7,8 @@ import {
   VideoOff,
   PhoneOff,
   Monitor,
-  MessageSquare,
   Sparkles,
-  ShieldCheck,
-  Maximize2
+  ShieldCheck
 } from 'lucide-react';
 
 export default function CallModal() {
@@ -37,30 +35,30 @@ export default function CallModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl h-[620px] bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl h-[92dvh] sm:h-[620px] max-h-[92dvh] bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-800">
         {/* Top bar inside call */}
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-900/90 border-b border-slate-800 z-10">
-          <div className="flex items-center gap-3">
-            <span className="flex h-3 w-3 relative">
+        <div className="flex items-center justify-between px-3.5 sm:px-6 py-2.5 sm:py-4 bg-slate-900/90 border-b border-slate-800 z-10 gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <span className="flex h-2.5 w-2.5 sm:h-3 sm:w-3 relative flex-shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 sm:h-3 sm:w-3 bg-emerald-500"></span>
             </span>
-            <div>
-              <h3 className="text-white font-medium text-sm flex items-center gap-2">
-                Consultation Call with {activeCall.participantName}
-                <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#004845] text-[#16a34a] border border-[#16a34a]/30">
-                  THINK Encrypted
+            <div className="min-w-0">
+              <h3 className="text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 truncate">
+                <span className="truncate">Call with {activeCall.participantName}</span>
+                <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] bg-[#004845] text-[#16a34a] border border-[#16a34a]/30 flex-shrink-0">
+                  Encrypted
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">Duration: {formatTimer(callDuration)}</p>
+              <p className="text-[10px] sm:text-xs text-slate-400">Duration: {formatTimer(callDuration)}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300">
               <ShieldCheck className="w-3.5 h-3.5 text-[#16a34a]" />
-              <span>Contact Privacy Shield Active</span>
+              <span>Contact Privacy Shield</span>
             </div>
           </div>
         </div>
@@ -108,15 +106,15 @@ export default function CallModal() {
           )}
 
           {/* Picture-in-picture self preview */}
-          <div className="absolute bottom-4 right-4 w-44 h-32 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl flex items-center justify-center">
+          <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-28 h-20 sm:w-44 sm:h-32 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl flex items-center justify-center z-10">
             {isVideoOff ? (
-              <div className="text-center p-2">
+              <div className="text-center p-1 sm:p-2">
                 <img
                   src={currentUser.avatar}
                   alt={currentUser.name}
-                  className="w-10 h-10 rounded-full mx-auto mb-1 opacity-80"
+                  className="w-7 h-7 sm:w-10 sm:h-10 rounded-full mx-auto mb-1 opacity-80"
                 />
-                <p className="text-[10px] text-slate-400">Camera Off</p>
+                <p className="text-[9px] sm:text-[10px] text-slate-400">Camera Off</p>
               </div>
             ) : (
               <div className="relative w-full h-full bg-slate-900 flex items-center justify-center">
@@ -125,7 +123,7 @@ export default function CallModal() {
                   alt={currentUser.name}
                   className="w-full h-full object-cover opacity-90"
                 />
-                <span className="absolute top-1.5 left-2 text-[10px] bg-black/60 px-1.5 py-0.5 rounded text-white font-medium">
+                <span className="absolute top-1 left-1.5 text-[9px] sm:text-[10px] bg-black/60 px-1.5 py-0.2 rounded text-white font-medium">
                   You
                 </span>
               </div>
@@ -134,59 +132,59 @@ export default function CallModal() {
         </div>
 
         {/* Bottom Call Controls */}
-        <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
+        <div className="px-3 sm:px-6 py-3 sm:py-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
           <div className="text-xs text-slate-400 hidden sm:block">
             Connected via WebRTC Relay
           </div>
 
-          <div className="flex items-center gap-3 mx-auto sm:mx-0">
+          <div className="flex items-center gap-2 sm:gap-3 mx-auto sm:mx-0">
             {/* Mic Toggle */}
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-3.5 rounded-full transition-all ${
+              className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
                 isMuted
                   ? 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30'
                   : 'bg-slate-800 text-white hover:bg-slate-700'
               }`}
               title={isMuted ? 'Unmute Mic' : 'Mute Mic'}
             >
-              {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              {isMuted ? <MicOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
             {/* Video Toggle */}
             <button
               onClick={() => setIsVideoOff(!isVideoOff)}
-              className={`p-3.5 rounded-full transition-all ${
+              className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
                 isVideoOff
                   ? 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30'
                   : 'bg-slate-800 text-white hover:bg-slate-700'
               }`}
               title={isVideoOff ? 'Turn Video On' : 'Turn Video Off'}
             >
-              {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+              {isVideoOff ? <VideoOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Video className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
             {/* Screen Share */}
             <button
               onClick={() => setIsSharingScreen(!isSharingScreen)}
-              className={`p-3.5 rounded-full transition-all ${
+              className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
                 isSharingScreen
                   ? 'bg-[#004845] text-[#16a34a] shadow-lg'
                   : 'bg-slate-800 text-white hover:bg-slate-700'
               }`}
               title={isSharingScreen ? 'Stop Sharing' : 'Share Screen'}
             >
-              <Monitor className="w-5 h-5" />
+              <Monitor className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* End Call */}
             <button
               onClick={endCall}
-              className="px-5 py-3 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-medium flex items-center gap-2 shadow-lg shadow-rose-600/30 transition-all ml-2"
+              className="px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-medium flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-rose-600/30 transition-all ml-1 sm:ml-2 cursor-pointer"
               title="End Consultation"
             >
-              <PhoneOff className="w-5 h-5" />
-              <span className="text-sm">Leave Room</span>
+              <PhoneOff className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm">Leave</span>
             </button>
           </div>
 

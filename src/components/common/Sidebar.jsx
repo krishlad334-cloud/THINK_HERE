@@ -13,12 +13,8 @@ import {
   ListTodo,
   BarChart3,
   CheckCircle2,
-  Clock,
-  Sparkles,
   LayoutDashboard,
   X,
-  ChevronRight,
-  ShieldCheck,
   LayoutGrid,
   LogOut
 } from 'lucide-react';
@@ -54,17 +50,36 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden transition-opacity"
           onClick={onClose}
+          aria-hidden="true"
         />
       )}
 
-      {/* Main Sidebar - Pinned directly to the left, full height below navbar */}
+      {/* Main Sidebar - Full height drawer on mobile, static flush on desktop */}
       <aside
-        className={`fixed top-16 bottom-0 left-0 z-40 w-72 bg-white border-r border-slate-200/90 flex flex-col h-[calc(100vh-4rem)] transition-transform duration-200 lg:static lg:h-full lg:translate-x-0 flex-shrink-0 shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-white border-r border-slate-200/90 flex flex-col h-full h-[100dvh] transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:h-full lg:w-72 lg:translate-x-0 flex-shrink-0 shadow-2xl lg:shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
+        {/* Mobile Header with THINK Brand & Close Button (Hidden on Desktop) */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 lg:hidden bg-slate-50/80 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <img src="/logo.jpg" alt="THINK" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
+            <span className="font-black text-sm tracking-tight text-slate-900">
+              <span className="text-[#004845]">TH</span>
+              <span className="text-[#16a34a]">INK</span> Menu
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors cursor-pointer"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
         {/* Top Header: New Chat Button (Iconic ChatGPT Style) */}
         <div className="p-3.5 border-b border-slate-100 flex-shrink-0 bg-white">
           {role === 'client' ? (

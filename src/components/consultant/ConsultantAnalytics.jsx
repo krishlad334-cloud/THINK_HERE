@@ -3,17 +3,10 @@ import { useApp } from '../../context/AppContext';
 import {
   BarChart3,
   TrendingUp,
-  DollarSign,
   Clock,
   Star,
   CheckCircle,
-  Users,
-  Calendar,
-  Briefcase,
-  Sparkles,
-  ArrowUpRight,
-  ShieldCheck,
-  FileText
+  Users
 } from 'lucide-react';
 
 export default function ConsultantAnalytics() {
@@ -65,7 +58,7 @@ export default function ConsultantAnalytics() {
       </div>
 
       {/* Top 4 Stat KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Total Revenue</span>
           <p className="text-3xl font-black text-slate-900 mt-1.5">${(consultantUser.earningsTotal || 34500).toLocaleString()}</p>

@@ -8,10 +8,7 @@ import {
   ArrowRight,
   Lock,
   Mail,
-  ShieldCheck,
-  Sparkles,
-  Zap,
-  ArrowLeft
+  Zap
 } from 'lucide-react';
 
 export default function AuthPage() {
@@ -19,9 +16,7 @@ export default function AuthPage() {
     authMode,
     setAuthMode,
     loginUser,
-    role: currentRole,
-    currentUser,
-    INITIAL_USERS
+    role: currentRole
   } = useApp();
 
   const [selectedRole, setSelectedRole] = useState(currentRole || 'client'); // 'client' | 'consultant'

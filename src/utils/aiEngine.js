@@ -55,7 +55,7 @@ export function analyzeThought(title = '', description = '', attachments = []) {
 }
 
 export function generateAISolution(thought) {
-  const { title, description, category } = thought;
+  const { title, category } = thought;
   const timestamp = new Date().toISOString();
 
   let actionPlan = [];

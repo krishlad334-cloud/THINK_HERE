@@ -1,15 +1,12 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { calculateTimeRemaining, formatDate, timeAgo } from '../../utils/formatters';
+import { timeAgo } from '../../utils/formatters';
 import {
   FolderKanban,
   MessageSquare,
   PhoneCall,
   CheckCircle,
-  Clock,
-  Sparkles,
-  ArrowRight,
-  ExternalLink
+  Clock
 } from 'lucide-react';
 
 export default function MyConsultations() {
@@ -66,7 +63,7 @@ export default function MyConsultations() {
             return (
               <div
                 key={thought.id}
-                className="p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6"
               >
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-2">

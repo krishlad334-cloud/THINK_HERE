@@ -4,18 +4,15 @@ import {
   Briefcase,
   Search,
   MapPin,
-  Clock,
   Bookmark,
   CheckCircle,
-  ExternalLink,
   Sparkles,
-  UserCheck,
   Send,
   Building
 } from 'lucide-react';
 
 export default function ClientJobHub() {
-  const { jobs, toggleSaveJob, applyJob, consultants, setSelectedThoughtId, setActiveTab } = useApp();
+  const { jobs, toggleSaveJob, applyJob, consultants, setActiveTab } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [appliedNotification, setAppliedNotification] = useState(null);
@@ -91,12 +88,12 @@ export default function ClientJobHub() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap max-w-full scrollbar-none pb-1 sm:pb-0">
           {jobTypes.map((type) => (
             <button
               key={type}
               onClick={() => setSelectedType(type)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                 selectedType === type
                   ? 'bg-[#004845] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -124,7 +121,7 @@ export default function ClientJobHub() {
         {filteredJobs.map((job) => (
           <div
             key={job.id}
-            className="p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col sm:flex-row items-start justify-between gap-6"
+            className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6"
           >
             <div className="space-y-3 flex-1">
               <div className="flex items-start gap-4">

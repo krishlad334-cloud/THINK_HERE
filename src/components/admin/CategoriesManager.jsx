@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FolderKanban, Plus, CheckCircle, Tag } from 'lucide-react';
+import { FolderKanban, Plus } from 'lucide-react';
 
 export default function CategoriesManager() {
   const [categories, setCategories] = useState([
@@ -34,8 +34,8 @@ export default function CategoriesManager() {
         </p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 space-y-5 shadow-xs">
-        <form onSubmit={handleAddCategory} className="flex gap-2">
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-8 space-y-5 shadow-xs">
+        <form onSubmit={handleAddCategory} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={newCatName}
@@ -45,7 +45,7 @@ export default function CategoriesManager() {
           />
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            className="px-4 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs flex-shrink-0"
           >
             <Plus className="w-3.5 h-3.5 text-[#16a34a]" />
             <span>Add Category</span>

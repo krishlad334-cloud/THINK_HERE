@@ -2,21 +2,15 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Users,
-  ShieldCheck,
-  ShieldAlert,
   Check,
   X,
   Search,
   Star,
-  Award,
-  GraduationCap,
-  Briefcase,
-  ExternalLink,
-  ChevronRight
+  Award
 } from 'lucide-react';
 
 export default function UserManagement() {
-  const { consultants, setConsultantVerification, clientUser, setSelectedThoughtId, setActiveTab } = useApp();
+  const { consultants, setConsultantVerification, clientUser } = useApp();
   const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'verified' | 'pending' | 'clients'
   const [searchQuery, setSearchQuery] = useState('');
   const [inspectingUser, setInspectingUser] = useState(null);
@@ -37,14 +31,14 @@ export default function UserManagement() {
   return (
     <div className="space-y-6 w-full pb-16">
       {/* Top Banner (Freelancer.com Admin Style) */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845]">
+            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
               <Users className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 User Verification & Credentials Management
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -55,7 +49,7 @@ export default function UserManagement() {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold overflow-x-auto whitespace-nowrap max-w-full scrollbar-none">
           <button
             onClick={() => setActiveFilter('all')}
             className={`px-3 py-1.5 rounded-lg transition-all ${
@@ -222,8 +216,8 @@ export default function UserManagement() {
 
       {/* Inspect Credentials Modal */}
       {inspectingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col p-6 max-h-[90vh] overflow-y-auto space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in">
+          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col p-4 sm:p-6 max-h-[90dvh] overflow-y-auto space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Award className="w-5 h-5 text-[#16a34a]" />

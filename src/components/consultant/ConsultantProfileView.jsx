@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
-  UserCheck,
   ShieldCheck,
   Star,
   MapPin,
@@ -10,11 +9,7 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-  ExternalLink,
-  Plus,
   Edit2,
-  CheckCircle,
-  FileText,
   Save
 } from 'lucide-react';
 
@@ -65,16 +60,16 @@ export default function ConsultantProfileView() {
         </div>
 
         {/* Profile Card Body */}
-        <div className="px-6 sm:px-8 pb-8 pt-0 relative">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-16 sm:-mt-20 mb-4">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0 relative">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-14 sm:-mt-20 mb-4">
             <div className="relative">
               <img
                 src={consultantUser.avatar}
                 alt={consultantUser.name}
-                className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl object-cover ring-4 ring-white shadow-xl"
+                className="w-24 h-24 sm:w-36 sm:h-36 rounded-3xl object-cover ring-4 ring-white shadow-xl"
               />
-              <span className="absolute bottom-2 right-2 p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white">
-                <ShieldCheck className="w-4 h-4" />
+              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </span>
             </div>
 
@@ -108,12 +103,29 @@ export default function ConsultantProfileView() {
             </div>
 
             {isEditing ? (
-              <input
-                type="text"
-                value={headline}
-                onChange={(e) => setHeadline(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <input
+                  type="text"
+                  value={headline}
+                  onChange={(e) => setHeadline(e.target.value)}
+                  placeholder="Headline..."
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                />
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Location (e.g. San Francisco, CA)..."
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                />
+                <input
+                  type="number"
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(e.target.value)}
+                  placeholder="Hourly Rate ($/hr)..."
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+                />
+              </div>
             ) : (
               <p className="text-sm font-semibold text-slate-700 max-w-3xl leading-snug">
                 {headline}
