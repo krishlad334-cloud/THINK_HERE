@@ -1,0 +1,313 @@
+import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import {
+  UserCheck,
+  ShieldCheck,
+  Star,
+  MapPin,
+  Clock,
+  DollarSign,
+  Briefcase,
+  GraduationCap,
+  Award,
+  ExternalLink,
+  Plus,
+  Edit2,
+  CheckCircle,
+  FileText,
+  Save
+} from 'lucide-react';
+
+export default function ConsultantProfileView() {
+  const { consultantUser, updateConsultantProfile } = useApp();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [headline, setHeadline] = useState(consultantUser.title);
+  const [bio, setBio] = useState(consultantUser.bio);
+  const [hourlyRate, setHourlyRate] = useState(consultantUser.hourlyRate);
+  const [location, setLocation] = useState(consultantUser.location);
+  const [newSkill, setNewSkill] = useState('');
+  const [skills, setSkills] = useState(consultantUser.skills || []);
+
+  const handleSave = () => {
+    updateConsultantProfile({
+      title: headline,
+      bio,
+      hourlyRate: Number(hourlyRate),
+      location,
+      skills
+    });
+    setIsEditing(false);
+  };
+
+  const addSkill = () => {
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      setSkills(prev => [...prev, newSkill.trim()]);
+      setNewSkill('');
+    }
+  };
+
+  const removeSkill = (s) => {
+    setSkills(prev => prev.filter(item => item !== s));
+  };
+
+  return (
+    <div className="space-y-6 w-full pb-16">
+      {/* Header Banner - LinkedIn / Freelancer Style */}
+      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+        {/* Cover graphic */}
+        <div className="h-40 sm:h-48 bg-gradient-to-r from-[#004845] via-[#003835] to-[#0d504c] relative">
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
+              Verified Consultant
+            </span>
+          </div>
+        </div>
+
+        {/* Profile Card Body */}
+        <div className="px-6 sm:px-8 pb-8 pt-0 relative">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-16 sm:-mt-20 mb-4">
+            <div className="relative">
+              <img
+                src={consultantUser.avatar}
+                alt={consultantUser.name}
+                className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl object-cover ring-4 ring-white shadow-xl"
+              />
+              <span className="absolute bottom-2 right-2 p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white">
+                <ShieldCheck className="w-4 h-4" />
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 self-start sm:self-auto">
+              <button
+                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                {isEditing ? (
+                  <>
+                    <Save className="w-4 h-4 text-[#16a34a]" />
+                    <span>Save Profile Changes</span>
+                  </>
+                ) : (
+                  <>
+                    <Edit2 className="w-4 h-4 text-[#16a34a]" />
+                    <span>Edit Profile Details</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Name & Headline */}
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-black text-slate-900">{consultantUser.name}</h1>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                100% Verified
+              </span>
+            </div>
+
+            {isEditing ? (
+              <input
+                type="text"
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
+              />
+            ) : (
+              <p className="text-sm font-semibold text-slate-700 max-w-3xl leading-snug">
+                {headline}
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
+              <span className="flex items-center gap-1 font-bold text-slate-800">
+                <Star className="w-4 h-4 text-amber-500 fill-current" />
+                {consultantUser.rating} ({consultantUser.reviewsCount} reviews)
+              </span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                {consultantUser.location}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                Avg. Response: {consultantUser.responseTime}
+              </span>
+              <span className="flex items-center gap-1 font-extrabold text-slate-900">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                ${hourlyRate}/hr
+              </span>
+            </div>
+          </div>
+
+          {/* About / Bio */}
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              About & Value Proposition
+            </h2>
+            {isEditing ? (
+              <textarea
+                rows={4}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-4xl">
+                {bio}
+              </p>
+            )}
+          </div>
+
+          {/* Skills & Endorsements */}
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Skills & Areas of Expertise
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-[#e6f2f1] text-[#004845] border border-[#004845]/20 flex items-center gap-1.5"
+                >
+                  <span>{skill}</span>
+                  {isEditing && (
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="text-slate-400 hover:text-rose-600 font-bold"
+                    >
+                      ×
+                    </button>
+                  )}
+                </span>
+              ))}
+            </div>
+
+            {isEditing && (
+              <div className="flex items-center gap-2 mt-3 max-w-sm">
+                <input
+                  type="text"
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  placeholder="Add new skill..."
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={addSkill}
+                  className="px-3 py-1.5 bg-[#004845] text-white rounded-xl text-xs font-bold"
+                >
+                  Add
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Services & Fixed-Scope Packages */}
+      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <Briefcase className="w-5 h-5 text-[#004845]" />
+          <span>Consultation Services & Offerings</span>
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {consultantUser.services?.map((srv) => (
+            <div
+              key={srv.id}
+              className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between"
+            >
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 leading-snug">{srv.title}</h4>
+                <p className="text-xs text-slate-500 mt-1">{srv.duration}</p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                <span className="text-base font-extrabold text-slate-900">${srv.price}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#004845] border border-slate-200">
+                  Fixed Scope
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Work Experience & Education (LinkedIn Style) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Experience */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-[#004845]" />
+            <span>Work Experience</span>
+          </h2>
+          <div className="space-y-4">
+            {consultantUser.experience?.map((exp) => (
+              <div key={exp.id} className="relative pl-6 pb-4 border-l-2 border-[#004845]/20 last:border-0 last:pb-0">
+                <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-[#004845] ring-4 ring-white" />
+                <h4 className="text-xs font-bold text-slate-900">{exp.role}</h4>
+                <p className="text-[11px] font-semibold text-[#004845]">{exp.company} • {exp.period}</p>
+                <p className="text-xs text-slate-600 mt-1">{exp.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Education & Certifications */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-[#16a34a]" />
+            <span>Education & Certifications</span>
+          </h2>
+
+          <div className="space-y-3">
+            {consultantUser.education?.map((edu) => (
+              <div key={edu.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <h4 className="text-xs font-bold text-slate-900">{edu.school}</h4>
+                <p className="text-xs text-slate-600">{edu.degree} ({edu.year})</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Verified Certifications
+            </h3>
+            <div className="space-y-1.5">
+              {consultantUser.certifications?.map((cert, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
+                  <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                  <span>{cert}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Portfolio Showcase */}
+      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <Award className="w-5 h-5 text-[#004845]" />
+          <span>Featured Portfolio Projects & Case Studies</span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {consultantUser.portfolio?.map((port) => (
+            <div key={port.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
+                {port.tag}
+              </span>
+              <h4 className="text-sm font-bold text-slate-900">{port.title}</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">{port.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
