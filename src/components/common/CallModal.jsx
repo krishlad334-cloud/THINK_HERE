@@ -7,7 +7,6 @@ import {
   VideoOff,
   PhoneOff,
   Monitor,
-  Sparkles,
   ShieldCheck
 } from 'lucide-react';
 
@@ -88,7 +87,7 @@ export default function CallModal() {
               </div>
               <h2 className="text-white text-xl font-bold">{activeCall.participantName}</h2>
               <p className="text-slate-400 text-sm mt-1 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+                <Video className="w-4 h-4 text-emerald-400" />
                 Live THINK Consultation Session
               </p>
 

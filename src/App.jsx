@@ -6,6 +6,7 @@ import NewThoughtModal from './components/client/NewThoughtModal';
 import ThoughtDetailModal from './components/client/ThoughtDetailModal';
 import CallModal from './components/common/CallModal';
 import ContactViolationAlert from './components/common/ContactViolationAlert';
+import ToastContainer from './components/common/ToastContainer';
 import AuthPage from './components/auth/AuthPage';
 
 // Client Views
@@ -16,22 +17,17 @@ import ClientJobHub from './components/client/ClientJobHub';
 import ClientFindConsultants from './components/client/ClientFindConsultants';
 import ClientSettings from './components/client/ClientSettings';
 
-// Consultant & Admin Views (Unified Experience)
+// Consultant Views
 import BrowseClientThoughts from './components/consultant/BrowseClientThoughts';
 import MyConsultations from './components/consultant/MyConsultations';
 import ConsultantProfileView from './components/consultant/ConsultantProfileView';
 import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
-import AdminDashboard from './components/admin/AdminDashboard';
-import UserManagement from './components/admin/UserManagement';
-import ThoughtFeedModeration from './components/admin/ThoughtFeedModeration';
-import DisputeAndLogs from './components/admin/DisputeAndLogs';
-import CategoriesManager from './components/admin/CategoriesManager';
 
 // Shared Chat & Consultation Room
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
-  const { role, activeTab, isAuthenticated } = useApp();
+  const { role, activeTab, isAuthenticated, toast, closeToast } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // If user is not authenticated (or clicked login / logout / switch account), render dedicated AuthPage with zero background chat
@@ -70,7 +66,7 @@ function AppContent() {
       }
     }
 
-    // Unified Admin / Consultant Panel (Freelancer.com + Platform Governance)
+    // Consultant Panel
     if (role === 'consultant') {
       switch (activeTab) {
         case 'browse_thoughts':
@@ -82,16 +78,6 @@ function AppContent() {
           return <ConsultantProfileView />;
         case 'analytics':
           return <ConsultantAnalytics />;
-        case 'admin_dashboard':
-          return <AdminDashboard />;
-        case 'admin_users':
-          return <UserManagement />;
-        case 'admin_moderation':
-          return <ThoughtFeedModeration />;
-        case 'admin_audit':
-          return <DisputeAndLogs />;
-        case 'admin_categories':
-          return <CategoriesManager />;
         case 'settings':
           return <ClientSettings />;
         default:
@@ -102,8 +88,8 @@ function AppContent() {
     return <ClientChatView />;
   };
 
-  // Full-bleed responsive layout: zero awkward empty side gaps!
-  const isEdgeToEdge = (activeTab === 'chat' && role === 'client') || activeTab === 'messages';
+  // Full-bleed responsive layout for dedicated 1-on-1 chat room
+  const isEdgeToEdge = activeTab === 'messages';
 
   return (
     <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
@@ -120,10 +106,10 @@ function AppContent() {
 
         {/* Viewport Content Area - Fills 100% remaining width */}
         <main
-          className={`flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden flex flex-col ${
+          className={`flex-1 min-w-0 h-full flex flex-col ${
             isEdgeToEdge
-              ? 'p-0 bg-white'
-              : 'p-3.5 sm:p-6 lg:p-8 bg-slate-50/60'
+              ? 'p-0 bg-white overflow-hidden'
+              : 'p-3.5 sm:p-6 lg:p-8 bg-slate-50/60 overflow-y-auto overflow-x-hidden'
           }`}
         >
           {renderCurrentView()}
@@ -131,6 +117,7 @@ function AppContent() {
       </div>
 
       {/* Global Interactive Overlays */}
+      <ToastContainer toast={toast} onClose={closeToast} />
       <NewThoughtModal />
       <ThoughtDetailModal />
       <CallModal />

@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Plus,
+  PlusCircle,
   MessageSquare,
   Bookmark,
   Briefcase,
   Users,
   Settings,
-  Shield,
   FileSearch,
   FolderKanban,
-  ListTodo,
   BarChart3,
   CheckCircle2,
-  LayoutDashboard,
   X,
   LayoutGrid,
-  LogOut
+  LogOut,
+  ChevronsUpDown,
+  Check
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -29,8 +29,27 @@ export default function Sidebar({ isOpen, onClose }) {
     startNewChat,
     openChatWithThought,
     currentUser,
-    logoutUser
+    logoutUser,
+    switchDemoUser,
+    demoUsers,
+    setIsNewThoughtModalOpen
   } = useApp();
+
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef(null);
+
+  // Close account menu on click outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target)) {
+        setIsAccountMenuOpen(false);
+      }
+    }
+    if (isAccountMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isAccountMenuOpen]);
 
   const handleNewChat = () => {
     startNewChat();
@@ -42,8 +61,14 @@ export default function Sidebar({ isOpen, onClose }) {
     if (onClose) onClose();
   };
 
+  const handleSelectDemoUser = (userId) => {
+    switchDemoUser(userId);
+    setIsAccountMenuOpen(false);
+    if (onClose) onClose();
+  };
+
   const myRecentThoughts = thoughts.filter(t => t.clientId === currentUser.id || !t.clientId);
-  const openThoughtsCount = thoughts.filter(t => t.status === 'pending_human').length;
+  const openThoughtsCount = thoughts.filter(t => t.status === 'pending' || t.status === 'pending_human').length;
 
   return (
     <>
@@ -80,7 +105,74 @@ export default function Sidebar({ isOpen, onClose }) {
             <X className="w-5 h-5" />
           </button>
         </div>
-        {/* Top Header: New Chat Button (Iconic ChatGPT Style) */}
+
+        {/* Mobile Dedicated Account Section: Visible at the top of the mobile drawer */}
+        <div className="p-3.5 bg-slate-50/95 border-b border-slate-200/80 lg:hidden space-y-3 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-shrink-0">
+              <img
+                src={currentUser.profileImage || currentUser.avatar}
+                alt={currentUser.name}
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-[#004845]/20 shadow-xs"
+              />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#16a34a] ring-2 ring-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</h4>
+              <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
+              <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#004845] text-white">
+                {currentUser.label || (role === 'consultant' ? 'Consultant' : 'Client Account')}
+              </span>
+            </div>
+          </div>
+
+          {/* Switch Demo Account (Touch-Friendly for Mobile) */}
+          <div className="space-y-1.5 pt-1">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block px-1">
+              Switch Demo Account
+            </span>
+            <div className="space-y-1">
+              {(demoUsers || []).map((u) => {
+                const isSelected = currentUser.id === u.id;
+                return (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => handleSelectDemoUser(u.id)}
+                    className={`w-full py-2 px-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all active:scale-[0.99] ${
+                      isSelected
+                        ? 'bg-[#e6f2f1] border-[#004845] text-[#004845] font-bold shadow-xs'
+                        : 'bg-white border-slate-200/80 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img
+                        src={u.profileImage || u.avatar}
+                        alt={u.name}
+                        className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200 flex-shrink-0"
+                      />
+                      <div className="min-w-0 truncate">
+                        <span className="text-xs font-bold text-slate-900 block truncate leading-tight">
+                          {u.label}
+                        </span>
+                        <span className="text-[10px] text-slate-400 block truncate">
+                          {u.name} • {u.role === 'client' ? 'Client' : 'Consultant'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {isSelected && (
+                      <span className="p-0.5 rounded-full bg-[#16a34a] text-white flex-shrink-0 ml-1.5">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {/* Top Header: Primary Action Button (Client: New Thought / Chat, Consultant: Client Thinks) */}
         <div className="p-3.5 border-b border-slate-100 flex-shrink-0 bg-white">
           {role === 'client' ? (
             <button
@@ -95,11 +187,11 @@ export default function Sidebar({ isOpen, onClose }) {
               onClick={() => { setActiveTab('browse_thoughts'); if (onClose) onClose(); }}
               className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all transform active:scale-98 cursor-pointer"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <FileSearch className="w-4 h-4 text-[#16a34a]" />
-                <span>Browse Client Thoughts</span>
+                <span className="font-semibold text-white">Client Thinks</span>
               </div>
-              <span className="text-[10px] bg-[#16a34a] px-2 py-0.5 rounded-full text-white font-black">
+              <span className="text-[10px] bg-[#16a34a] text-white px-2 py-0.5 rounded-full font-black">
                 {openThoughtsCount}
               </span>
             </button>
@@ -108,61 +200,14 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* Scrollable Center: Recent Chats & Platform Routes */}
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-          {/* Section 1: Recent Conversations / Thoughts (ChatGPT style) */}
-          {role === 'client' && (
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
-                Recent Thoughts & Chats
-              </span>
-              <div className="space-y-0.5">
-                {myRecentThoughts.map((t) => {
-                  const isSelected = activeTab === 'chat' && activeChatThoughtId === t.id;
-                  const hasSolution = t.solutions && t.solutions.length > 0;
-
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => handleSelectThought(t.id)}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between group ${
-                        isSelected
-                          ? 'bg-[#e6f2f1] text-[#004845] font-bold shadow-xs'
-                          : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 overflow-hidden flex-1">
-                        <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-[#16a34a]' : 'text-slate-400'}`} />
-                        <span className="truncate">{t.title}</span>
-                      </div>
-                      {hasSolution && (
-                        <span className="w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0 ml-1.5" title="Solution Ready" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Section 2: Main Workspace Routes */}
+          {/* Section 1: Main Navigation Routes */}
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
-              {role === 'client' ? 'Workspace Routes' : 'Consultant Workflow'}
+              {role === 'client' ? 'Client Routes' : 'Consultant Workflow'}
             </span>
             <div className="space-y-0.5">
               {role === 'client' ? (
                 <>
-                  <button
-                    onClick={() => { setActiveTab('chat'); if (onClose) onClose(); }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                      activeTab === 'chat' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <LayoutGrid className="w-4 h-4 text-[#004845]" />
-                      <span>Workspace</span>
-                    </div>
-                  </button>
-
                   <button
                     onClick={() => { setActiveTab('my_thoughts'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
@@ -232,21 +277,6 @@ export default function Sidebar({ isOpen, onClose }) {
               ) : (
                 <>
                   <button
-                    onClick={() => { setActiveTab('browse_thoughts'); if (onClose) onClose(); }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'browse_thoughts' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <FileSearch className="w-4 h-4 text-[#004845]" />
-                      <span>Browse Problems</span>
-                    </div>
-                    <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
-                      {openThoughtsCount}
-                    </span>
-                  </button>
-
-                  <button
                     onClick={() => { setActiveTab('my_consultations'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                       activeTab === 'my_consultations' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -257,7 +287,7 @@ export default function Sidebar({ isOpen, onClose }) {
                       <span>My Consultations</span>
                     </div>
                     <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
-                      {thoughts.filter(t => t.assignedConsultantId).length}
+                      {thoughts.filter(t => (t.consultantId === currentUser.id || t.assignedConsultantId === currentUser.id)).length}
                     </span>
                   </button>
 
@@ -301,65 +331,47 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Section 3: Platform Governance & Admin (For Consultant/Admin role) */}
-          {role === 'consultant' && (
-            <div>
+          {/* Section 2: Recent History (Placed after Client Routes as requested) */}
+          {role === 'client' && (
+            <div className="pt-2 border-t border-slate-100">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
-                Platform Governance & Admin
+                Recent History
               </span>
               <div className="space-y-0.5">
-                <button
-                  onClick={() => { setActiveTab('admin_dashboard'); if (onClose) onClose(); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === 'admin_dashboard' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard className="w-4 h-4 text-[#004845]" />
-                    <span>Operations Overview</span>
-                  </div>
-                </button>
+                {myRecentThoughts.length === 0 ? (
+                  <p className="px-3 py-2 text-[11px] text-slate-400 italic">No recent thoughts yet</p>
+                ) : (
+                  myRecentThoughts.map((t) => {
+                    const isSelected = activeTab === 'messages' && activeChatThoughtId === t.id;
+                    const hasSolution = t.solutions && t.solutions.length > 0;
 
-                <button
-                  onClick={() => { setActiveTab('admin_users'); if (onClose) onClose(); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === 'admin_users' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Users className="w-4 h-4 text-[#004845]" />
-                    <span>User Verification</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('admin_moderation'); if (onClose) onClose(); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === 'admin_moderation' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ListTodo className="w-4 h-4 text-[#004845]" />
-                    <span>Thought Moderation</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('admin_audit'); if (onClose) onClose(); }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === 'admin_audit' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Shield className="w-4 h-4 text-[#004845]" />
-                    <span>Security & Privacy Logs</span>
-                  </div>
-                </button>
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleSelectThought(t.id)}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between group cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#e6f2f1] text-[#004845] font-bold shadow-xs'
+                            : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 overflow-hidden flex-1">
+                          <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+                          <span className="truncate">{t.title}</span>
+                        </div>
+                        {hasSolution && (
+                          <span className="w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0 ml-1.5" title="Solution Ready" />
+                        )}
+                      </button>
+                    );
+                  })
+                )}
               </div>
             </div>
           )}
 
-          {/* Section 4: Account & Settings (Client Only - Hidden on Consultant side) */}
+          {/* Section 3: Account & Settings (Client Only) */}
           {role === 'client' && (
             <div>
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
@@ -380,36 +392,128 @@ export default function Sidebar({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Bottom User Pill with Dedicated Logout Button */}
-        <div className="p-3 border-t border-slate-200/80 bg-slate-50/80 flex items-center justify-between gap-2 flex-shrink-0">
-          <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
-            <div className="relative flex-shrink-0">
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
-              />
-              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#16a34a] ring-1 ring-white" />
-            </div>
-            <div className="truncate">
-              <span className="text-xs font-bold text-slate-900 truncate block">{currentUser.name}</span>
-              <span className="text-[10px] text-slate-400 block truncate">{role === 'consultant' ? 'Admin / Consultant' : 'Client Account'}</span>
-            </div>
-          </div>
-
-          {/* Proper Logout Button as requested */}
+        {/* Mobile Bottom Actions: Logout */}
+        <div className="p-3 border-t border-slate-200/80 bg-slate-50/90 lg:hidden flex-shrink-0">
           <button
             type="button"
             onClick={() => {
               logoutUser();
               if (onClose) onClose();
             }}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-rose-300 bg-white hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs font-bold transition-all shadow-xs cursor-pointer group flex-shrink-0"
-            title="Log out of account"
+            className="w-full py-2.5 px-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer hover:bg-rose-100 transition-colors"
           >
-            <LogOut className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600 transition-colors" />
-            <span className="text-xs">Logout</span>
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Logout</span>
           </button>
+        </div>
+
+        {/* Desktop Bottom User Card & Demo Switcher in Sidebar (hidden on mobile, which has top switcher) */}
+        <div className="hidden lg:block p-3 border-t border-slate-200/80 bg-slate-50/90 relative flex-shrink-0" ref={accountMenuRef}>
+          {/* Popover Menu Anchored Above the User Card */}
+          {isAccountMenuOpen && (
+            <div className="absolute bottom-full left-2 right-2 mb-2 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 space-y-2">
+              <div className="flex items-center justify-between px-2 pt-1 pb-1 border-b border-slate-100">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  Switch Demo Account
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsAccountMenuOpen(false)}
+                  className="text-slate-400 hover:text-slate-700 text-xs p-1 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-1">
+                {(demoUsers || []).map((u) => {
+                  const isSelected = currentUser.id === u.id;
+                  return (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => handleSelectDemoUser(u.id)}
+                      className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-[#e6f2f1] border-[#004845] text-[#004845] font-bold shadow-xs'
+                          : 'bg-white border-slate-200/70 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img
+                          src={u.profileImage || u.avatar}
+                          alt={u.name}
+                          className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200 flex-shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold text-slate-900 block truncate leading-tight">
+                            {u.label}
+                          </span>
+                          <span className="text-[10px] text-slate-400 truncate block">
+                            {u.name} • {u.role === 'client' ? 'Client' : 'Consultant'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {isSelected && (
+                        <span className="p-1 rounded-full bg-[#16a34a] text-white flex-shrink-0 ml-1.5">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-1.5 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    logoutUser();
+                    setIsAccountMenuOpen(false);
+                    if (onClose) onClose();
+                  }}
+                  className="w-full px-2.5 py-1.5 text-left text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg flex items-center gap-2 cursor-pointer transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* User Trigger Card */}
+          <div
+            onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+            className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 cursor-pointer transition-all shadow-xs group select-none"
+            title="Click to switch demo account"
+          >
+            <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
+              <div className="relative flex-shrink-0">
+                <img
+                  src={currentUser.profileImage || currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200 group-hover:ring-[#16a34a] transition-all"
+                />
+                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#16a34a] ring-1 ring-white" />
+              </div>
+              <div className="truncate">
+                <span className="text-xs font-bold text-slate-900 truncate block group-hover:text-[#004845] transition-colors">
+                  {currentUser.name}
+                </span>
+                <span className="text-[10px] text-slate-400 block truncate">
+                  {currentUser.label || (role === 'consultant' ? 'Consultant' : 'Client Account')}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-[#e6f2f1] group-hover:text-[#004845] transition-colors">
+                Switch
+              </span>
+              <ChevronsUpDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors" />
+            </div>
+          </div>
         </div>
       </aside>
     </>

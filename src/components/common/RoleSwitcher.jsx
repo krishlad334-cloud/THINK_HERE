@@ -3,37 +3,50 @@ import { useApp } from '../../context/AppContext';
 import { User, Briefcase } from 'lucide-react';
 
 export default function RoleSwitcher() {
-  const { role, switchRole } = useApp();
+  const { activeUser, switchDemoUser } = useApp();
 
   return (
-    <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-      {/* Client Panel Button */}
+    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+      {/* Demo Client Button */}
       <button
-        onClick={() => switchRole('client')}
+        onClick={() => switchDemoUser('client_001')}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
-          role === 'client'
+          activeUser.id === 'client_001'
             ? 'bg-white text-[#004845] shadow-xs border border-slate-200/80 ring-1 ring-[#004845]/10'
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
         }`}
-        title="Switch to Client Panel (ChatGPT Style Workspace)"
+        title="Switch to Demo Client (Alex Morgan)"
       >
-        <User className={`w-3.5 h-3.5 ${role === 'client' ? 'text-[#16a34a]' : 'text-slate-400'}`} />
-        <span>Client Panel</span>
+        <User className={`w-3.5 h-3.5 ${activeUser.id === 'client_001' ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+        <span>Demo Client</span>
       </button>
 
-      {/* Admin / Consultant Panel Button */}
+      {/* Demo Consultant 1 Button */}
       <button
-        onClick={() => switchRole('consultant')}
+        onClick={() => switchDemoUser('consultant_001')}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
-          role === 'consultant'
+          activeUser.id === 'consultant_001'
             ? 'bg-white text-[#004845] shadow-xs border border-slate-200/80 ring-1 ring-[#004845]/10'
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
         }`}
-        title="Switch to Admin & Consultant Panel (Freelancer.com Style Marketplace)"
+        title="Switch to Demo Consultant 1 (Dr. Elena Vance)"
       >
-        <Briefcase className={`w-3.5 h-3.5 ${role === 'consultant' ? 'text-[#16a34a]' : 'text-slate-400'}`} />
-        <span className="hidden sm:inline">Admin / Consultant Panel</span>
-        <span className="sm:hidden">Consultant</span>
+        <Briefcase className={`w-3.5 h-3.5 ${activeUser.id === 'consultant_001' ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+        <span>Consultant 1</span>
+      </button>
+
+      {/* Demo Consultant 2 Button */}
+      <button
+        onClick={() => switchDemoUser('consultant_002')}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+          activeUser.id === 'consultant_002'
+            ? 'bg-white text-[#004845] shadow-xs border border-slate-200/80 ring-1 ring-[#004845]/10'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+        }`}
+        title="Switch to Demo Consultant 2 (Marcus Sterling)"
+      >
+        <Briefcase className={`w-3.5 h-3.5 ${activeUser.id === 'consultant_002' ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+        <span>Consultant 2</span>
       </button>
     </div>
   );

@@ -31,7 +31,7 @@ export default function AuthPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSigningIn(true);
-    setSuccessToast(`Welcome! Signing into your ${selectedRole === 'client' ? 'Client' : 'Consultant & Admin'} account...`);
+    setSuccessToast(`Welcome! Signing into your ${selectedRole === 'client' ? 'Client' : 'Consultant'} account...`);
 
     const customUser = {
       name: name || (selectedRole === 'client' ? 'Alex Morgan' : 'Dr. Elena Vance'),
@@ -65,7 +65,7 @@ export default function AuthPage() {
     setEmail('elena.vance@think.platform');
     setPassword('••••••••••••');
     setIsSigningIn(true);
-    setSuccessToast('Authenticating as Demo Consultant & Admin (Dr. Elena Vance)...');
+    setSuccessToast('Authenticating as Demo Consultant (Dr. Elena Vance)...');
 
     setTimeout(() => {
       loginUser('consultant');
@@ -163,9 +163,9 @@ export default function AuthPage() {
                 )}
               </div>
               <div>
-                <h4 className="text-xs font-bold">Consultant & Admin</h4>
+                <h4 className="text-xs font-bold">Consultant Panel</h4>
                 <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">
-                  Provide consultations & manage platform
+                  Provide consultations & accept client thinks
                 </p>
               </div>
             </div>
@@ -284,8 +284,8 @@ export default function AuthPage() {
           >
             <span>
               {authMode === 'login'
-                ? `Sign In to ${selectedRole === 'client' ? 'Client Panel' : 'Consultant & Admin'}`
-                : `Create ${selectedRole === 'client' ? 'Client' : 'Consultant & Admin'} Account`}
+                ? `Sign In to ${selectedRole === 'client' ? 'Client Panel' : 'Consultant Panel'}`
+                : `Create ${selectedRole === 'client' ? 'Client' : 'Consultant'} Account`}
             </span>
             <ArrowRight className="w-3.5 h-3.5 text-[#16a34a]" />
           </button>

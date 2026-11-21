@@ -646,5 +646,5 @@ export const TOPIC_SUGGESTIONS = [
   { label: 'Product & Marketing Growth', icon: 'TrendingUp', prompt: 'I built an innovative product. How do I improve organic distribution without massive ad spend?' },
   { label: 'Technology & Cloud Architecture', icon: 'Cpu', prompt: 'How do I architect high-concurrency database queries with sub-50ms response times?' },
   { label: 'UI/UX & Creative Innovation', icon: 'Palette', prompt: 'Review my mobile application user journey to optimize onboarding retention.' },
-  { label: 'Personal Growth & Strategy', icon: 'Sparkles', prompt: 'How do I manage high-stress executive decision making and prevent burnout?' }
+  { label: 'Personal Growth & Strategy', icon: 'Target', prompt: 'How do I manage high-stress executive decision making and prevent burnout?' }
 ];

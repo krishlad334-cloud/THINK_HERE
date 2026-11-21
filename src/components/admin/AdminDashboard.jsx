@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import {
   Shield,
   Users,
-  Sparkles,
+  Cpu,
   ShieldCheck
 } from 'lucide-react';
 
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#16a34a]" />
+              <Cpu className="w-5 h-5 text-[#16a34a]" />
               <h3 className="text-base font-bold text-white">
                 THINK 24-Hour Guarantee Engine Controls
               </h3>
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
               onClick={() => triggerAIFallback(t.id)}
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold flex items-center gap-1.5 transition-all"
             >
-              <Sparkles className="w-3 h-3 text-[#16a34a]" />
+              <Cpu className="w-3 h-3 text-[#16a34a]" />
               <span className="truncate max-w-[130px]">Trigger #{t.id}</span>
             </button>
           ))}

@@ -2,34 +2,46 @@ import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X,
-  Sparkles,
+  FileText,
   Paperclip,
   Image as ImageIcon,
   Video,
-  FileText,
   Mic,
   MicOff,
   Clock,
-  ArrowRight
+  ArrowRight,
+  PlusCircle
 } from 'lucide-react';
 
 export default function NewThoughtModal() {
   const {
     isNewThoughtModalOpen,
     setIsNewThoughtModalOpen,
-    submitThought,
+    submitThink,
     setActiveChatThoughtId,
-    setActiveTab
+    setActiveTab,
+    showToast
   } = useApp();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('Career & Jobs');
   const [urgency, setUrgency] = useState('Standard');
   const [attachments, setAttachments] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const categories = [
+    'Career & Jobs',
+    'Technology & IT',
+    'Business & Startups',
+    'Product & Innovation',
+    'Marketing & Growth',
+    'General Consultation'
+  ];
 
   if (!isNewThoughtModalOpen) return null;
 
@@ -92,21 +104,35 @@ export default function NewThoughtModal() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    setValidationError('');
 
-    const createdThought = submitThought({
+    if (!title.trim()) {
+      setValidationError('Please enter a title for your Think.');
+      return;
+    }
+
+    if (!description.trim()) {
+      setValidationError('Please provide a description or problem context.');
+      return;
+    }
+
+    const created = submitThink({
       title: title.trim(),
       description: description.trim(),
+      category,
       attachments,
       urgency
     });
 
-    setIsNewThoughtModalOpen(false);
-    setTitle('');
-    setDescription('');
-    setAttachments([]);
-    setActiveChatThoughtId(createdThought.id);
-    setActiveTab('chat');
+    if (created) {
+      setIsNewThoughtModalOpen(false);
+      setTitle('');
+      setDescription('');
+      setCategory('Career & Jobs');
+      setAttachments([]);
+      setActiveChatThoughtId(created.id);
+      setActiveTab('my_thoughts');
+    }
   };
 
   return (
@@ -116,20 +142,20 @@ export default function NewThoughtModal() {
         <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-[#e6f2f1] text-[#004845] rounded-xl flex-shrink-0">
-              <Sparkles className="w-5 h-5 text-[#16a34a]" />
+              <PlusCircle className="w-5 h-5 text-[#16a34a]" />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                Share a Thought, Problem or Business Idea
+                Submit a Think, Problem or Business Challenge
               </h3>
               <p className="text-[11px] sm:text-xs text-slate-500">
-                Guaranteed response by human consultants or AI within 24 hours
+                Direct connection to verified consultants with real-time consultation chat
               </p>
             </div>
           </div>
           <button
             onClick={() => setIsNewThoughtModalOpen(false)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -137,30 +163,61 @@ export default function NewThoughtModal() {
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
+          {validationError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+              {validationError}
+            </div>
+          )}
+
+          {/* Title */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              What is on your mind? (Your Core Thought or Question) *
+              Think Title *
             </label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. I am a Python developer but not getting interview calls. How to fix my portfolio?"
+              placeholder="e.g. Looking for a job in the IT industry, but not getting interview calls..."
               className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all font-medium placeholder:text-slate-400"
             />
           </div>
 
+          {/* Category Selection */}
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              Category *
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {categories.map((cat) => (
+                <button
+                  type="button"
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
+                    category === cat
+                      ? 'bg-[#004845] text-white border-[#004845] shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                Detailed Context & Requirements
+                Problem Description & Details *
               </label>
 
               <button
                 type="button"
                 onClick={toggleSpeechRecognition}
-                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${
+                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                   isRecording
                     ? 'bg-rose-50 text-rose-600 border-rose-300 animate-pulse'
                     : 'bg-[#e6f2f1] text-[#004845] border-[#004845]/20 hover:bg-[#d5eae8]'
@@ -173,9 +230,10 @@ export default function NewThoughtModal() {
 
             <textarea
               rows={4}
+              required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Provide more background: what you have tried, specific blockers, target outcome, budget or industry details..."
+              placeholder="Provide more background: what you have tried, blockers, target outcome, budget or industry details..."
               className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all placeholder:text-slate-400"
             />
           </div>
@@ -198,7 +256,7 @@ export default function NewThoughtModal() {
             <div className="p-2.5 bg-[#f0fdf4] rounded-xl border border-[#16a34a]/20 flex items-center gap-2.5 text-[#004845]">
               <Clock className="w-4 h-4 text-[#16a34a] flex-shrink-0" />
               <div className="text-[11px] leading-tight">
-                <span className="font-bold">24-Hour Fallback active:</span> If no human responds in 24h, AI delivers an actionable roadmap.
+                <span className="font-bold">Instant Workflow:</span> Stored in LocalStorage and immediately available in the Consultant Panel.
               </div>
             </div>
           </div>
@@ -207,12 +265,12 @@ export default function NewThoughtModal() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                Attachments (Images, Docs, Product Media)
+                Attachments (Optional)
               </label>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs text-[#004845] hover:text-[#16a34a] font-bold flex items-center gap-1"
+                className="text-xs text-[#004845] hover:text-[#16a34a] font-bold flex items-center gap-1 cursor-pointer"
               >
                 <Paperclip className="w-3.5 h-3.5 text-[#16a34a]" />
                 <span>Add Files</span>
@@ -230,15 +288,15 @@ export default function NewThoughtModal() {
             {attachments.length === 0 ? (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:border-[#004845] hover:bg-slate-50 transition-colors"
+                className="border-2 border-dashed border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-[#004845] hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center justify-center gap-3 text-slate-400 mb-1">
-                  <ImageIcon className="w-5 h-5 text-[#16a34a]" />
-                  <Video className="w-5 h-5 text-[#16a34a]" />
-                  <FileText className="w-5 h-5 text-[#16a34a]" />
+                  <ImageIcon className="w-4 h-4 text-[#16a34a]" />
+                  <Video className="w-4 h-4 text-[#16a34a]" />
+                  <FileText className="w-4 h-4 text-[#16a34a]" />
                 </div>
-                <p className="text-xs text-slate-500 font-medium">
-                  Click to attach resume, architecture diagram, product photos, or sample videos
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Click to attach resume, architecture diagram, prototype, or specs
                 </p>
               </div>
             ) : (
@@ -258,7 +316,7 @@ export default function NewThoughtModal() {
                     <button
                       type="button"
                       onClick={() => removeAttachment(att.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1"
+                      className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -268,13 +326,13 @@ export default function NewThoughtModal() {
             )}
           </div>
 
-          {/* Footer Submit Button - Strictly in Brand Teal/Green */}
+          {/* Footer Submit Button */}
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold text-sm shadow-md shadow-[#004845]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="w-full py-3 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold text-sm shadow-md shadow-[#004845]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
             >
-              <span>Submit Thought & Start 24h Window</span>
+              <span>Submit Think & Send to Consultants</span>
               <ArrowRight className="w-4 h-4 text-[#16a34a]" />
             </button>
           </div>

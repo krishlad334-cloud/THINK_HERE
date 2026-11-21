@@ -1,11 +1,27 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
-  INITIAL_USERS,
+  initializeThinkStorage,
+  getUsers,
+  getActiveUser,
+  setActiveUser as setStorageActiveUser,
+  getThinks,
+  saveThink as storageSaveThink,
+  updateThink as storageUpdateThink,
+  acceptThink as storageAcceptThink,
+  getConversations,
+  sendMessage as storageSendMessage,
+  markMessagesAsRead as storageMarkMessagesRead,
+  getNotifications,
+  markNotificationRead as storageMarkNotifRead,
+  markAllNotificationsRead as storageMarkAllNotifsRead,
+  resetDemoData as storageResetDemoData,
+  updateUser as storageUpdateUser,
+  getUserById,
+  DEMO_USERS
+} from '../utils/thinkStorage';
+import {
   MOCK_CONSULTANTS,
-  INITIAL_THOUGHTS,
-  INITIAL_MESSAGES,
   INITIAL_JOBS,
-  INITIAL_NOTIFICATIONS,
   INITIAL_AUDIT_LOGS
 } from '../data/mockSeedData';
 import { analyzeThought, generateAISolution } from '../utils/aiEngine';
@@ -13,480 +29,355 @@ import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
 
 const AppContext = createContext(null);
 
-const STORAGE_KEY_PREFIX = 'think_platform_';
-
-function loadFromStorage(key, fallback) {
-  try {
-    const item = localStorage.getItem(STORAGE_KEY_PREFIX + key);
-    return item ? JSON.parse(item) : fallback;
-  } catch (e) {
-    console.warn('Storage read failed for', key, e);
-    return fallback;
-  }
-}
-
-function saveToStorage(key, value) {
-  try {
-    localStorage.setItem(STORAGE_KEY_PREFIX + key, JSON.stringify(value));
-  } catch (e) {
-    console.warn('Storage write failed for', key, e);
-  }
-}
-
 export function AppProvider({ children }) {
-  // Active role: 'client' or 'consultant' (Unified Admin & Consultant)
-  const [role, setRole] = useState(() => loadFromStorage('active_role', 'client'));
+  // 1. Initialize LocalStorage on initial load
+  useEffect(() => {
+    initializeThinkStorage();
+  }, []);
 
-  // Profiles
-  const [clientUser, setClientUser] = useState(() => loadFromStorage('client_user', INITIAL_USERS.client));
-  
-  // Unified Consultant / Admin User
-  const [consultantUser, setConsultantUser] = useState(() => {
-    const stored = loadFromStorage('consultant_user', INITIAL_USERS.consultant);
-    return {
-      ...stored,
-      isAdmin: true,
-      permissions: ['all_access', 'verify_consultants', 'moderate_thoughts', 'audit_privacy', 'trigger_ai_fallback']
-    };
+  // 2. Core Reactive State from LocalStorage
+  const [activeUser, setActiveUserState] = useState(() => {
+    initializeThinkStorage();
+    return getActiveUser();
   });
 
-  // Core entities
-  const [thoughts, setThoughts] = useState(() => loadFromStorage('thoughts', INITIAL_THOUGHTS));
-  const [messages, setMessages] = useState(() => {
-    const stored = loadFromStorage('messages', INITIAL_MESSAGES);
-    if (!stored || stored.length < INITIAL_MESSAGES.length) {
-      return INITIAL_MESSAGES;
-    }
-    return stored;
+  const [users, setUsersState] = useState(() => {
+    initializeThinkStorage();
+    return getUsers();
   });
-  const [consultants, setConsultants] = useState(() => loadFromStorage('consultants', MOCK_CONSULTANTS));
-  const [jobs, setJobs] = useState(() => loadFromStorage('jobs', INITIAL_JOBS));
-  const [notifications, setNotifications] = useState(() => loadFromStorage('notifications', INITIAL_NOTIFICATIONS));
-  const [auditLogs, setAuditLogs] = useState(() => loadFromStorage('audit_logs', INITIAL_AUDIT_LOGS));
+
+  const [thinks, setThinksState] = useState(() => {
+    initializeThinkStorage();
+    return getThinks();
+  });
+
+  const [conversations, setConversationsState] = useState(() => {
+    initializeThinkStorage();
+    return getConversations();
+  });
+
+  const [notifications, setNotificationsState] = useState(() => {
+    initializeThinkStorage();
+    const user = getActiveUser();
+    return getNotifications(user?.id, user?.role);
+  });
+
+  // UI Toast state
+  const [toast, setToast] = useState(null);
+  const showToast = useCallback((title, message, type = 'success') => {
+    setToast({ title, message, type, id: Date.now() });
+    setTimeout(() => {
+      setToast(prev => (prev?.id ? null : prev));
+    }, 4000);
+  }, []);
+
+  const closeToast = useCallback(() => {
+    setToast(null);
+  }, []);
 
   // Navigation & UI States
-  const [isAuthenticated, setIsAuthenticated] = useState(() => loadFromStorage('is_authenticated', true));
-  const [activeTab, setActiveTab] = useState('chat'); // 'chat' is default ChatGPT workspace
-  const [activeChatThoughtId, setActiveChatThoughtId] = useState(null); // null means empty "New Chat"
+  const role = activeUser.role; // 'client' or 'consultant'
+  const [activeTab, setActiveTab] = useState(role === 'consultant' ? 'browse_thoughts' : 'chat');
+  const [activeChatThoughtId, setActiveChatThoughtId] = useState(null);
   const [selectedThoughtId, setSelectedThoughtId] = useState(null);
+  const [activeConversationId, setActiveConversationId] = useState(null);
   const [isNewThoughtModalOpen, setIsNewThoughtModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [authMode, setAuthMode] = useState('login');
   const [privacyAlert, setPrivacyAlert] = useState(null);
-
-  // Interactive Audio/Video Consultation Call modal
   const [activeCall, setActiveCall] = useState(null);
+  const [mutedThoughtIds, setMutedThoughtIds] = useState([]);
 
-  // Muted consultation chat rooms
-  const [mutedThoughtIds, setMutedThoughtIds] = useState(() => loadFromStorage('muted_thoughts', []));
-  useEffect(() => { saveToStorage('muted_thoughts', mutedThoughtIds); }, [mutedThoughtIds]);
+  // Mock companion states for secondary views
+  const [consultants, setConsultants] = useState(MOCK_CONSULTANTS);
+  const [jobs, setJobs] = useState(INITIAL_JOBS);
+  const [auditLogs, setAuditLogs] = useState(INITIAL_AUDIT_LOGS);
 
-  // Sync to storage
-  useEffect(() => { saveToStorage('is_authenticated', isAuthenticated); }, [isAuthenticated]);
-  useEffect(() => { saveToStorage('active_role', role); }, [role]);
-  useEffect(() => { saveToStorage('client_user', clientUser); }, [clientUser]);
-  useEffect(() => { saveToStorage('consultant_user', consultantUser); }, [consultantUser]);
-  useEffect(() => { saveToStorage('thoughts', thoughts); }, [thoughts]);
-  useEffect(() => { saveToStorage('messages', messages); }, [messages]);
-  useEffect(() => { saveToStorage('consultants', consultants); }, [consultants]);
-  useEffect(() => { saveToStorage('jobs', jobs); }, [jobs]);
-  useEffect(() => { saveToStorage('notifications', notifications); }, [notifications]);
-  useEffect(() => { saveToStorage('audit_logs', auditLogs); }, [auditLogs]);
+  // Synchronize state when storage changes (Cross-Tab via 'storage', Same-Tab via 'think_storage_updated')
+  const reloadFromStorage = useCallback(() => {
+    const currentActiveUser = getActiveUser();
+    setActiveUserState(currentActiveUser);
+    setUsersState(getUsers());
+    setThinksState(getThinks());
+    setConversationsState(getConversations());
+    setNotificationsState(getNotifications(currentActiveUser?.id, currentActiveUser?.role));
+  }, []);
 
-  // Derived current user based on active role
-  const currentUser = role === 'consultant' ? consultantUser : clientUser;
+  useEffect(() => {
+    const handleStorageEvent = (e) => {
+      if (!e.key || e.key.startsWith('think_')) {
+        reloadFromStorage();
+      }
+    };
 
-  // Switch between panels
+    const handleCustomUpdate = () => {
+      reloadFromStorage();
+    };
+
+    window.addEventListener('storage', handleStorageEvent);
+    window.addEventListener('think_storage_updated', handleCustomUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageEvent);
+      window.removeEventListener('think_storage_updated', handleCustomUpdate);
+    };
+  }, [reloadFromStorage]);
+
+  // Keep notifications fresh when active user changes
+  useEffect(() => {
+    setNotificationsState(getNotifications(activeUser?.id, activeUser?.role));
+  }, [activeUser]);
+
+  // -------------------------------------------------------------
+  // DEMO USER SWITCHING (Client, Consultant 1, Consultant 2)
+  // -------------------------------------------------------------
+  const switchDemoUser = (userId) => {
+    const targetUser = DEMO_USERS.find(u => u.id === userId);
+    if (!targetUser) return;
+
+    setStorageActiveUser(userId);
+    setActiveUserState(targetUser);
+
+    if (targetUser.role === 'consultant') {
+      setActiveTab('browse_thoughts');
+    } else {
+      setActiveTab('chat');
+    }
+
+    setNotificationsState(getNotifications(targetUser.id, targetUser.role));
+    showToast('Switched User', `Active as ${targetUser.label} (${targetUser.name})`, 'info');
+  };
+
+  // Backwards compatibility for role switch button
   const switchRole = (newRole) => {
-    setRole(newRole);
-    if (newRole === 'consultant') {
-      setActiveTab('browse_thoughts');
+    if (newRole === 'client') {
+      switchDemoUser('client_001');
     } else {
-      setActiveTab('chat');
+      // Default to Consultant 1
+      switchDemoUser('consultant_001');
     }
   };
 
-  // Dedicated Authentication methods
-  const loginUser = (targetRole = 'client', customUser = null) => {
-    if (customUser) {
-      if (targetRole === 'client') {
-        setClientUser(prev => ({ ...prev, ...customUser }));
-      } else {
-        setConsultantUser(prev => ({ ...prev, ...customUser }));
-      }
+  // -------------------------------------------------------------
+  // 1. CLIENT PANEL: SUBMIT THINK
+  // -------------------------------------------------------------
+  const submitThink = ({ title, description = '', category = 'General Consultation', attachments = [], urgency = 'Standard' }) => {
+    if (!title || !title.trim()) {
+      showToast('Validation Error', 'Please enter a title for your Think.', 'error');
+      return null;
     }
-    setRole(targetRole);
-    if (targetRole === 'consultant') {
-      setActiveTab('browse_thoughts');
-    } else {
-      setActiveTab('chat');
-    }
-    setIsAuthenticated(true);
-  };
 
-  const logoutUser = () => {
-    setIsAuthenticated(false);
-    setAuthMode('login');
-  };
-
-  const openAuthPage = (mode = 'login') => {
-    setAuthMode(mode);
-    setIsAuthenticated(false);
-  };
-
-  // Start a fresh new ChatGPT session
-  const startNewChat = () => {
-    setActiveChatThoughtId(null);
-    setActiveTab('chat');
-  };
-
-  // Select an existing thought to open in real 1-on-1 consultation chat room
-  const openChatWithThought = (thoughtId) => {
-    setActiveChatThoughtId(thoughtId);
-    setSelectedThoughtId(thoughtId);
-    setActiveTab('messages');
-  };
-
-  // Add system audit log
-  const addAuditLog = (type, details, severity = 'info', actor = currentUser.name) => {
-    const newLog = {
-      id: 'log-' + Date.now(),
-      type,
-      actor,
-      details,
-      severity,
-      timestamp: new Date().toISOString()
-    };
-    setAuditLogs(prev => [newLog, ...prev]);
-  };
-
-  // Submit a new Thought (Client side) - also automatically generates AI diagnosis in chat!
-  const submitThought = ({ title, description, attachments = [], urgency = 'Standard' }) => {
     const aiAnalysis = analyzeThought(title, description, attachments);
+    const assignedCategory = category || aiAnalysis.category || 'General Consultation';
 
-    const newThought = {
-      id: 'thought-' + Date.now(),
-      clientId: clientUser.id,
-      clientName: clientUser.name,
-      clientAvatar: clientUser.avatar,
-      title,
-      description,
-      category: aiAnalysis.category,
-      urgency: urgency || aiAnalysis.urgency,
-      createdAt: new Date().toISOString(),
-      deadlineHours: 24,
-      status: 'pending_human',
-      assignedConsultantId: null,
-      assignedConsultantName: null,
-      assignedConsultantAvatar: null,
-      attachments,
-      tags: aiAnalysis.tags,
-      aiAnalysis,
-      solutions: [],
-      isSaved: false
-    };
-
-    // Generate immediate initial AI roadmap for the chat experience!
-    const immediateAISol = generateAISolution(newThought);
-    newThought.solutions = [immediateAISol];
-
-    setThoughts(prev => [newThought, ...prev]);
-    setActiveChatThoughtId(newThought.id);
-
-    // Send notification to consultants
-    const notif = {
-      id: 'notif-' + Date.now(),
-      recipientRole: 'consultant',
-      title: 'New Client Thought Submitted',
-      message: `"${title.slice(0, 50)}..." matches your domain (${aiAnalysis.category}).`,
-      type: 'thought_matched',
-      linkThoughtId: newThought.id,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-    setNotifications(prev => [notif, ...prev]);
-
-    // Initial message in chat
-    const initialMsg = {
-      id: 'msg-' + Date.now(),
-      thoughtId: newThought.id,
-      senderId: clientUser.id,
-      senderName: clientUser.name,
-      senderRole: 'client',
-      senderAvatar: clientUser.avatar,
-      text: description ? `${title}\n\n${description}` : title,
-      timestamp: new Date().toISOString(),
+    const newThink = storageSaveThink({
+      clientId: activeUser.id,
+      clientName: activeUser.name,
+      clientAvatar: activeUser.profileImage || activeUser.avatar,
+      title: title.trim(),
+      description: description.trim(),
+      category: assignedCategory,
+      urgency,
+      tags: aiAnalysis.tags || [assignedCategory],
       attachments
-    };
-    setMessages(prev => [...prev, initialMsg]);
+    });
 
-    addAuditLog('NEW_THOUGHT_SUBMISSION', `Client ${clientUser.name} submitted: "${title.slice(0, 45)}..."`, 'info');
+    reloadFromStorage();
+    setActiveChatThoughtId(newThink.id);
+    setSelectedThoughtId(newThink.id);
 
-    return newThought;
+    showToast('Think Submitted!', `"${newThink.title.slice(0, 40)}..." is now live for consultants to review. Status: Pending`, 'success');
+
+    return newThink;
   };
 
-  // Claim/Take Ownership of a Thought (Consultant side)
-  const claimThought = (thoughtId) => {
-    const target = thoughts.find(t => t.id === thoughtId);
-    if (!target) return;
+  // Legacy alias
+  const submitThought = (params) => submitThink(params);
 
-    if (target.assignedConsultantId && target.assignedConsultantId !== consultantUser.id) {
-      alert(`This thought is already being handled by ${target.assignedConsultantName}. Multiple consultants cannot claim the same thought.`);
-      return;
+  // -------------------------------------------------------------
+  // 2. CONSULTANT PANEL: ACCEPT THINK
+  // -------------------------------------------------------------
+  const acceptThink = (thinkId) => {
+    try {
+      const { think, conversation, alreadyAccepted } = storageAcceptThink(thinkId, activeUser);
+
+      reloadFromStorage();
+
+      if (alreadyAccepted) {
+        showToast('Already Accepted', 'You have already accepted this Think. Opening conversation...', 'info');
+      } else {
+        showToast('Think Accepted!', `Assigned to ${activeUser.name}. Shared conversation created.`, 'success');
+      }
+
+      // Navigate to chat
+      if (conversation) {
+        setActiveConversationId(conversation.id);
+        setSelectedThoughtId(think.id);
+        setActiveChatThoughtId(think.id);
+        setActiveTab('messages');
+      }
+
+      return { think, conversation };
+    } catch (err) {
+      showToast('Acceptance Failed', err.message || 'Could not accept Think.', 'error');
+      return null;
+    }
+  };
+
+  // Legacy alias
+  const claimThought = (thoughtId) => acceptThink(thoughtId);
+
+  // -------------------------------------------------------------
+  // 3 & 4. THINK STATUS MANAGEMENT
+  // (Pending, Accepted, In Progress, Resolved, Closed)
+  // -------------------------------------------------------------
+  const updateThinkStatus = (thinkId, newStatus) => {
+    const updated = storageUpdateThink(thinkId, { status: newStatus });
+    reloadFromStorage();
+
+    const formattedStatus = newStatus.replace('_', ' ').toUpperCase();
+    showToast('Status Updated', `Think status changed to ${formattedStatus}`, 'success');
+
+    return updated;
+  };
+
+  // -------------------------------------------------------------
+  // SHARED CHAT & MESSAGING
+  // -------------------------------------------------------------
+  const sendChatMessage = (targetId, text, attachments = []) => {
+    if (!text && (!attachments || attachments.length === 0)) return null;
+
+    // targetId can be a conversationId or thoughtId
+    let conv = conversations.find(c => c.id === targetId || c.thinkId === targetId);
+
+    if (!conv) {
+      // If no conversation exists yet for this thought (e.g. client is typing in thought workspace before human acceptance)
+      const think = thinks.find(t => t.id === targetId);
+      if (think && think.status === 'pending') {
+        // AI / initial diagnostic simulation
+        const msg = {
+          id: `msg_${Date.now()}`,
+          conversationId: null,
+          thoughtId: targetId,
+          senderId: activeUser.id,
+          senderName: activeUser.name,
+          senderAvatar: activeUser.profileImage || activeUser.avatar,
+          senderRole: activeUser.role,
+          text: text.trim(),
+          attachments,
+          createdAt: new Date().toISOString(),
+          isRead: true
+        };
+        reloadFromStorage();
+        return msg;
+      }
     }
 
-    setThoughts(prev => prev.map(t => {
-      if (t.id === thoughtId) {
-        return {
-          ...t,
-          status: 'in_consultation',
-          assignedConsultantId: consultantUser.id,
-          assignedConsultantName: consultantUser.name,
-          assignedConsultantAvatar: consultantUser.avatar
-        };
-      }
-      return t;
-    }));
-
-    // Notify client
-    const notif = {
-      id: 'notif-' + Date.now(),
-      recipientRole: 'client',
-      title: 'Consultant Accepted Your Thought',
-      message: `${consultantUser.name} accepted your thought "${target.title.slice(0, 40)}..." and is preparing a solution.`,
-      type: 'consultant_accepted',
-      linkThoughtId: thoughtId,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-    setNotifications(prev => [notif, ...prev]);
-
-    addAuditLog('CONSULTANT_CLAIMED', `${consultantUser.name} took ownership of Thought #${thoughtId}`, 'info');
-  };
-
-  // Submit Human Consultant Solution
-  const submitSolution = (thoughtId, { executiveSummary, actionPlan, recommendedTools, nextStepsPrompt }) => {
-    const solution = {
-      id: 'sol-h-' + Date.now(),
-      isAIGenerated: false,
-      author: {
-        id: consultantUser.id,
-        name: consultantUser.name,
-        role: consultantUser.title,
-        avatar: consultantUser.avatar,
-        badge: 'Verified Consultant'
-      },
-      createdAt: new Date().toISOString(),
-      executiveSummary,
-      actionPlan: actionPlan || [],
-      recommendedTools: recommendedTools || [],
-      nextStepsPrompt: nextStepsPrompt || 'Let us continue the conversation in the consultation chat room.'
-    };
-
-    setThoughts(prev => prev.map(t => {
-      if (t.id === thoughtId) {
-        return {
-          ...t,
-          status: 'in_consultation',
-          solutions: [solution, ...(t.solutions || [])]
-        };
-      }
-      return t;
-    }));
-
-    // Add chat message from consultant
-    const chatMsg = {
-      id: 'msg-' + Date.now(),
-      thoughtId,
-      senderId: consultantUser.id,
-      senderName: consultantUser.name,
-      senderRole: 'consultant',
-      senderAvatar: consultantUser.avatar,
-      text: `Hello! I have reviewed your submission and provided a comprehensive diagnostic solution:\n\n${executiveSummary}`,
-      timestamp: new Date().toISOString(),
-      attachments: []
-    };
-    setMessages(prev => [...prev, chatMsg]);
-
-    // Client notification
-    const notif = {
-      id: 'notif-' + Date.now(),
-      recipientRole: 'client',
-      title: 'Personalized Human Solution Delivered!',
-      message: `${consultantUser.name} provided a structured consultation roadmap for your thought.`,
-      type: 'solution_received',
-      linkThoughtId: thoughtId,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-    setNotifications(prev => [notif, ...prev]);
-
-    addAuditLog('SOLUTION_SUBMITTED', `Consultant ${consultantUser.name} delivered human solution for Thought #${thoughtId}`, 'success');
-  };
-
-  // Trigger 24-Hour AI Fallback Solution
-  const triggerAIFallback = (thoughtId) => {
-    const target = thoughts.find(t => t.id === thoughtId);
-    if (!target) return;
-
-    if (target.solutions?.some(s => s.isAIGenerated)) {
-      return;
+    if (conv) {
+      const msg = storageSendMessage(conv.id, activeUser, text, attachments);
+      reloadFromStorage();
+      return msg;
     }
 
-    const aiSolution = generateAISolution(target);
-
-    setThoughts(prev => prev.map(t => {
-      if (t.id === thoughtId) {
-        return {
-          ...t,
-          status: 'ai_fallback',
-          solutions: [...(t.solutions || []), aiSolution]
-        };
-      }
-      return t;
-    }));
-
-    const notif = {
-      id: 'notif-' + Date.now(),
-      recipientRole: 'client',
-      title: '24-Hour AI Fallback Solution Generated',
-      message: `THINK AI has generated an instant comprehensive blueprint for "${target.title.slice(0, 40)}...".`,
-      type: 'ai_fallback',
-      linkThoughtId: thoughtId,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-    setNotifications(prev => [notif, ...prev]);
-
-    addAuditLog('AI_FALLBACK_TRIGGERED', `24h Fallback Guarantee activated for Thought #${thoughtId}`, 'warning', 'THINK AI Engine');
+    return null;
   };
 
-  // Send Chat Message with Safety/Privacy Guard
-  const sendMessage = (thoughtId, text, attachments = []) => {
-    const inspection = inspectMessageForPrivacy(text);
+  // Legacy alias
+  const sendMessage = (targetId, text, attachments = []) => sendChatMessage(targetId, text, attachments);
 
-    if (inspection.isViolation) {
-      setPrivacyAlert({
-        message: inspection.warningMessage,
-        violations: inspection.violations
-      });
-
-      addAuditLog('PRIVACY_VIOLATION_ATTEMPT', `Masked external contact attempt in Thought #${thoughtId} by ${currentUser.name}: ${inspection.violations.join(', ')}`, 'warning');
-    }
-
-    const newMessage = {
-      id: 'msg-' + Date.now(),
-      thoughtId,
-      senderId: currentUser.id,
-      senderName: currentUser.name,
-      senderRole: role,
-      senderAvatar: currentUser.avatar,
-      text: inspection.cleanText,
-      timestamp: new Date().toISOString(),
-      attachments,
-      wasMasked: inspection.isViolation
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-
-    // If client is chatting in AI mode (no assigned human consultant yet), simulate an instant AI conversational reply!
-    const targetThought = thoughts.find(t => t.id === thoughtId);
-    if (role === 'client' && (!targetThought?.assignedConsultantId || targetThought?.status === 'ai_fallback')) {
-      setTimeout(() => {
-        const aiReply = {
-          id: 'msg-ai-' + Date.now(),
-          thoughtId,
-          senderId: 'ai-engine',
-          senderName: 'THINK AI Assistant',
-          senderRole: 'ai',
-          senderAvatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80',
-          text: `I analyzed your query: "${inspection.cleanText.slice(0, 80)}...". Based on this context, I recommend focusing on your core bottleneck first. Would you like me to connect you with an expert consultant in ${targetThought?.category || 'this domain'} to review your code or strategy 1-on-1?`,
-          timestamp: new Date().toISOString(),
-          attachments: []
-        };
-        setMessages(m => [...m, aiReply]);
-      }, 700);
-    }
-
-    return newMessage;
+  const markConversationRead = (conversationId) => {
+    storageMarkMessagesRead(conversationId, activeUser.id);
+    reloadFromStorage();
   };
 
-  // Delete an individual chat message
-  const deleteMessage = (messageId) => {
-    setMessages(prev => prev.filter(m => m.id !== messageId));
-  };
-
-  // Clear all messages for a specific consultation / thought room
-  const clearChat = (thoughtId) => {
-    setMessages(prev => prev.filter(m => m.thoughtId !== thoughtId));
-  };
-
-  // Toggle mute notifications for a thought consultation room
-  const toggleMuteChat = (thoughtId) => {
-    setMutedThoughtIds(prev =>
-      prev.includes(thoughtId) ? prev.filter(id => id !== thoughtId) : [...prev, thoughtId]
-    );
-  };
-
-  // Save / Bookmark Thought or Solution
-  const toggleSaveThought = (thoughtId) => {
-    setThoughts(prev => prev.map(t => {
-      if (t.id === thoughtId) {
-        return { ...t, isSaved: !t.isSaved };
-      }
-      return t;
-    }));
-  };
-
-  // Save Job
-  const toggleSaveJob = (jobId) => {
-    setJobs(prev => prev.map(j => {
-      if (j.id === jobId) {
-        return { ...j, isSaved: !j.isSaved };
-      }
-      return j;
-    }));
-  };
-
-  // Apply to Job
-  const applyJob = (jobId) => {
-    setJobs(prev => prev.map(j => {
-      if (j.id === jobId) {
-        return { ...j, isApplied: true, applicantsCount: (j.applicantsCount || 0) + 1 };
-      }
-      return j;
-    }));
-    addAuditLog('JOB_APPLICATION', `${clientUser.name} applied to job position #${jobId}`, 'info');
-  };
-
-  // Consultant Verification
-  const setConsultantVerification = (consultantId, status) => {
-    setConsultants(prev => prev.map(c => {
-      if (c.id === consultantId) {
-        return { ...c, verificationStatus: status, isVerified: status === 'approved' };
-      }
-      return c;
-    }));
-    addAuditLog('VERIFICATION_CHANGE', `Admin changed verification of consultant #${consultantId} to ${status}`, 'info');
-  };
-
-  // Update Consultant Profile
-  const updateConsultantProfile = (fields) => {
-    setConsultantUser(prev => ({ ...prev, ...fields }));
-    setConsultants(prev => prev.map(c => c.id === consultantUser.id ? { ...c, ...fields } : c));
-    addAuditLog('PROFILE_UPDATED', `Consultant ${consultantUser.name} updated profile details.`, 'info');
-  };
-
-  // Notifications
-  const markNotificationRead = (id) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+  // -------------------------------------------------------------
+  // NOTIFICATIONS
+  // -------------------------------------------------------------
+  const markNotificationRead = (notifId) => {
+    storageMarkNotifRead(notifId);
+    reloadFromStorage();
   };
 
   const markAllNotificationsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    storageMarkAllNotifsRead(activeUser.id, activeUser.role);
+    reloadFromStorage();
   };
 
-  // Start & End Calls
+  // -------------------------------------------------------------
+  // RESET DEMO DATA
+  // -------------------------------------------------------------
+  const resetAllData = () => {
+    storageResetDemoData();
+    reloadFromStorage();
+    showToast('Demo Data Reset', 'Platform restored to initial sample state.', 'info');
+  };
+
+  // Legacy helpers & compatibility
+  const clientUser = users.find(u => u.id === 'client_001') || activeUser;
+  const consultantUser = (activeUser.role === 'consultant' ? activeUser : users.find(u => u.id === 'consultant_001')) || activeUser;
+  const currentUser = activeUser;
+
+  const updateConsultantProfile = (updates) => {
+    const targetId = (activeUser.role === 'consultant' ? activeUser.id : consultantUser.id) || 'consultant_001';
+    const updated = storageUpdateUser(targetId, updates);
+    if (activeUser.id === targetId) {
+      setActiveUserState(prev => ({ ...prev, ...updates }));
+    }
+    reloadFromStorage();
+    showToast('Profile Updated', 'Profile changes have been saved successfully.', 'success');
+    return updated;
+  };
+
+  const setClientUser = (updaterOrObj) => {
+    const targetId = 'client_001';
+    const current = getUserById(targetId) || clientUser;
+    const nextVal = typeof updaterOrObj === 'function' ? updaterOrObj(current) : { ...current, ...updaterOrObj };
+    storageUpdateUser(targetId, nextVal);
+    if (activeUser.id === targetId) {
+      setActiveUserState(prev => ({ ...prev, ...nextVal }));
+    }
+    reloadFromStorage();
+    showToast('Settings Saved', 'Account settings saved successfully.', 'success');
+  };
+
+  const updateUserProfile = (userId, updates) => {
+    const updated = storageUpdateUser(userId, updates);
+    if (activeUser.id === userId) {
+      setActiveUserState(prev => ({ ...prev, ...updates }));
+    }
+    reloadFromStorage();
+    showToast('Profile Saved', 'Profile details have been updated.', 'success');
+    return updated;
+  };
+
+  // Derive flat messages list for legacy components
+  const allMessages = conversations.flatMap(c => c.messages || []);
+
+  const openChatWithThought = (thoughtId) => {
+    setActiveChatThoughtId(thoughtId);
+    setSelectedThoughtId(thoughtId);
+    const conv = conversations.find(c => c.thinkId === thoughtId);
+    if (conv) {
+      setActiveConversationId(conv.id);
+    }
+    setActiveTab('messages');
+  };
+
+  const startNewChat = () => {
+    setActiveChatThoughtId(null);
+    setSelectedThoughtId(null);
+    setActiveConversationId(null);
+    setActiveTab('chat');
+    setIsNewThoughtModalOpen(false);
+  };
+
+  const toggleSaveThought = (thoughtId) => {
+    const target = thinks.find(t => t.id === thoughtId);
+    if (!target) return;
+    storageUpdateThink(thoughtId, { isSaved: !target.isSaved });
+    reloadFromStorage();
+  };
+
   const startCall = ({ thoughtId, participantName, participantAvatar, callType = 'video' }) => {
     setActiveCall({
       thoughtId,
@@ -501,62 +392,85 @@ export function AppProvider({ children }) {
     setActiveCall(null);
   };
 
+  const logoutUser = () => {
+    // Reset to demo client
+    switchDemoUser('client_001');
+    showToast('Logged Out', 'Returned to Client Workspace', 'info');
+  };
+
   const value = {
-    role,
-    switchRole,
+    // Core state
+    activeUser,
     currentUser,
     clientUser,
-    setClientUser,
     consultantUser,
-    setConsultantUser,
-    thoughts,
-    submitThought,
-    claimThought,
-    submitSolution,
-    triggerAIFallback,
-    toggleSaveThought,
-    messages,
-    sendMessage,
-    deleteMessage,
-    clearChat,
-    toggleMuteChat,
-    mutedThoughtIds,
-    consultants,
-    setConsultantVerification,
-    updateConsultantProfile,
-    jobs,
-    toggleSaveJob,
-    applyJob,
+    demoUsers: DEMO_USERS,
+    role,
+    switchDemoUser,
+    switchRole,
+
+    // Entities
+    thinks,
+    thoughts: thinks, // alias for backwards compatibility
+    conversations,
+    messages: allMessages,
     notifications,
+
+    // Actions
+    submitThink,
+    submitThought,
+    acceptThink,
+    claimThought,
+    updateThinkStatus,
+    sendChatMessage,
+    sendMessage,
+    markConversationRead,
     markNotificationRead,
     markAllNotificationsRead,
-    auditLogs,
-    addAuditLog,
+    resetAllData,
+    updateConsultantProfile,
+    setClientUser,
+    updateUserProfile,
+
+    // Navigation & UI
     activeTab,
     setActiveTab,
     activeChatThoughtId,
     setActiveChatThoughtId,
-    startNewChat,
-    openChatWithThought,
     selectedThoughtId,
     setSelectedThoughtId,
+    activeConversationId,
+    setActiveConversationId,
     isNewThoughtModalOpen,
     setIsNewThoughtModalOpen,
-    isAuthModalOpen,
-    setIsAuthModalOpen,
+    startNewChat,
+    openChatWithThought,
+    toggleSaveThought,
+
+    // Toast
+    toast,
+    showToast,
+    closeToast,
+
+    // Call Modal
+    activeCall,
+    startCall,
+    endCall,
+
+    // Compatibility props
+    isAuthenticated,
+    setIsAuthenticated,
     authMode,
     setAuthMode,
     privacyAlert,
     setPrivacyAlert,
-    activeCall,
-    startCall,
-    endCall,
-    isAuthenticated,
-    setIsAuthenticated,
-    loginUser,
+    mutedThoughtIds,
+    setMutedThoughtIds,
+    consultants,
+    jobs,
+    auditLogs,
     logoutUser,
-    openAuthPage,
-    INITIAL_USERS
+    DEMO_USERS
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -51,13 +51,15 @@ export default function Navbar({ onToggleSidebar }) {
           </div>
         </div>
 
-        {/* Right Section: Notifications & Profile Hover Menu (All options inside profile dropdown) */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Right Section: Notifications (always visible) & Profile (desktop only) */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           {/* Notifications Dropdown */}
           <NotificationDropdown />
 
-          {/* Interactive Profile Dropdown on Hover/Click with Cursor Pointer on All Options */}
-          <ProfileDropdown />
+          {/* Desktop Profile Dropdown (Hidden on mobile; on mobile, profile is in the sidebar) */}
+          <div className="hidden lg:block">
+            <ProfileDropdown />
+          </div>
         </div>
       </div>
     </header>

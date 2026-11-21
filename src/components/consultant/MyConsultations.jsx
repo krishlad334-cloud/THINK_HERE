@@ -1,18 +1,31 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { timeAgo } from '../../utils/formatters';
+import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   FolderKanban,
   MessageSquare,
   PhoneCall,
   CheckCircle,
-  Clock
+  Clock,
+  Lock
 } from 'lucide-react';
 
 export default function MyConsultations() {
-  const { thoughts, consultantUser, setSelectedThoughtId, setActiveTab, startCall } = useApp();
+  const {
+    thinks,
+    thoughts,
+    activeUser,
+    setSelectedThoughtId,
+    setActiveTab,
+    startCall,
+    openChatWithThought
+  } = useApp();
 
-  const myConsultations = thoughts.filter(t => t.assignedConsultantId === consultantUser.id);
+  const allThinks = thinks || thoughts || [];
+
+  const myConsultations = allThinks.filter(t =>
+    t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id
+  );
 
   const handleStartCall = (thought) => {
     startCall({
@@ -24,8 +37,42 @@ export default function MyConsultations() {
   };
 
   const handleOpenChat = (thoughtId) => {
-    setSelectedThoughtId(thoughtId);
-    setActiveTab('messages');
+    openChatWithThought(thoughtId);
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'accepted':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3 text-emerald-600" /> Accepted
+          </span>
+        );
+      case 'in_progress':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-blue-600" /> In Progress
+          </span>
+        );
+      case 'resolved':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3 text-teal-600" /> Resolved
+          </span>
+        );
+      case 'closed':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1">
+            <Lock className="w-3 h-3 text-slate-500" /> Closed
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+            {status}
+          </span>
+        );
+    }
   };
 
   return (
@@ -37,14 +84,14 @@ export default function MyConsultations() {
           <span>My Active Consultations</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Manage claimed client engagements, delivery roadmaps, and real-time calling sessions
+          Manage claimed client engagements, delivery roadmaps, and real-time calling sessions for {activeUser.name}
         </p>
       </div>
 
       {myConsultations.length === 0 ? (
         <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center">
           <FolderKanban className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-sm font-bold text-slate-800">No active consultations assigned</h3>
+          <h3 className="text-sm font-bold text-slate-800">No active consultations assigned to {activeUser.name}</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Head to the problem discovery feed to browse incoming thoughts and claim ownership.
           </p>
@@ -52,33 +99,26 @@ export default function MyConsultations() {
             onClick={() => setActiveTab('browse_thoughts')}
             className="mt-4 px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold cursor-pointer"
           >
-            Browse Client Thoughts
+            Browse Available Thinks
           </button>
         </div>
       ) : (
         <div className="space-y-4">
           {myConsultations.map((thought) => {
-            const hasDeliveredSolution = thought.solutions?.some(s => s.author.id === consultantUser.id);
-
             return (
               <div
                 key={thought.id}
                 className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6"
               >
                 <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                      #{thought.id}
+                    </span>
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#e6f2f1] text-[#004845]">
                       {thought.category}
                     </span>
-                    {hasDeliveredSolution ? (
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" /> Solution Delivered
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-500" /> Response In Progress
-                      </span>
-                    )}
+                    {getStatusBadge(thought.status)}
                   </div>
 
                   <h3
@@ -104,10 +144,10 @@ export default function MyConsultations() {
                 <div className="flex items-center gap-2.5 self-end md:self-center flex-shrink-0">
                   <button
                     onClick={() => handleOpenChat(thought.id)}
-                    className="px-3.5 py-2 rounded-xl bg-[#e6f2f1] hover:bg-[#d4ecea] text-[#004845] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                   >
                     <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
-                    <span>Client Chat</span>
+                    <span>Open Consultation Chat</span>
                   </button>
 
                   <button
@@ -115,14 +155,14 @@ export default function MyConsultations() {
                     className="px-3.5 py-2 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                   >
                     <PhoneCall className="w-3.5 h-3.5" />
-                    <span>Video Consultation</span>
+                    <span>Video Call</span>
                   </button>
 
                   <button
                     onClick={() => setSelectedThoughtId(thought.id)}
                     className="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer"
                   >
-                    Roadmap
+                    Details
                   </button>
                 </div>
               </div>

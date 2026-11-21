@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   User,
@@ -8,8 +8,7 @@ import {
   Save,
   Camera,
   ShieldCheck,
-  Clock,
-  Sparkles
+  Clock
 } from 'lucide-react';
 
 export default function ClientSettings() {
@@ -24,6 +23,16 @@ export default function ClientSettings() {
   const [inPlatformMasking, setInPlatformMasking] = useState(true);
   const [timerAlerts, setTimerAlerts] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
+
+  useEffect(() => {
+    if (clientUser) {
+      setName(clientUser.name || 'Alex Morgan');
+      setEmail(clientUser.email || 'alex.morgan@think.platform');
+      setBio(clientUser.bio || '');
+      setLocation(clientUser.location || 'San Francisco, CA');
+      setTitle(clientUser.title || 'Startup Founder & Tech Innovator');
+    }
+  }, [clientUser]);
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -116,7 +125,7 @@ export default function ClientSettings() {
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
                 <Clock className="w-4 h-4 text-amber-500" />
-                <span>24h AI Fallback Guarantee</span>
+                <span>Verified Consultant Connection</span>
               </div>
             </div>
           </div>
@@ -124,7 +133,7 @@ export default function ClientSettings() {
           {/* Quick Help Box */}
           <div className="bg-[#f0fdf4] rounded-2xl border border-[#16a34a]/20 p-5 space-y-2">
             <h4 className="text-xs font-bold text-[#004845] flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#16a34a]" />
+              <ShieldCheck className="w-4 h-4 text-[#16a34a]" />
               THINK Privacy Guarantee
             </h4>
             <p className="text-[11px] text-slate-600 leading-relaxed">

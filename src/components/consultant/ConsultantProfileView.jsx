@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   ShieldCheck,
@@ -10,29 +10,45 @@ import {
   GraduationCap,
   Award,
   Edit2,
-  Save
+  Save,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function ConsultantProfileView() {
   const { consultantUser, updateConsultantProfile } = useApp();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [headline, setHeadline] = useState(consultantUser.title);
-  const [bio, setBio] = useState(consultantUser.bio);
-  const [hourlyRate, setHourlyRate] = useState(consultantUser.hourlyRate);
-  const [location, setLocation] = useState(consultantUser.location);
+  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [headline, setHeadline] = useState(consultantUser.title || '');
+  const [bio, setBio] = useState(consultantUser.bio || '');
+  const [hourlyRate, setHourlyRate] = useState(consultantUser.hourlyRate || 150);
+  const [location, setLocation] = useState(consultantUser.location || '');
   const [newSkill, setNewSkill] = useState('');
   const [skills, setSkills] = useState(consultantUser.skills || []);
 
+  useEffect(() => {
+    if (consultantUser && !isEditing) {
+      setHeadline(consultantUser.title || '');
+      setBio(consultantUser.bio || '');
+      setHourlyRate(consultantUser.hourlyRate || 150);
+      setLocation(consultantUser.location || '');
+      setSkills(consultantUser.skills || []);
+    }
+  }, [consultantUser, isEditing]);
+
   const handleSave = () => {
-    updateConsultantProfile({
-      title: headline,
-      bio,
-      hourlyRate: Number(hourlyRate),
-      location,
-      skills
-    });
+    if (updateConsultantProfile) {
+      updateConsultantProfile({
+        title: headline,
+        bio,
+        hourlyRate: Number(hourlyRate),
+        location,
+        skills
+      });
+    }
     setIsEditing(false);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3500);
   };
 
   const addSkill = () => {
@@ -48,6 +64,16 @@ export default function ConsultantProfileView() {
 
   return (
     <div className="space-y-6 w-full pb-16">
+      {savedSuccess && (
+        <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-800 text-xs font-bold flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
+          <CheckCircle2 className="w-5 h-5 text-[#16a34a] flex-shrink-0" />
+          <div>
+            <p className="font-extrabold text-slate-900">Profile Changes Saved Successfully!</p>
+            <p className="text-[11px] text-slate-500 font-medium">Your updated consultant title, rate, location, and bio are now live across THINK.</p>
+          </div>
+        </div>
+      )}
+
       {/* Header Banner - LinkedIn / Freelancer Style */}
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Cover graphic */}
@@ -73,8 +99,25 @@ export default function ConsultantProfileView() {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 self-start sm:self-auto">
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setHeadline(consultantUser.title || '');
+                    setBio(consultantUser.bio || '');
+                    setHourlyRate(consultantUser.hourlyRate || 150);
+                    setLocation(consultantUser.location || '');
+                    setSkills(consultantUser.skills || []);
+                  }}
+                  className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+              )}
               <button
+                type="button"
                 onClick={() => isEditing ? handleSave() : setIsEditing(true)}
                 className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
               >

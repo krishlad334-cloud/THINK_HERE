@@ -1,49 +1,96 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { calculateTimeRemaining, timeAgo } from '../../utils/formatters';
+import { calculateTimeRemaining, timeAgo, formatDate } from '../../utils/formatters';
 import {
   MessageSquare,
   Clock,
-  Sparkles,
   CheckCircle,
   PlusCircle,
   Search,
-  ArrowRight
+  ArrowRight,
+  Lock
 } from 'lucide-react';
 
 export default function MyThoughtsView({ filterMode = 'all' }) {
-  const { thoughts, setSelectedThoughtId, setIsNewThoughtModalOpen, triggerAIFallback } = useApp();
+  const {
+    thinks,
+    thoughts,
+    setSelectedThoughtId,
+    startNewChat,
+    openChatWithThought
+  } = useApp();
+
+  const allThinks = thinks || thoughts || [];
+
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories = ['All', 'Career & Jobs', 'Product & Innovation', 'Business & Startups', 'Technology & IT', 'Marketing & Growth'];
 
   // Filter thoughts
-  const filtered = thoughts.filter((t) => {
-    // Check mode filter (e.g., if navigated from "Consultant Responses" or "AI Responses")
-    if (filterMode === 'consultant_responses') {
-      const hasHuman = t.solutions?.some(s => !s.isAIGenerated);
-      if (!hasHuman) return false;
-    }
-    if (filterMode === 'ai_responses') {
-      const hasAI = t.solutions?.some(s => s.isAIGenerated) || t.status === 'ai_fallback';
-      if (!hasAI) return false;
-    }
-
+  const filtered = allThinks.filter((t) => {
     if (activeCategory !== 'All' && t.category !== activeCategory) {
       return false;
     }
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
+      const matchId = t.id.toLowerCase().includes(q);
       const matchTitle = t.title.toLowerCase().includes(q);
       const matchDesc = t.description?.toLowerCase().includes(q);
       const matchCat = t.category.toLowerCase().includes(q);
-      if (!matchTitle && !matchDesc && !matchCat) return false;
+      if (!matchId && !matchTitle && !matchDesc && !matchCat) return false;
     }
 
     return true;
   });
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'pending':
+      case 'pending_human':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span>Pending Review</span>
+          </span>
+        );
+      case 'accepted':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3 text-emerald-600" />
+            <span>Accepted</span>
+          </span>
+        );
+      case 'in_progress':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-blue-600" />
+            <span>In Progress</span>
+          </span>
+        );
+      case 'resolved':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3 text-teal-600" />
+            <span>Resolved</span>
+          </span>
+        );
+      case 'closed':
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1">
+            <Lock className="w-3 h-3 text-slate-500" />
+            <span>Closed</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+            {status}
+          </span>
+        );
+    }
+  };
 
   return (
     <div className="space-y-6 w-full pb-16">
@@ -51,19 +98,15 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            {filterMode === 'consultant_responses'
-              ? 'Human Consultant Solutions'
-              : filterMode === 'ai_responses'
-              ? 'AI-Generated Fallback Solutions'
-              : 'My Thoughts & Questions'}
+            My Thoughts & Questions
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Browse, track 24h countdowns, and explore solutions provided by verified experts and AI
+            Track status, review consultant acceptance, and collaborate in 1-on-1 consultations
           </p>
         </div>
 
         <button
-          onClick={() => setIsNewThoughtModalOpen(true)}
+          onClick={startNewChat}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all self-start sm:self-auto cursor-pointer"
         >
           <PlusCircle className="w-4 h-4 text-[#16a34a]" />
@@ -97,8 +140,8 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search problems, keywords..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+            placeholder="Search problems, #think_id..."
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] font-medium"
           />
         </div>
       </div>
@@ -112,7 +155,7 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
             Try adjusting your search query or submit a new thought to start a 24-hour consultation.
           </p>
           <button
-            onClick={() => setIsNewThoughtModalOpen(true)}
+            onClick={startNewChat}
             className="mt-4 px-4 py-2 rounded-xl bg-[#004845] text-white text-xs font-bold hover:bg-[#003331] cursor-pointer"
           >
             Start a Thought
@@ -122,8 +165,6 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
         <div className="space-y-4">
           {filtered.map((thought) => {
             const timeInfo = calculateTimeRemaining(thought.createdAt, thought.deadlineHours || 24);
-            const humanSols = thought.solutions?.filter(s => !s.isAIGenerated) || [];
-            const aiSols = thought.solutions?.filter(s => s.isAIGenerated) || [];
 
             return (
               <div
@@ -132,6 +173,9 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
               >
                 <div className="space-y-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                      #{thought.id}
+                    </span>
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#e6f2f1] text-[#004845]">
                       {thought.category}
                     </span>
@@ -139,20 +183,7 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
                       {timeAgo(thought.createdAt)}
                     </span>
 
-                    {/* Status Pill */}
-                    {humanSols.length > 0 ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" /> Human Solution Provided
-                      </span>
-                    ) : aiSols.length > 0 ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> 24h AI Fallback Active
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 flex items-center gap-1">
-                        <Clock className="w-3 h-3 animate-spin" /> In Consultant Review
-                      </span>
-                    )}
+                    {getStatusBadge(thought.status)}
 
                     {thought.urgency === 'High (Urgent)' && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
@@ -168,56 +199,52 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
                     {thought.title}
                   </h3>
 
-                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed whitespace-pre-wrap">
                     {thought.description}
                   </p>
 
-                  {/* Consultant / AI Assigned info */}
+                  {/* Consultant Assigned info */}
                   <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-500">
-                    {thought.assignedConsultantName && (
-                      <span className="flex items-center gap-1.5 font-medium text-slate-700">
+                    {thought.assignedConsultantName ? (
+                      <span className="flex items-center gap-1.5 font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
                         <img
                           src={thought.assignedConsultantAvatar}
                           alt={thought.assignedConsultantName}
                           className="w-4 h-4 rounded-full object-cover"
                         />
-                        <span>Handled by {thought.assignedConsultantName}</span>
+                        <span>Accepted by {thought.assignedConsultantName}</span>
+                      </span>
+                    ) : (
+                      <span className="text-amber-700 font-medium">
+                        Waiting for consultant acceptance...
                       </span>
                     )}
 
                     {thought.attachments && thought.attachments.length > 0 && (
                       <span className="text-slate-400">
-                        • {thought.attachments.length} attachment(s)
+                        • {thought.attachments.length} file(s)
                       </span>
                     )}
-
-                    {/* Timer */}
-                    <span className="text-slate-500 font-semibold flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-amber-500" />
-                      {timeInfo.isExpired ? '24h Timer Finished' : `${timeInfo.hours}h ${timeInfo.minutes}m remaining`}
-                    </span>
                   </div>
                 </div>
 
                 {/* Right Action buttons */}
                 <div className="flex items-center gap-2 self-end md:self-center flex-shrink-0">
-                  {aiSols.length === 0 && (
+                  {thought.assignedConsultantName && (
                     <button
-                      onClick={() => triggerAIFallback(thought.id)}
-                      className="px-3 py-2 rounded-xl bg-[#e6f2f1] hover:bg-[#d4ecea] text-[#004845] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                      title="Trigger 24h AI Fallback Blueprint"
+                      onClick={() => openChatWithThought(thought.id)}
+                      className="px-3.5 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#16a34a]" />
-                      <span>AI Fallback</span>
+                      <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
+                      <span>Consultation Chat</span>
                     </button>
                   )}
 
                   <button
                     onClick={() => setSelectedThoughtId(thought.id)}
-                    className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                    className="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer"
                   >
-                    <span>View Roadmap</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#16a34a]" />
+                    Details
                   </button>
                 </div>
               </div>

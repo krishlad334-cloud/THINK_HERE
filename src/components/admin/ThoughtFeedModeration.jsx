@@ -4,7 +4,7 @@ import { calculateTimeRemaining } from '../../utils/formatters';
 import {
   ListTodo,
   Search,
-  Sparkles,
+  Cpu,
   Clock
 } from 'lucide-react';
 
@@ -185,7 +185,7 @@ export default function ThoughtFeedModeration() {
                         className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold transition-all text-xs inline-flex items-center gap-1"
                         title="Force 24h AI Fallback Solution"
                       >
-                        <Sparkles className="w-3 h-3 text-purple-600" />
+                        <Cpu className="w-3 h-3 text-purple-600" />
                         <span>Force AI</span>
                       </button>
 

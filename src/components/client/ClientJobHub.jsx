@@ -6,7 +6,7 @@ import {
   MapPin,
   Bookmark,
   CheckCircle,
-  Sparkles,
+  Users,
   Send,
   Building
 } from 'lucide-react';
@@ -173,7 +173,7 @@ export default function ClientJobHub() {
               {/* Career Consultant recommendation */}
               {job.recommendedConsultant && (
                 <div className="text-[11px] text-[#004845] bg-[#e6f2f1] p-2.5 rounded-xl border border-[#004845]/20 flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-[#16a34a] flex-shrink-0" />
+                  <Users className="w-3.5 h-3.5 text-[#16a34a] flex-shrink-0" />
                   <span>
                     Suggested Coach: <strong>{job.recommendedConsultant}</strong> can review your resume before applying.
                   </span>
