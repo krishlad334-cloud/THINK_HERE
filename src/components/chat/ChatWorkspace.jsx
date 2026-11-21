@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   MessageSquare,
@@ -28,6 +29,18 @@ import {
   Smile
 } from 'lucide-react';
 
+function isOnlyEmojis(text) {
+  if (!text || typeof text !== 'string') return false;
+  const clean = text.trim();
+  if (!clean) return false;
+  try {
+    const emojiRegex = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\s)+$/u;
+    return emojiRegex.test(clean) && Array.from(clean).length <= 4;
+  } catch (e) {
+    return false;
+  }
+}
+
 export default function ChatWorkspace() {
   const {
     conversations,
@@ -39,6 +52,8 @@ export default function ChatWorkspace() {
     role,
     activeConversationId,
     setActiveConversationId,
+    activeChatThoughtId,
+    setActiveChatThoughtId,
     selectedThoughtId,
     setSelectedThoughtId,
     startCall,
@@ -66,6 +81,7 @@ export default function ChatWorkspace() {
 
   // Active conversation selection
   const currentConversation = myConversations.find(c => c.id === activeConversationId)
+    || (activeChatThoughtId ? myConversations.find(c => c.thinkId === activeChatThoughtId) : null)
     || (selectedThoughtId ? myConversations.find(c => c.thinkId === selectedThoughtId) : null)
     || (myConversations.length > 0 ? myConversations[0] : null);
 
@@ -81,11 +97,14 @@ export default function ChatWorkspace() {
   const [copiedMsgId, setCopiedMsgId] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [copiedThinkId, setCopiedThinkId] = useState(false);
 
   const callMenuTimerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const emojiPickerRef = useRef(null);
+  const moreMenuRef = useRef(null);
 
   const EMOJI_LIST = ['👍', '👋', '😊', '💡', '🚀', '✅', '🙏', '🔥', '👏', '🎉', '❤️', '🤔', '🎯', '🤝', '💼', '📈', '⭐', '💯', '✨', '🙌', '👌', '⚡', '📝', '💬'];
 
@@ -132,16 +151,17 @@ export default function ChatWorkspace() {
 
   // Close message popup when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (e) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target)) {
+        setShowMoreMenu(false);
+      }
       setActiveMsgMenuId(null);
       setShowCallMenu(false);
       setShowStatusMenu(false);
     };
-    if (activeMsgMenuId || showCallMenu || showStatusMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [activeMsgMenuId, showCallMenu, showStatusMenu]);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -265,13 +285,14 @@ export default function ChatWorkspace() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
+      case 'pending_human':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">Pending</span>;
       case 'accepted':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Accepted</span>;
       case 'in_progress':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">In Progress</span>;
       case 'resolved':
-        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">Resolved</span>;
+        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">Completed</span>;
       case 'closed':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">Closed</span>;
       default:
@@ -334,7 +355,8 @@ export default function ChatWorkspace() {
                 key={conv.id}
                 onClick={() => {
                   setActiveConversationId(conv.id);
-                  if (conv.thinkId) setSelectedThoughtId(conv.thinkId);
+                  if (conv.thinkId) setActiveChatThoughtId(conv.thinkId);
+                  setSelectedThoughtId(null);
                   setMobileView('chat');
                 }}
                 className={`p-3 rounded-2xl cursor-pointer transition-all flex items-start gap-3 relative ${
@@ -345,12 +367,13 @@ export default function ChatWorkspace() {
               >
                 {/* Avatar with Online Ring */}
                 <div className="relative flex-shrink-0 mt-0.5">
-                  <img
+                  <UserAvatar
                     src={contactAvatar}
-                    alt={contactName}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+                    name={contactName}
+                    size="md"
+                    showOnline={true}
+                    className="ring-2 ring-white shadow-xs"
                   />
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#16a34a] ring-2 ring-white" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -402,67 +425,113 @@ export default function ChatWorkspace() {
       {/* Center / Right: Main Chat Canvas                         */}
       {/* ======================================================== */}
       <div className={`flex-1 flex flex-col h-full bg-[#f8fafc] min-w-0 overflow-hidden ${mobileView === 'list' ? 'hidden md:flex' : 'flex'}`}>
-        {/* Top Chat Header */}
-        <div className="px-3 sm:px-5 py-2.5 sm:py-3 border-b border-slate-200/90 flex items-center justify-between bg-white z-20 flex-shrink-0 shadow-2xs gap-2">
-          {/* Partner Info */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        {/* Top Chat Header - WhatsApp Inspired Clean Layout */}
+        <div className="px-2.5 sm:px-4 py-2 sm:py-2.5 border-b border-slate-200/90 flex items-center justify-between bg-white z-20 flex-shrink-0 shadow-2xs gap-1 sm:gap-3 h-14 sm:h-16">
+          {/* Partner Info (WhatsApp Style) */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             {/* Mobile Back Button */}
             <button
               type="button"
               onClick={() => setMobileView('list')}
-              className="p-1.5 -ml-1 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 md:hidden cursor-pointer transition-colors flex-shrink-0"
+              className="p-1.5 -ml-1 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 md:hidden cursor-pointer transition-colors flex-shrink-0"
               title="Back to conversations"
+              aria-label="Back"
             >
               <ArrowLeft className="w-5 h-5 text-slate-700" />
             </button>
 
-            <div className="relative flex-shrink-0">
-              <img
+            {/* Profile Avatar */}
+            <div
+              className="relative flex-shrink-0 cursor-pointer"
+              onClick={() => setShowContextDrawer(prev => !prev)}
+            >
+              <UserAvatar
                 src={partnerAvatar}
-                alt={partnerName}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-slate-100 shadow-xs"
+                name={partnerName}
+                role={partnerRoleLabel?.toLowerCase().includes('consultant') ? 'consultant' : 'client'}
+                size="md"
+                showOnline={true}
               />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#16a34a] ring-2 ring-white" />
             </div>
 
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 truncate">{partnerName}</h3>
-                <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] font-extrabold border border-[#004845]/20 flex-shrink-0">
+            {/* Name & Online Status Column (Clean WhatsApp Stack - ZERO wrapping!) */}
+            <div
+              className="min-w-0 flex-1 cursor-pointer"
+              onClick={() => setShowContextDrawer(prev => !prev)}
+            >
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate leading-tight">
+                  {partnerName}
+                </h3>
+                <span className="hidden sm:inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-[#e6f2f1] text-[#004845] border border-[#004845]/20 flex-shrink-0">
                   {partnerRoleLabel}
                 </span>
-                <span className="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
-                  #{currentConversation.thinkId}
-                </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 truncate flex items-center gap-1 sm:gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse flex-shrink-0" />
-                <span className="text-emerald-700 font-medium">Online</span>
-                <span>•</span>
-                <span className="text-slate-600 truncate font-semibold">
+              <p className="text-[11px] sm:text-xs text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
+                <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse flex-shrink-0" />
+                <span className="text-[#16a34a] font-semibold leading-none">Online</span>
+                <span className="hidden sm:inline text-slate-300">•</span>
+                <span className="hidden sm:inline text-slate-500 truncate font-normal">
                   {activeThought?.title || 'Consultation Room'}
                 </span>
               </p>
             </div>
           </div>
 
-          {/* Right Action Header: Status Management & Calls */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Status Manager Dropdown (Requirement 4: Status Management) */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowStatusMenu(prev => !prev);
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer shadow-xs"
-                title="Manage Think Status"
-              >
-                <span className="hidden sm:inline text-slate-400 font-normal">Status:</span>
-                {getStatusBadge(currentStatus)}
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
+          {/* Right Action Header: Video Call, Audio Call & Options Menu */}
+          <div className="flex items-center gap-0.5 sm:gap-1.5 flex-shrink-0">
+            {/* Live Video Call Button (WhatsApp Style) */}
+            <button
+              type="button"
+              onClick={() => handleStartCall('video')}
+              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#004845] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Start Live Video Call"
+              aria-label="Start Live Video Call"
+            >
+              <Video className="w-5 h-5 text-slate-700 hover:text-[#004845]" />
+              <span className="hidden lg:inline text-xs font-semibold text-slate-700">Video</span>
+            </button>
+
+            {/* Audio Voice Call Button (WhatsApp Style) */}
+            <button
+              type="button"
+              onClick={() => handleStartCall('audio')}
+              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#004845] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Start Voice Call"
+              aria-label="Start Voice Call"
+            >
+              <PhoneCall className="w-4.5 h-4.5 text-slate-700 hover:text-[#004845]" />
+              <span className="hidden lg:inline text-xs font-semibold text-slate-700">Call</span>
+            </button>
+
+            {/* Status Dropdown Pill Button (No "Status:" prefix, clean status badge) */}
+            <div className="relative hidden md:block">
+              {(() => {
+                const config = {
+                  pending: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500 animate-pulse' },
+                  pending_human: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500 animate-pulse' },
+                  in_progress: { label: 'In Progress', bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500 animate-pulse' },
+                  accepted: { label: 'Accepted', bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+                  resolved: { label: 'Completed', bg: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200', dot: 'bg-teal-500' },
+                  closed: { label: 'Closed', bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', dot: 'bg-slate-400' }
+                }[currentStatus] || { label: currentStatus, bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-200', dot: 'bg-slate-400' };
+
+                return (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowStatusMenu(prev => !prev);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:opacity-90 ${config.bg} ${config.text} ${config.border}`}
+                    title="Change Status (Pending, Accepted, In Progress, Completed, Closed)"
+                  >
+                    <span className={`w-2 h-2 rounded-full ${config.dot}`} />
+                    <span>{config.label}</span>
+                    <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                  </button>
+                );
+              })()}
 
               {showStatusMenu && (
                 <div
@@ -474,10 +543,26 @@ export default function ChatWorkspace() {
                   </div>
                   <button
                     type="button"
+                    onClick={() => handleStatusChange('pending')}
+                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-amber-50 text-amber-800 flex items-center gap-2 cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    <span>Pending</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleStatusChange('accepted')}
+                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-emerald-50 text-emerald-800 flex items-center gap-2 cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>Accepted</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => handleStatusChange('in_progress')}
                     className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-blue-50 text-blue-800 flex items-center gap-2 cursor-pointer"
                   >
-                    <Clock className="w-3.5 h-3.5 text-blue-600" />
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                     <span>In Progress</span>
                   </button>
                   <button
@@ -485,94 +570,123 @@ export default function ChatWorkspace() {
                     onClick={() => handleStatusChange('resolved')}
                     className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-teal-50 text-teal-800 flex items-center gap-2 cursor-pointer"
                   >
-                    <CheckCircle className="w-3.5 h-3.5 text-teal-600" />
-                    <span>Resolved</span>
+                    <span className="w-2 h-2 rounded-full bg-teal-500" />
+                    <span>Completed</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleStatusChange('closed')}
                     className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-slate-100 text-slate-700 flex items-center gap-2 cursor-pointer"
                   >
-                    <Lock className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="w-2 h-2 rounded-full bg-slate-500" />
                     <span>Closed</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleStatusChange('accepted')}
-                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-emerald-50 text-emerald-800 flex items-center gap-2 cursor-pointer"
-                  >
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Accepted</span>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Context Drawer Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowContextDrawer(!showContextDrawer)}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-            >
-              <Info className="w-3.5 h-3.5 text-[#004845]" />
-              <span>Think Context</span>
-              {showContextDrawer ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-
-            {/* Call Button */}
-            <div
-              className="relative"
-              onMouseEnter={handleCallMouseEnter}
-              onMouseLeave={handleCallMouseLeave}
-            >
+            {/* WhatsApp-Style 3-Dots More Options Menu */}
+            <div className="relative" ref={moreMenuRef}>
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setShowCallMenu(prev => !prev);
+                  setShowMoreMenu(prev => !prev);
                 }}
-                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all cursor-pointer select-none"
-                title="Start Audio or Live Video Call"
+                className="p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center"
+                title="More Options"
+                aria-label="More Options"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-[#16a34a]" />
-                <span>Call</span>
-                <ChevronDown className={`w-3 h-3 text-white/70 transition-transform ${showCallMenu ? 'rotate-180' : ''}`} />
+                <MoreVertical className="w-5 h-5 text-slate-700" />
               </button>
 
-              {showCallMenu && (
+              {showMoreMenu && (
                 <div
-                  onMouseEnter={handleCallMouseEnter}
-                  onMouseLeave={handleCallMouseLeave}
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute right-0 top-full pt-1 z-50 w-48 sm:w-52 animate-in fade-in zoom-in-95 duration-100"
+                  className="absolute right-0 top-full mt-1.5 z-50 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 animate-in fade-in zoom-in-95 duration-100"
                 >
-                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/95 p-1.5 space-y-1">
-                    <button
-                      type="button"
-                      onClick={() => handleStartCall('video')}
-                      className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#e6f2f1] hover:text-[#004845] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
-                    >
-                      <div className="p-2 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
-                        <Video className="w-4 h-4 text-[#16a34a]" />
-                      </div>
-                      <div>
-                        <span className="block font-bold text-slate-900">Live Video Call</span>
-                        <span className="text-[10px] text-slate-400 font-normal">HD Screen & Audio</span>
-                      </div>
-                    </button>
+                  {/* Status Section */}
+                  <div className="px-3.5 py-2 border-b border-slate-100">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1.5">
+                      Consultation Status
+                    </span>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-slate-600 font-medium">Current:</span>
+                      {getStatusBadge(currentStatus)}
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => { handleStatusChange('pending'); setShowMoreMenu(false); }}
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 text-center transition-colors"
+                      >
+                        Pending
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { handleStatusChange('accepted'); setShowMoreMenu(false); }}
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-center transition-colors"
+                      >
+                        Accepted
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { handleStatusChange('in_progress'); setShowMoreMenu(false); }}
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 text-center transition-colors"
+                      >
+                        In Progress
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { handleStatusChange('resolved'); setShowMoreMenu(false); }}
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-teal-50 hover:bg-teal-100 text-teal-700 text-center transition-colors"
+                      >
+                        Completed
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { handleStatusChange('closed'); setShowMoreMenu(false); }}
+                        className="col-span-2 py-1 px-2 rounded-lg text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 text-center transition-colors"
+                      >
+                        Closed
+                      </button>
+                    </div>
+                  </div>
 
+                  {/* Think Context Action */}
+                  <div className="p-1.5 border-b border-slate-100">
                     <button
                       type="button"
-                      onClick={() => handleStartCall('audio')}
-                      className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#e6f2f1] hover:text-[#004845] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
+                      onClick={() => {
+                        setShowContextDrawer(!showContextDrawer);
+                        setShowMoreMenu(false);
+                      }}
+                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
                     >
-                      <div className="p-2 rounded-xl bg-slate-100 text-slate-700 flex-shrink-0">
-                        <PhoneCall className="w-4 h-4 text-[#004845]" />
-                      </div>
-                      <div>
-                        <span className="block font-bold text-slate-900">Audio Call</span>
-                        <span className="text-[10px] text-slate-400 font-normal">Encrypted Voice</span>
-                      </div>
+                      <Info className="w-4 h-4 text-[#004845]" />
+                      <span>{showContextDrawer ? 'Hide Think Details' : 'View Think Details'}</span>
+                    </button>
+                  </div>
+
+                  {/* Think ID Copy Action */}
+                  <div className="p-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`#${currentConversation.thinkId}`);
+                        setCopiedThinkId(true);
+                        setTimeout(() => {
+                          setCopiedThinkId(false);
+                          setShowMoreMenu(false);
+                        }, 1200);
+                      }}
+                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-600 hover:bg-slate-50 rounded-xl flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <span className="truncate font-mono text-[11px]">#{currentConversation.thinkId}</span>
+                      <span className="text-[10px] text-[#004845] font-bold flex items-center gap-1">
+                        {copiedThinkId ? <Check className="w-3 h-3 text-[#16a34a]" /> : <Copy className="w-3 h-3" />}
+                        {copiedThinkId ? 'Copied' : 'Copy'}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -634,15 +748,15 @@ export default function ChatWorkspace() {
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-5 bg-[#f8fafc]/90">
           <div className="max-w-3xl sm:max-w-4xl mx-auto space-y-4">
             {/* Consultation Connected Banner at Top */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-3.5 sm:p-4 shadow-xs text-center space-y-1.5 max-w-xl mx-auto mb-4">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] text-[11px] font-bold">
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-2.5 sm:p-4 shadow-xs text-center space-y-1 max-w-xl mx-auto mb-3">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] text-[10px] sm:text-[11px] font-bold">
                 <CheckCircle className="w-3.5 h-3.5 text-[#16a34a]" />
                 <span>1-on-1 Consultation Connected</span>
               </div>
-              <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 sm:line-clamp-2">
                 "{activeThought?.title || 'Problem Consultation'}"
               </h4>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 truncate sm:whitespace-normal">
                 Think #{currentConversation.thinkId} • Verified discussion between {currentConversation.clientName} and {currentConversation.consultantName}
               </p>
             </div>
@@ -669,14 +783,16 @@ export default function ChatWorkspace() {
                       key={msg.id}
                       className="flex items-start gap-2.5 sm:gap-3 max-w-md sm:max-w-lg lg:max-w-xl mr-auto group relative"
                     >
-                      <img
+                      <UserAvatar
                         src={msg.senderAvatar || partnerAvatar}
-                        alt={msg.senderName}
-                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 ring-2 ring-white shadow-xs mt-0.5"
+                        name={msg.senderName}
+                        role={msg.senderRole}
+                        size="sm"
+                        className="ring-2 ring-white shadow-xs mt-0.5"
                       />
 
-                      <div className="space-y-1 max-w-[calc(100%-2.5rem)]">
-                        <div className="flex items-center gap-1.5 px-1">
+                      <div className="flex flex-col items-start max-w-[calc(100%-2.5rem)] min-w-0">
+                        <div className="flex items-center gap-1.5 px-1 mb-1">
                           <span className="text-xs font-bold text-slate-900">{msg.senderName}</span>
                           {msg.senderRole === 'consultant' && (
                             <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
@@ -686,9 +802,13 @@ export default function ChatWorkspace() {
                           <span className="text-[10px] text-slate-400">{timeAgo(msg.createdAt)}</span>
                         </div>
 
-                        <div className="relative group/bubble">
+                        <div className="relative group/bubble w-fit max-w-full">
                           <div
-                            className="p-3.5 sm:p-4 rounded-2xl rounded-tl-xs bg-white border border-slate-200/90 shadow-xs text-xs sm:text-[13.5px] leading-relaxed text-slate-800"
+                            className={`w-fit max-w-full rounded-2xl rounded-tl-xs bg-white border border-slate-200/90 shadow-xs leading-relaxed text-slate-800 ${
+                              isOnlyEmojis(msg.text)
+                                ? 'px-3.5 py-2 text-2xl sm:text-3xl'
+                                : 'px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-[13.5px]'
+                            }`}
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
 
@@ -757,21 +877,27 @@ export default function ChatWorkspace() {
                       key={msg.id}
                       className="flex items-start gap-2.5 sm:gap-3 max-w-md sm:max-w-lg lg:max-w-xl ml-auto flex-row-reverse group relative"
                     >
-                      <img
-                        src={msg.senderAvatar || (activeUser.profileImage || activeUser.avatar)}
-                        alt={msg.senderName}
-                        className="w-8 h-8 rounded-full object-cover flex-shrink-0 ring-2 ring-white shadow-xs mt-0.5"
+                      <UserAvatar
+                        src={msg.senderAvatar || activeUser.profileImage || activeUser.avatar}
+                        name={msg.senderName || activeUser.name}
+                        role={activeUser.role}
+                        size="sm"
+                        className="ring-2 ring-white shadow-xs mt-0.5"
                       />
 
-                      <div className="space-y-1 max-w-[calc(100%-2.5rem)] text-right">
-                        <div className="flex items-center justify-end gap-2 px-1">
+                      <div className="flex flex-col items-end max-w-[calc(100%-2.5rem)] min-w-0">
+                        <div className="flex items-center justify-end gap-2 px-1 mb-1">
                           <span className="text-[10px] text-slate-400">{timeAgo(msg.createdAt)}</span>
                           <span className="text-xs font-bold text-slate-900">{msg.senderName}</span>
                         </div>
 
-                        <div className="relative group/bubble text-left">
+                        <div className="relative group/bubble w-fit max-w-full flex flex-col items-end">
                           <div
-                            className="p-3.5 sm:p-4 rounded-2xl rounded-tr-xs bg-[#004845] text-white shadow-xs text-xs sm:text-[13.5px] leading-relaxed"
+                            className={`w-fit max-w-full rounded-2xl rounded-tr-xs bg-[#004845] text-white shadow-xs leading-relaxed text-left ${
+                              isOnlyEmojis(msg.text)
+                                ? 'px-3.5 py-2 text-2xl sm:text-3xl'
+                                : 'px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-[13.5px]'
+                            }`}
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
 
@@ -790,7 +916,7 @@ export default function ChatWorkspace() {
                               </div>
                             )}
 
-                            <div className="flex items-center justify-end gap-1.5 mt-1.5 text-[10px] text-emerald-200/80">
+                            <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] text-emerald-200/80">
                               <span>{timeAgo(msg.createdAt)}</span>
                               <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#16a34a]' : 'text-emerald-300'}`} />
                             </div>
@@ -845,13 +971,13 @@ export default function ChatWorkspace() {
         </div>
 
         {/* ======================================================== */}
-        {/* Bottom Message Composer                                  */}
+        {/* Bottom Message Composer (Mobile Optimized)               */}
         {/* ======================================================== */}
-        <div className="p-3 sm:p-4 bg-white border-t border-slate-200/90 flex-shrink-0 z-10 shadow-xs">
-          <div className="max-w-3xl sm:max-w-4xl mx-auto w-full space-y-2">
+        <div className="p-2 sm:p-4 bg-white border-t border-slate-200/90 flex-shrink-0 z-10 shadow-xs pb-[max(0.35rem,env(safe-area-inset-bottom))]">
+          <div className="max-w-3xl sm:max-w-4xl mx-auto w-full space-y-1.5 sm:space-y-2">
             {/* Attachments preview if selected */}
             {attachments.length > 0 && (
-              <div className="flex flex-wrap gap-2 px-1">
+              <div className="flex flex-wrap gap-1.5 px-1">
                 {attachments.map((att) => (
                   <div key={att.id} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-xs text-slate-700 border border-slate-200">
                     <FileText className="w-3 h-3 text-[#16a34a]" />
@@ -868,7 +994,7 @@ export default function ChatWorkspace() {
               </div>
             )}
 
-            <form onSubmit={handleSend} className="bg-slate-50 border border-slate-200/90 rounded-2xl p-1.5 flex items-center gap-2 focus-within:border-[#004845] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#004845]/15 transition-all shadow-xs">
+            <form onSubmit={handleSend} className="bg-slate-50 border border-slate-200/90 rounded-2xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 focus-within:border-[#004845] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#004845]/15 transition-all shadow-xs">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -964,7 +1090,7 @@ export default function ChatWorkspace() {
               </button>
             </form>
 
-            <div className="flex items-center justify-between px-2 text-[10px] text-slate-400">
+            <div className="hidden sm:flex items-center justify-between px-2 text-[10px] text-slate-400">
               <span>Press <kbd className="px-1 py-0.5 rounded bg-slate-100 font-mono text-slate-600">Enter</kbd> to send</span>
               <span className="flex items-center gap-1">
                 <Lock className="w-2.5 h-2.5 text-[#16a34a]" />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { calculateTimeRemaining, timeAgo, formatDate } from '../../utils/formatters';
 import {
   MessageSquare,
@@ -15,20 +16,33 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
   const {
     thinks,
     thoughts,
+    activeUser,
+    currentUser,
     setSelectedThoughtId,
     startNewChat,
     openChatWithThought
   } = useApp();
 
+  const user = activeUser || currentUser;
   const allThinks = thinks || thoughts || [];
+
+  // Filter strictly to only thoughts submitted by the currently logged-in user
+  const myThinks = allThinks.filter((t) => {
+    if (!user) return false;
+    if (t.clientId && user.id && t.clientId === user.id) return true;
+    if (user.id === 'client_001' && (t.clientId === 'client_001' || t.clientId === 'user-client-1')) return true;
+    if (user.email && t.clientEmail && t.clientEmail.toLowerCase() === user.email.toLowerCase()) return true;
+    if (t.clientName && user.name && t.clientName.trim().toLowerCase() === user.name.trim().toLowerCase()) return true;
+    return false;
+  });
 
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories = ['All', 'Career & Jobs', 'Product & Innovation', 'Business & Startups', 'Technology & IT', 'Marketing & Growth'];
 
-  // Filter thoughts
-  const filtered = allThinks.filter((t) => {
+  // Filter thoughts by category and search
+  const filtered = myThinks.filter((t) => {
     if (activeCategory !== 'All' && t.category !== activeCategory) {
       return false;
     }
@@ -207,10 +221,11 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
                   <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-500">
                     {thought.assignedConsultantName ? (
                       <span className="flex items-center gap-1.5 font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
-                        <img
+                        <UserAvatar
                           src={thought.assignedConsultantAvatar}
-                          alt={thought.assignedConsultantName}
-                          className="w-4 h-4 rounded-full object-cover"
+                          name={thought.assignedConsultantName}
+                          role="consultant"
+                          size="xs"
                         />
                         <span>Accepted by {thought.assignedConsultantName}</span>
                       </span>

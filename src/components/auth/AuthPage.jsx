@@ -23,6 +23,7 @@ export default function AuthPage() {
   const {
     login,
     register,
+    quickRegister,
     verifyRegistrationOTP,
     generateOTP,
     resendOTP,
@@ -40,6 +41,7 @@ export default function AuthPage() {
   const [loginShowPassword, setLoginShowPassword] = useState(false);
   const [loginRememberMe, setLoginRememberMe] = useState(true);
   const [loginError, setLoginError] = useState('');
+  const [loginIsNotFound, setLoginIsNotFound] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
 
@@ -102,6 +104,7 @@ export default function AuthPage() {
   const handleLoginSubmit = (e) => {
     if (e) e.preventDefault();
     setLoginError('');
+    setLoginIsNotFound(false);
 
     if (!loginIdentifier.trim()) {
       setLoginError('Please enter your registered email address or mobile number.');
@@ -118,6 +121,7 @@ export default function AuthPage() {
       setIsLoggingIn(false);
       if (!res.success) {
         setLoginError(res.error || 'Authentication failed. Please verify your details.');
+        setLoginIsNotFound(!!res.notFound);
       }
       // On success, AppContext automatically updates activeUser, isAuthenticated,
       // and redirects to Client (/client/dashboard) or Consultant (/consultant/dashboard)
@@ -355,9 +359,39 @@ export default function AuthPage() {
 
               {/* Inline Error Message */}
               {loginError && (
-                <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs font-medium flex items-start gap-2.5 animate-fadeIn">
-                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{loginError}</span>
+                <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-200/80 text-red-700 text-xs font-medium space-y-2 animate-fadeIn">
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                    <span className="leading-relaxed">{loginError}</span>
+                  </div>
+
+                  {loginIsNotFound && (
+                    <div className="mt-2 pt-2 border-t border-red-200/60">
+                      <p className="text-[11px] text-slate-700 font-semibold mb-1.5">
+                        Test account not found in LocalStorage. Quick create and sign in now:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            quickRegister(loginIdentifier.trim(), loginPassword, 'client');
+                          }}
+                          className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <span>+ Create Client</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
+                          }}
+                          className="py-1.5 px-2 bg-[#004845] hover:bg-[#003836] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <span>+ Create Consultant</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -468,34 +502,50 @@ export default function AuthPage() {
                 </button>
               </form>
 
-              {/* Subtle Demo Testing Helper for Quick 1-Click Login */}
+              {/* Quick Demo Testing Helper for Quick 1-Click Login (4 Test Users + Any Local Users) */}
               <div className="mt-6 pt-5 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Quick Demo Logins:
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                    <Lock className="w-3 h-3 text-[#16a34a]" />
+                    <span>LocalStorage Accounts ({getUsers().length} Users):</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">
-                    password: password123
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    pass: password123
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={handleQuickFillClient}
-                    className="py-1.5 px-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:text-slate-900 transition-colors text-left flex items-center justify-between"
-                  >
-                    <span>Demo Client</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Alex</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleQuickFillConsultant}
-                    className="py-1.5 px-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:text-slate-900 transition-colors text-left flex items-center justify-between"
-                  >
-                    <span>Demo Consultant</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Elena</span>
-                  </button>
+                  {getUsers().slice(0, 6).map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => {
+                        setLoginIdentifier(u.email || u.mobile);
+                        setLoginPassword(u.password || 'password123');
+                        setLoginError('');
+                        setLoginIsNotFound(false);
+                      }}
+                      className="py-1.5 px-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:text-slate-900 transition-colors text-left flex items-center justify-between group cursor-pointer"
+                      title={`Click to fill: ${u.name} (${u.email || u.mobile})`}
+                    >
+                      <div className="truncate min-w-0 pr-1">
+                        <span className="font-bold text-slate-800 block truncate group-hover:text-[#004845]">
+                          {u.name}
+                        </span>
+                        <span className="text-[10px] text-slate-400 block truncate capitalize">
+                          {u.role === 'consultant' ? 'Consultant' : 'Client'}
+                        </span>
+                      </div>
+                      <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded flex-shrink-0 ${
+                        u.role === 'consultant' ? 'bg-[#e6f2f1] text-[#004845]' : 'bg-emerald-50 text-emerald-800'
+                      }`}>
+                        {u.role === 'consultant' ? 'Expert' : 'Client'}
+                      </span>
+                    </button>
+                  ))}
                 </div>
+                <p className="text-[10px] text-slate-400 mt-2 text-center">
+                  All user accounts, emails, and passwords are saved in LocalStorage for testing.
+                </p>
               </div>
 
               {/* Bottom Switch Link */}

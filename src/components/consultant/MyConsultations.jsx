@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   FolderKanban,
@@ -130,10 +131,11 @@ export default function MyConsultations() {
 
                   <div className="flex items-center gap-3 text-xs text-slate-500">
                     <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-                      <img
+                      <UserAvatar
                         src={thought.clientAvatar}
-                        alt={thought.clientName}
-                        className="w-4 h-4 rounded-full object-cover"
+                        name={thought.clientName}
+                        role="client"
+                        size="xs"
                       />
                       <span>{thought.clientName}</span>
                     </div>

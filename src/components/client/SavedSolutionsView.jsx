@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { Bookmark, ArrowRight, Printer } from 'lucide-react';
 
 export default function SavedSolutionsView() {
@@ -68,10 +69,10 @@ export default function SavedSolutionsView() {
                   {latestSol && (
                     <div className="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <img
+                        <UserAvatar
                           src={latestSol.author.avatar}
-                          alt={latestSol.author.name}
-                          className="w-5 h-5 rounded-full object-cover"
+                          name={latestSol.author.name}
+                          size="xs"
                         />
                         <span className="text-xs font-bold text-slate-800 line-clamp-1">
                           {latestSol.author.name}

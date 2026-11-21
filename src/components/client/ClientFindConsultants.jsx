@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import {
   Star,
   ShieldCheck,
@@ -90,10 +91,13 @@ export default function ClientFindConsultants() {
             <div>
               <div className="flex items-start gap-4">
                 <div className="relative flex-shrink-0">
-                  <img
+                  <UserAvatar
                     src={c.avatar}
-                    alt={c.name}
-                    className="w-14 h-14 rounded-2xl object-cover ring-2 ring-slate-100"
+                    name={c.name}
+                    role="consultant"
+                    size="lg"
+                    rounded="2xl"
+                    className="ring-2 ring-slate-100"
                   />
                   {c.isVerified && (
                     <span className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-[#16a34a] text-white" title="Verified Consultant">

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import {
   ShieldCheck,
   Star,
@@ -11,18 +12,21 @@ import {
   Award,
   Edit2,
   Save,
-  CheckCircle2
+  CheckCircle2,
+  Camera
 } from 'lucide-react';
 
 export default function ConsultantProfileView() {
   const { consultantUser, updateConsultantProfile } = useApp();
 
+  const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [headline, setHeadline] = useState(consultantUser.title || '');
   const [bio, setBio] = useState(consultantUser.bio || '');
   const [hourlyRate, setHourlyRate] = useState(consultantUser.hourlyRate || 150);
   const [location, setLocation] = useState(consultantUser.location || '');
+  const [avatar, setAvatar] = useState(consultantUser.avatar || consultantUser.profileImage || '');
   const [newSkill, setNewSkill] = useState('');
   const [skills, setSkills] = useState(consultantUser.skills || []);
 
@@ -33,8 +37,27 @@ export default function ConsultantProfileView() {
       setHourlyRate(consultantUser.hourlyRate || 150);
       setLocation(consultantUser.location || '');
       setSkills(consultantUser.skills || []);
+      setAvatar(consultantUser.avatar || consultantUser.profileImage || '');
     }
   }, [consultantUser, isEditing]);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        setAvatar(result);
+        if (updateConsultantProfile) {
+          updateConsultantProfile({
+            avatar: result,
+            profileImage: result
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = () => {
     if (updateConsultantProfile) {
@@ -43,7 +66,9 @@ export default function ConsultantProfileView() {
         bio,
         hourlyRate: Number(hourlyRate),
         location,
-        skills
+        skills,
+        avatar,
+        profileImage: avatar
       });
     }
     setIsEditing(false);
@@ -88,15 +113,33 @@ export default function ConsultantProfileView() {
         {/* Profile Card Body */}
         <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0 relative">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-14 sm:-mt-20 mb-4">
-            <div className="relative">
-              <img
-                src={consultantUser.avatar}
-                alt={consultantUser.name}
-                className="w-24 h-24 sm:w-36 sm:h-36 rounded-3xl object-cover ring-4 ring-white shadow-xl"
+            <div className="relative inline-block">
+              <UserAvatar
+                src={avatar || consultantUser.avatar || consultantUser.profileImage}
+                name={consultantUser.name}
+                role="consultant"
+                size="3xl"
+                rounded="3xl"
+                className="ring-4 ring-white shadow-xl"
               />
-              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white">
+              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white z-10">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </span>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePhotoUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute top-1 right-1 p-2 rounded-full bg-[#004845] hover:bg-[#003331] text-white shadow-md cursor-pointer transition-transform hover:scale-110 z-10"
+                title="Upload Photo (or leave empty for first letter initial)"
+              >
+                <Camera className="w-3.5 h-3.5 text-[#16a34a]" />
+              </button>
             </div>
 
             <div className="flex items-center gap-2 self-start sm:self-auto">

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import {
   User,
   Shield,
@@ -14,11 +15,13 @@ import {
 export default function ClientSettings() {
   const { clientUser, setClientUser } = useApp();
 
+  const fileInputRef = useRef(null);
   const [name, setName] = useState(clientUser.name || 'Alex Morgan');
   const [email, setEmail] = useState(clientUser.email || 'alex.morgan@think.platform');
   const [bio, setBio] = useState(clientUser.bio || 'Passionate about building scalable digital products and exploring modern AI solutions. Always looking for expert consultation.');
   const [location, setLocation] = useState(clientUser.location || 'San Francisco, CA');
   const [title, setTitle] = useState(clientUser.title || 'Startup Founder & Tech Innovator');
+  const [avatar, setAvatar] = useState(clientUser.avatar || clientUser.profileImage || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [inPlatformMasking, setInPlatformMasking] = useState(true);
   const [timerAlerts, setTimerAlerts] = useState(true);
@@ -31,8 +34,20 @@ export default function ClientSettings() {
       setBio(clientUser.bio || '');
       setLocation(clientUser.location || 'San Francisco, CA');
       setTitle(clientUser.title || 'Startup Founder & Tech Innovator');
+      setAvatar(clientUser.avatar || clientUser.profileImage || '');
     }
   }, [clientUser]);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -42,7 +57,9 @@ export default function ClientSettings() {
       email,
       bio,
       location,
-      title
+      title,
+      avatar,
+      profileImage: avatar
     }));
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
@@ -75,15 +92,25 @@ export default function ClientSettings() {
           {/* Identity Card */}
           <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-5 text-center">
             <div className="relative inline-block mx-auto">
-              <img
-                src={clientUser.avatar}
-                alt={clientUser.name}
-                className="w-24 h-24 rounded-full object-cover ring-4 ring-slate-100 shadow-md mx-auto"
+              <UserAvatar
+                src={avatar || clientUser.avatar || clientUser.profileImage}
+                name={name || clientUser.name}
+                role="client"
+                size="2xl"
+                className="ring-4 ring-slate-100 shadow-md mx-auto"
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePhotoUpload}
+                accept="image/*"
+                className="hidden"
               />
               <button
                 type="button"
+                onClick={() => fileInputRef.current?.click()}
                 className="absolute bottom-0 right-0 p-2 rounded-full bg-[#004845] hover:bg-[#003331] text-white shadow-md cursor-pointer transition-transform hover:scale-110"
-                title="Change Avatar"
+                title="Upload Photo (or leave empty for first letter initial)"
               >
                 <Camera className="w-3.5 h-3.5 text-[#16a34a]" />
               </button>

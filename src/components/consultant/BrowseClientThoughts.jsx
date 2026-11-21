@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   FileSearch,
@@ -325,10 +326,12 @@ export default function BrowseClientThoughts() {
                   <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     {/* Client Name & Submission Date */}
                     <div className="flex items-center gap-2.5">
-                      <img
+                      <UserAvatar
                         src={thought.clientAvatar}
-                        alt={thought.clientName}
-                        className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
+                        name={thought.clientName}
+                        role="client"
+                        size="sm"
+                        className="ring-1 ring-slate-200"
                       />
                       <div className="text-xs">
                         <span className="font-bold text-slate-900 block">{thought.clientName}</span>
@@ -383,10 +386,13 @@ export default function BrowseClientThoughts() {
         <div className="xl:col-span-1 space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xs">
             <div className="flex items-center gap-3">
-              <img
+              <UserAvatar
                 src={activeUser.profileImage || activeUser.avatar}
-                alt={activeUser.name}
-                className="w-12 h-12 rounded-xl object-cover ring-2 ring-slate-100"
+                name={activeUser.name}
+                role="consultant"
+                size="lg"
+                rounded="2xl"
+                className="ring-2 ring-slate-100"
               />
               <div>
                 <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1">

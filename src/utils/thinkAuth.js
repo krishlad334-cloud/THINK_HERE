@@ -224,12 +224,8 @@ export function registerUser(userData) {
     hourlyRate: userData.hourlyRate ? Number(userData.hourlyRate) : (userData.role === 'consultant' ? 120 : undefined),
     bio: userData.bio || '',
     skills: userData.skills || [],
-    avatar: userData.role === 'consultant'
-      ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80'
-      : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-    profileImage: userData.role === 'consultant'
-      ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80'
-      : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    avatar: userData.avatar || userData.profileImage || null,
+    profileImage: userData.profileImage || userData.avatar || null,
     label: userData.role === 'consultant' ? 'Consultant' : 'Client',
     createdAt: new Date().toISOString()
   };
@@ -294,7 +290,8 @@ export function loginUser(identifier, password) {
   if (!user) {
     return {
       success: false,
-      error: 'Account not registered. Please check your credentials or create a free account.'
+      notFound: true,
+      error: 'Account not registered in local storage.'
     };
   }
 
@@ -330,6 +327,27 @@ export function loginUser(identifier, password) {
     role: user.role,
     redirectTo: redirectByRole(user.role)
   };
+}
+
+/**
+ * Allows instantaneous local registration for testing if a user enters new credentials on the login screen.
+ * Saves email, password, and profile directly into LocalStorage ('think_users').
+ */
+export function quickRegisterUser(identifier, password, role = 'client') {
+  const cleanId = (identifier || '').trim();
+  const isEmail = cleanId.includes('@');
+  const email = isEmail ? cleanId.toLowerCase() : `${cleanId.toLowerCase()}@think.platform`;
+  const mobile = !isEmail ? cleanId.replace(/\D/g, '') : `987${Math.floor(1000000 + Math.random() * 9000000)}`;
+  const prefix = isEmail ? cleanId.split('@')[0] : 'User';
+  const name = prefix.charAt(0).toUpperCase() + prefix.slice(1).replace(/[^a-zA-Z0-9]/g, ' ');
+
+  return registerUser({
+    name,
+    email,
+    mobile: mobile.length >= 10 ? mobile : `98765432${Math.floor(10 + Math.random() * 89)}`,
+    password: password || 'password123',
+    role: role || 'client'
+  });
 }
 
 /**

@@ -24,6 +24,7 @@ import {
 } from '../utils/thinkStorage';
 import {
   registerUser as authRegisterUser,
+  quickRegisterUser as authQuickRegisterUser,
   loginUser as authLoginUser,
   logoutUser as authLogoutUser,
   verifyRegistrationOTP,
@@ -385,7 +386,7 @@ export function AppProvider({ children }) {
 
   const openChatWithThought = (thoughtId) => {
     setActiveChatThoughtId(thoughtId);
-    setSelectedThoughtId(thoughtId);
+    setSelectedThoughtId(null);
     const conv = conversations.find(c => c.thinkId === thoughtId);
     if (conv) {
       setActiveConversationId(conv.id);
@@ -463,8 +464,8 @@ export function AppProvider({ children }) {
         hourlyRate: customUserData.hourlyRate || 120,
         skills: customUserData.skills || [],
         location: customUserData.location || 'Remote',
-        avatar: customUserData.avatar || (userRole === 'consultant' ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'),
-        profileImage: customUserData.avatar || (userRole === 'consultant' ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'),
+        avatar: customUserData.avatar || customUserData.profileImage || null,
+        profileImage: customUserData.profileImage || customUserData.avatar || null,
         label: customUserData.label || (userRole === 'consultant' ? 'Consultant' : 'Client')
       };
       storageUpdateUser(id, targetUser);
@@ -507,6 +508,22 @@ export function AppProvider({ children }) {
       }
       reloadFromStorage();
       showToast('Account Created!', `Welcome to THINK, ${res.user.name}!`, 'success');
+    }
+    return res;
+  };
+
+  const quickRegister = (identifier, password, role = 'client') => {
+    const res = authQuickRegisterUser(identifier, password, role);
+    if (res.success) {
+      setIsAuthenticated(true);
+      setActiveUserState(res.user);
+      if (res.role === 'consultant') {
+        setActiveTab('browse_thoughts');
+      } else {
+        setActiveTab('chat');
+      }
+      reloadFromStorage();
+      showToast('Account Created Locally!', `Signed in as ${res.user.name}. Saved in LocalStorage for easy testing.`, 'success');
     }
     return res;
   };
@@ -586,6 +603,7 @@ export function AppProvider({ children }) {
     loginUser,
     login: loginUser,
     register,
+    quickRegister,
     verifyRegistrationOTP,
     generateOTP,
     resendOTP,

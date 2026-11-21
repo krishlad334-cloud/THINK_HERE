@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   X,
@@ -21,12 +22,18 @@ export default function ThoughtDetailModal() {
     thoughts,
     thinks,
     toggleSaveThought,
+    activeTab,
     setActiveTab,
     startCall,
     acceptThink,
     openChatWithThought,
     activeUser
   } = useApp();
+
+  // If user is in the chat workspace, never display this modal overlay
+  if (activeTab === 'chat' || activeTab === 'messages') {
+    return null;
+  }
 
   const allThinks = thinks || thoughts || [];
   const thought = allThinks.find(t => t.id === selectedThoughtId);
@@ -151,10 +158,12 @@ export default function ThoughtDetailModal() {
           ) : (
             <div className="p-4 rounded-2xl bg-[#e6f2f1] border border-[#004845]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <img
-                  src={thought.assignedConsultantAvatar || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200'}
-                  alt={thought.assignedConsultantName}
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+                <UserAvatar
+                  src={thought.assignedConsultantAvatar}
+                  name={thought.assignedConsultantName || 'Consultant'}
+                  role="consultant"
+                  size="md"
+                  className="ring-2 ring-white shadow-xs"
                 />
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
@@ -183,10 +192,12 @@ export default function ThoughtDetailModal() {
           {/* Original Question Card */}
           <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80">
             <div className="flex items-center gap-3 mb-3">
-              <img
+              <UserAvatar
                 src={thought.clientAvatar}
-                alt={thought.clientName}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+                name={thought.clientName}
+                role="client"
+                size="md"
+                className="ring-2 ring-white shadow-xs"
               />
               <div>
                 <h4 className="text-xs font-bold text-slate-900">{thought.clientName}</h4>

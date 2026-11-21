@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from './UserAvatar';
 import {
   Plus,
   PlusCircle,
@@ -67,7 +68,14 @@ export default function Sidebar({ isOpen, onClose }) {
     if (onClose) onClose();
   };
 
-  const myRecentThoughts = thoughts.filter(t => t.clientId === currentUser.id || !t.clientId);
+  const myRecentThoughts = thoughts.filter((t) => {
+    if (!currentUser) return false;
+    if (t.clientId && currentUser.id && t.clientId === currentUser.id) return true;
+    if (currentUser.id === 'client_001' && (t.clientId === 'client_001' || t.clientId === 'user-client-1')) return true;
+    if (currentUser.email && t.clientEmail && t.clientEmail.toLowerCase() === currentUser.email.toLowerCase()) return true;
+    if (t.clientName && currentUser.name && t.clientName.trim().toLowerCase() === currentUser.name.trim().toLowerCase()) return true;
+    return false;
+  });
   const openThoughtsCount = thoughts.filter(t => t.status === 'pending' || t.status === 'pending_human').length;
 
   return (
@@ -107,68 +115,24 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         {/* Mobile Dedicated Account Section: Visible at the top of the mobile drawer */}
-        <div className="p-3.5 bg-slate-50/95 border-b border-slate-200/80 lg:hidden space-y-3 flex-shrink-0">
+        <div className="p-3.5 bg-slate-50/95 border-b border-slate-200/80 lg:hidden space-y-2.5 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="relative flex-shrink-0">
-              <img
-                src={currentUser.profileImage || currentUser.avatar}
-                alt={currentUser.name}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-[#004845]/20 shadow-xs"
+              <UserAvatar
+                src={currentUser?.profileImage || currentUser?.avatar}
+                name={currentUser?.name}
+                role={role}
+                size="md"
+                showOnline={true}
+                className="ring-2 ring-[#004845]/20 shadow-xs"
               />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#16a34a] ring-2 ring-white" />
             </div>
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</h4>
-              <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
+              <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser?.name}</h4>
+              <p className="text-[11px] text-slate-500 truncate">{currentUser?.email}</p>
               <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#004845] text-white">
-                {currentUser.label || (role === 'consultant' ? 'Consultant' : 'Client Account')}
+                {role === 'consultant' ? 'Verified Consultant' : 'Client Account'}
               </span>
-            </div>
-          </div>
-
-          {/* Switch Demo Account (Touch-Friendly for Mobile) */}
-          <div className="space-y-1.5 pt-1">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block px-1">
-              Switch Demo Account
-            </span>
-            <div className="space-y-1">
-              {(demoUsers || []).map((u) => {
-                const isSelected = currentUser.id === u.id;
-                return (
-                  <button
-                    key={u.id}
-                    type="button"
-                    onClick={() => handleSelectDemoUser(u.id)}
-                    className={`w-full py-2 px-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all active:scale-[0.99] ${
-                      isSelected
-                        ? 'bg-[#e6f2f1] border-[#004845] text-[#004845] font-bold shadow-xs'
-                        : 'bg-white border-slate-200/80 text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <img
-                        src={u.profileImage || u.avatar}
-                        alt={u.name}
-                        className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200 flex-shrink-0"
-                      />
-                      <div className="min-w-0 truncate">
-                        <span className="text-xs font-bold text-slate-900 block truncate leading-tight">
-                          {u.label}
-                        </span>
-                        <span className="text-[10px] text-slate-400 block truncate">
-                          {u.name} • {u.role === 'client' ? 'Client' : 'Consultant'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {isSelected && (
-                      <span className="p-0.5 rounded-full bg-[#16a34a] text-white flex-shrink-0 ml-1.5">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -219,7 +183,7 @@ export default function Sidebar({ isOpen, onClose }) {
                       <span>All My Thoughts</span>
                     </div>
                     <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
-                      {thoughts.length}
+                      {myRecentThoughts.length}
                     </span>
                   </button>
 
@@ -407,112 +371,42 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Desktop Bottom User Card & Demo Switcher in Sidebar (hidden on mobile, which has top switcher) */}
-        <div className="hidden lg:block p-3 border-t border-slate-200/80 bg-slate-50/90 relative flex-shrink-0" ref={accountMenuRef}>
-          {/* Popover Menu Anchored Above the User Card */}
-          {isAccountMenuOpen && (
-            <div className="absolute bottom-full left-2 right-2 mb-2 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 space-y-2">
-              <div className="flex items-center justify-between px-2 pt-1 pb-1 border-b border-slate-100">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                  Switch Demo Account
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsAccountMenuOpen(false)}
-                  className="text-slate-400 hover:text-slate-700 text-xs p-1 cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="space-y-1">
-                {(demoUsers || []).map((u) => {
-                  const isSelected = currentUser.id === u.id;
-                  return (
-                    <button
-                      key={u.id}
-                      type="button"
-                      onClick={() => handleSelectDemoUser(u.id)}
-                      className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-[#e6f2f1] border-[#004845] text-[#004845] font-bold shadow-xs'
-                          : 'bg-white border-slate-200/70 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <img
-                          src={u.profileImage || u.avatar}
-                          alt={u.name}
-                          className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200 flex-shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <span className="text-xs font-bold text-slate-900 block truncate leading-tight">
-                            {u.label}
-                          </span>
-                          <span className="text-[10px] text-slate-400 truncate block">
-                            {u.name} • {u.role === 'client' ? 'Client' : 'Consultant'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {isSelected && (
-                        <span className="p-1 rounded-full bg-[#16a34a] text-white flex-shrink-0 ml-1.5">
-                          <Check className="w-3 h-3 stroke-[3]" />
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="pt-1.5 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    logoutUser();
-                    setIsAccountMenuOpen(false);
-                    if (onClose) onClose();
-                  }}
-                  className="w-full px-2.5 py-1.5 text-left text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg flex items-center gap-2 cursor-pointer transition-colors"
-                >
-                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* User Trigger Card */}
-          <div
-            onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
-            className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 cursor-pointer transition-all shadow-xs group select-none"
-            title="Click to switch demo account"
-          >
+        {/* Desktop Bottom User Card with Logout */}
+        <div className="hidden lg:block p-3 border-t border-slate-200/80 bg-slate-50/90 relative flex-shrink-0">
+          <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-xs">
             <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
               <div className="relative flex-shrink-0">
-                <img
-                  src={currentUser.profileImage || currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200 group-hover:ring-[#16a34a] transition-all"
+                <UserAvatar
+                  src={currentUser?.profileImage || currentUser?.avatar}
+                  name={currentUser?.name}
+                  role={role}
+                  size="sm"
+                  showOnline={true}
+                  className="ring-1 ring-slate-200"
                 />
-                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#16a34a] ring-1 ring-white" />
               </div>
               <div className="truncate">
-                <span className="text-xs font-bold text-slate-900 truncate block group-hover:text-[#004845] transition-colors">
-                  {currentUser.name}
+                <span className="text-xs font-bold text-slate-900 truncate block">
+                  {currentUser?.name}
                 </span>
                 <span className="text-[10px] text-slate-400 block truncate">
-                  {currentUser.label || (role === 'consultant' ? 'Consultant' : 'Client Account')}
+                  {role === 'consultant' ? 'Verified Consultant' : 'Client Account'}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 group-hover:bg-[#e6f2f1] group-hover:text-[#004845] transition-colors">
-                Switch
-              </span>
-              <ChevronsUpDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors" />
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                logoutUser();
+                if (onClose) onClose();
+              }}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0"
+              title="Logout"
+              aria-label="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>

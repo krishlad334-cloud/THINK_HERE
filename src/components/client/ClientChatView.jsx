@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from '../common/UserAvatar';
 import { TOPIC_SUGGESTIONS } from '../../data/mockSeedData';
 import { timeAgo } from '../../utils/formatters';
 import {
@@ -43,6 +44,7 @@ export default function ClientChatView() {
     mutedThoughtIds,
     submitThink,
     activeChatThoughtId,
+    setActiveChatThoughtId,
     openChatWithThought,
     setSelectedThoughtId,
     setActiveConversationId,
@@ -292,7 +294,8 @@ export default function ClientChatView() {
             <button
               type="button"
               onClick={() => {
-                setSelectedThoughtId(activeThought.id);
+                setActiveChatThoughtId(activeThought.id);
+                setSelectedThoughtId(null);
                 if (currentConversation) {
                   setActiveConversationId(currentConversation.id);
                 }
@@ -453,7 +456,8 @@ export default function ClientChatView() {
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedThoughtId(activeThought.id);
+                  setActiveChatThoughtId(activeThought.id);
+                  setSelectedThoughtId(null);
                   if (currentConversation) {
                     setActiveConversationId(currentConversation.id);
                   }
@@ -468,10 +472,12 @@ export default function ClientChatView() {
 
             {/* Original Problem Card as the First Message */}
             <div className="flex gap-4 items-start">
-              <img
+              <UserAvatar
                 src={activeThought.clientAvatar || currentUser.profileImage || currentUser.avatar}
-                alt={activeThought.clientName || currentUser.name}
-                className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 flex-shrink-0"
+                name={activeThought.clientName || currentUser.name}
+                role="client"
+                size="md"
+                className="ring-2 ring-slate-200 flex-shrink-0"
               />
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2">
@@ -516,10 +522,12 @@ export default function ClientChatView() {
                     isMine ? 'flex-row-reverse' : ''
                   }`}
                 >
-                  <img
-                    src={msg.senderAvatar || (isMine ? (currentUser.profileImage || currentUser.avatar) : (assignedConsAvatar || '/images/consultant.png'))}
-                    alt={msg.senderName}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-slate-100 flex-shrink-0"
+                  <UserAvatar
+                    src={msg.senderAvatar || (isMine ? (currentUser.profileImage || currentUser.avatar) : (assignedConsAvatar || null))}
+                    name={msg.senderName}
+                    role={isMine ? 'client' : 'consultant'}
+                    size="sm"
+                    className="ring-2 ring-slate-100 flex-shrink-0"
                   />
 
                   <div className={`space-y-1 max-w-[85%] sm:max-w-[75%] ${isMine ? 'items-end' : 'items-start'}`}>

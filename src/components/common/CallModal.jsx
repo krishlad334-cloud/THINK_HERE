@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import UserAvatar from './UserAvatar';
 import {
   Mic,
   MicOff,
@@ -77,12 +78,13 @@ export default function CallModal() {
           ) : (
             <div className="flex flex-col items-center justify-center text-center">
               <div className="relative mb-4">
-                <img
-                  src={activeCall.participantAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
-                  alt={activeCall.participantName}
-                  className="w-32 h-32 rounded-full object-cover ring-4 ring-[#004845] shadow-2xl"
+                <UserAvatar
+                  src={activeCall.participantAvatar}
+                  name={activeCall.participantName}
+                  size="2xl"
+                  showOnline={true}
+                  className="ring-4 ring-[#004845] shadow-2xl"
                 />
-                <span className="absolute bottom-1 right-2 w-5 h-5 rounded-full bg-[#16a34a] ring-2 ring-slate-900"></span>
                 <div className="absolute -inset-2 rounded-full border border-[#16a34a]/40 animate-pulse pointer-events-none"></div>
               </div>
               <h2 className="text-white text-xl font-bold">{activeCall.participantName}</h2>
@@ -108,19 +110,21 @@ export default function CallModal() {
           <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-28 h-20 sm:w-44 sm:h-32 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl flex items-center justify-center z-10">
             {isVideoOff ? (
               <div className="text-center p-1 sm:p-2">
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-7 h-7 sm:w-10 sm:h-10 rounded-full mx-auto mb-1 opacity-80"
+                <UserAvatar
+                  src={currentUser.avatar || currentUser.profileImage}
+                  name={currentUser.name}
+                  size="sm"
+                  className="mx-auto mb-1 opacity-80"
                 />
                 <p className="text-[9px] sm:text-[10px] text-slate-400">Camera Off</p>
               </div>
             ) : (
               <div className="relative w-full h-full bg-slate-900 flex items-center justify-center">
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-full h-full object-cover opacity-90"
+                <UserAvatar
+                  src={currentUser.avatar || currentUser.profileImage}
+                  name={currentUser.name}
+                  size="md"
+                  className="opacity-90"
                 />
                 <span className="absolute top-1 left-1.5 text-[9px] sm:text-[10px] bg-black/60 px-1.5 py-0.2 rounded text-white font-medium">
                   You

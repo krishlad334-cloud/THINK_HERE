@@ -37,6 +37,22 @@ export const DEMO_USERS = [
     createdAt: '2026-01-15T10:00:00.000Z'
   },
   {
+    id: 'client_002',
+    name: 'Sarah Jenkins',
+    role: 'client',
+    title: 'E-commerce & Brand Director',
+    bio: 'Managing multichannel e-commerce operations. Seeking expert guidance on performance marketing and conversion optimization.',
+    profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    email: 'sarah.jenkins@think.platform',
+    mobile: '9876543213',
+    password: 'password123',
+    isVerified: true,
+    label: 'Demo Client 2',
+    location: 'New York, NY',
+    createdAt: '2026-01-16T11:00:00.000Z'
+  },
+  {
     id: 'consultant_001',
     name: 'Dr. Elena Vance',
     role: 'consultant',
@@ -113,22 +129,36 @@ export function initializeThinkStorage() {
   if (!existingUsers) {
     safeSetItem(STORAGE_KEYS.USERS, DEMO_USERS);
   } else {
-    // Ensure all demo users exist and have required authentication fields (mobile, password, isVerified)
+    // Ensure all demo users exist with complete credentials and all new registered users are preserved
     let updated = false;
-    const merged = existingUsers.map(u => {
-      const demo = DEMO_USERS.find(d => d.id === u.id);
-      if (demo && (!u.mobile || !u.password || u.isVerified === undefined)) {
-        updated = true;
-        return {
-          ...u,
-          mobile: u.mobile || demo.mobile,
-          password: u.password || demo.password,
-          isVerified: u.isVerified !== undefined ? u.isVerified : true
-        };
-      }
-      return u;
+    const userMap = new Map();
+
+    // 1. Keep existing registered users
+    existingUsers.forEach(u => {
+      userMap.set(u.id, u);
     });
-    if (updated) {
+
+    // 2. Ensure all DEMO_USERS are present with valid password & mobile
+    DEMO_USERS.forEach(demo => {
+      if (!userMap.has(demo.id)) {
+        userMap.set(demo.id, demo);
+        updated = true;
+      } else {
+        const current = userMap.get(demo.id);
+        if (!current.mobile || !current.password || current.isVerified === undefined) {
+          userMap.set(demo.id, {
+            ...current,
+            mobile: current.mobile || demo.mobile,
+            password: current.password || demo.password,
+            isVerified: current.isVerified !== undefined ? current.isVerified : true
+          });
+          updated = true;
+        }
+      }
+    });
+
+    const merged = Array.from(userMap.values());
+    if (updated || merged.length !== existingUsers.length) {
       safeSetItem(STORAGE_KEYS.USERS, merged);
     }
   }
