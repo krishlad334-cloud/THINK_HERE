@@ -15,7 +15,8 @@ export const STORAGE_KEYS = {
   THINKS: 'think_data',
   CONVERSATIONS: 'think_conversations',
   NOTIFICATIONS: 'think_notifications',
-  ACTIVE_USER: 'think_active_user'
+  ACTIVE_USER: 'think_active_user',
+  AUTH_SESSION: 'think_auth_session'
 };
 
 export const DEMO_USERS = [
@@ -28,8 +29,12 @@ export const DEMO_USERS = [
     profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     email: 'alex.morgan@think.platform',
+    mobile: '9876543210',
+    password: 'password123',
+    isVerified: true,
     label: 'Demo Client',
-    location: 'San Francisco, CA'
+    location: 'San Francisco, CA',
+    createdAt: '2026-01-15T10:00:00.000Z'
   },
   {
     id: 'consultant_001',
@@ -40,12 +45,15 @@ export const DEMO_USERS = [
     profileImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     email: 'elena.vance@think.platform',
+    mobile: '9876543211',
+    password: 'password123',
+    isVerified: true,
     label: 'Demo Consultant 1',
     hourlyRate: 150,
     rating: 4.98,
     reviewsCount: 142,
     location: 'Seattle, WA (Remote)',
-    isVerified: true
+    createdAt: '2026-01-10T08:00:00.000Z'
   },
   {
     id: 'consultant_002',
@@ -56,12 +64,15 @@ export const DEMO_USERS = [
     profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     email: 'marcus.sterling@think.platform',
+    mobile: '9876543212',
+    password: 'password123',
+    isVerified: true,
     label: 'Demo Consultant 2',
     hourlyRate: 110,
     rating: 4.95,
     reviewsCount: 218,
     location: 'Austin, TX',
-    isVerified: true
+    createdAt: '2026-01-12T09:00:00.000Z'
   }
 ];
 
@@ -98,8 +109,28 @@ function safeSetItem(key, data) {
  * workflow data is displayed as requested.
  */
 export function initializeThinkStorage() {
-  if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+  const existingUsers = safeGetItem(STORAGE_KEYS.USERS, null);
+  if (!existingUsers) {
     safeSetItem(STORAGE_KEYS.USERS, DEMO_USERS);
+  } else {
+    // Ensure all demo users exist and have required authentication fields (mobile, password, isVerified)
+    let updated = false;
+    const merged = existingUsers.map(u => {
+      const demo = DEMO_USERS.find(d => d.id === u.id);
+      if (demo && (!u.mobile || !u.password || u.isVerified === undefined)) {
+        updated = true;
+        return {
+          ...u,
+          mobile: u.mobile || demo.mobile,
+          password: u.password || demo.password,
+          isVerified: u.isVerified !== undefined ? u.isVerified : true
+        };
+      }
+      return u;
+    });
+    if (updated) {
+      safeSetItem(STORAGE_KEYS.USERS, merged);
+    }
   }
 
   // Check if existing data is contaminated with old static dummy IDs
@@ -128,6 +159,23 @@ export function initializeThinkStorage() {
   }
   if (!localStorage.getItem(STORAGE_KEYS.ACTIVE_USER)) {
     safeSetItem(STORAGE_KEYS.ACTIVE_USER, 'client_001');
+  }
+}
+
+export function getAuthSession() {
+  return safeGetItem(STORAGE_KEYS.AUTH_SESSION, null);
+}
+
+export function setAuthSession(sessionData) {
+  safeSetItem(STORAGE_KEYS.AUTH_SESSION, sessionData);
+}
+
+export function clearAuthSession() {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
+    window.dispatchEvent(new CustomEvent('think_storage_updated', { detail: { key: STORAGE_KEYS.AUTH_SESSION, data: null } }));
+  } catch (err) {
+    console.error('[thinkStorage] Error clearing auth session:', err);
   }
 }
 

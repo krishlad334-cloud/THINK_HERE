@@ -17,8 +17,23 @@ import {
   resetDemoData as storageResetDemoData,
   updateUser as storageUpdateUser,
   getUserById,
+  getAuthSession,
+  setAuthSession,
+  clearAuthSession,
   DEMO_USERS
 } from '../utils/thinkStorage';
+import {
+  registerUser as authRegisterUser,
+  loginUser as authLoginUser,
+  logoutUser as authLogoutUser,
+  verifyRegistrationOTP,
+  generateOTP,
+  resendOTP,
+  isAuthenticated as checkIsAuthenticated,
+  getCurrentUser,
+  getUserRole,
+  redirectByRole
+} from '../utils/thinkAuth';
 import {
   MOCK_CONSULTANTS,
   INITIAL_JOBS,
@@ -38,7 +53,12 @@ export function AppProvider({ children }) {
   // 2. Core Reactive State from LocalStorage
   const [activeUser, setActiveUserState] = useState(() => {
     initializeThinkStorage();
-    return getActiveUser();
+    const session = getAuthSession();
+    if (session && session.isAuthenticated && session.userId) {
+      const user = getUserById(session.userId);
+      if (user) return user;
+    }
+    return getActiveUser() || DEMO_USERS[0];
   });
 
   const [users, setUsersState] = useState(() => {
@@ -76,13 +96,16 @@ export function AppProvider({ children }) {
   }, []);
 
   // Navigation & UI States
-  const role = activeUser.role; // 'client' or 'consultant'
+  const role = activeUser?.role || 'client'; // 'client' or 'consultant'
   const [activeTab, setActiveTab] = useState(role === 'consultant' ? 'browse_thoughts' : 'chat');
   const [activeChatThoughtId, setActiveChatThoughtId] = useState(null);
   const [selectedThoughtId, setSelectedThoughtId] = useState(null);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [isNewThoughtModalOpen, setIsNewThoughtModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    initializeThinkStorage();
+    return checkIsAuthenticated();
+  });
   const [authMode, setAuthMode] = useState('login');
   const [privacyAlert, setPrivacyAlert] = useState(null);
   const [activeCall, setActiveCall] = useState(null);
@@ -132,11 +155,18 @@ export function AppProvider({ children }) {
   // DEMO USER SWITCHING (Client, Consultant 1, Consultant 2)
   // -------------------------------------------------------------
   const switchDemoUser = (userId) => {
-    const targetUser = DEMO_USERS.find(u => u.id === userId);
+    const targetUser = DEMO_USERS.find(u => u.id === userId) || getUserById(userId);
     if (!targetUser) return;
 
     setStorageActiveUser(userId);
     setActiveUserState(targetUser);
+    setAuthSession({
+      userId: targetUser.id,
+      role: targetUser.role,
+      isAuthenticated: true,
+      createdAt: new Date().toISOString()
+    });
+    setIsAuthenticated(true);
 
     if (targetUser.role === 'consultant') {
       setActiveTab('browse_thoughts');
@@ -145,7 +175,7 @@ export function AppProvider({ children }) {
     }
 
     setNotificationsState(getNotifications(targetUser.id, targetUser.role));
-    showToast('Switched User', `Active as ${targetUser.label} (${targetUser.name})`, 'info');
+    showToast('Switched User', `Active as ${targetUser.label || targetUser.name} (${targetUser.name})`, 'info');
   };
 
   // Backwards compatibility for role switch button
@@ -313,14 +343,14 @@ export function AppProvider({ children }) {
   };
 
   // Legacy helpers & compatibility
-  const clientUser = users.find(u => u.id === 'client_001') || activeUser;
-  const consultantUser = (activeUser.role === 'consultant' ? activeUser : users.find(u => u.id === 'consultant_001')) || activeUser;
-  const currentUser = activeUser;
+  const clientUser = users.find(u => u.id === 'client_001') || activeUser || DEMO_USERS[0];
+  const consultantUser = (activeUser?.role === 'consultant' ? activeUser : users.find(u => u.id === 'consultant_001')) || activeUser || DEMO_USERS[1];
+  const currentUser = activeUser || DEMO_USERS[0];
 
   const updateConsultantProfile = (updates) => {
-    const targetId = (activeUser.role === 'consultant' ? activeUser.id : consultantUser.id) || 'consultant_001';
+    const targetId = (activeUser?.role === 'consultant' ? activeUser?.id : consultantUser?.id) || 'consultant_001';
     const updated = storageUpdateUser(targetId, updates);
-    if (activeUser.id === targetId) {
+    if (activeUser?.id === targetId) {
       setActiveUserState(prev => ({ ...prev, ...updates }));
     }
     reloadFromStorage();
@@ -333,7 +363,7 @@ export function AppProvider({ children }) {
     const current = getUserById(targetId) || clientUser;
     const nextVal = typeof updaterOrObj === 'function' ? updaterOrObj(current) : { ...current, ...updaterOrObj };
     storageUpdateUser(targetId, nextVal);
-    if (activeUser.id === targetId) {
+    if (activeUser?.id === targetId) {
       setActiveUserState(prev => ({ ...prev, ...nextVal }));
     }
     reloadFromStorage();
@@ -342,7 +372,7 @@ export function AppProvider({ children }) {
 
   const updateUserProfile = (userId, updates) => {
     const updated = storageUpdateUser(userId, updates);
-    if (activeUser.id === userId) {
+    if (activeUser?.id === userId) {
       setActiveUserState(prev => ({ ...prev, ...updates }));
     }
     reloadFromStorage();
@@ -393,9 +423,92 @@ export function AppProvider({ children }) {
   };
 
   const logoutUser = () => {
-    // Reset to demo client
-    switchDemoUser('client_001');
-    showToast('Logged Out', 'Returned to Client Workspace', 'info');
+    authLogoutUser();
+    setIsAuthenticated(false);
+    setActiveUserState(DEMO_USERS[0]);
+    showToast('Logged Out', 'You have been signed out successfully.', 'info');
+  };
+
+  const loginUser = (identifierOrRole, passwordOrData) => {
+    // If called with identifier & password (e.g. Email/Mobile + Password)
+    if (typeof passwordOrData === 'string') {
+      const res = authLoginUser(identifierOrRole, passwordOrData);
+      if (res.success) {
+        setIsAuthenticated(true);
+        setActiveUserState(res.user);
+        if (res.role === 'consultant') {
+          setActiveTab('browse_thoughts');
+        } else {
+          setActiveTab('chat');
+        }
+        reloadFromStorage();
+        showToast('Welcome Back', `Signed in successfully as ${res.user.name}.`, 'success');
+      }
+      return res;
+    }
+
+    // Backwards compatibility if called with (role, customUserData)
+    let targetUser;
+    const userRole = identifierOrRole || 'client';
+    const customUserData = passwordOrData;
+    if (customUserData && customUserData.name) {
+      const id = customUserData.id || `user_${Date.now()}`;
+      targetUser = {
+        id,
+        name: customUserData.name,
+        email: customUserData.email,
+        role: userRole,
+        title: customUserData.title || (userRole === 'consultant' ? 'Verified Consultant' : 'Client Account'),
+        bio: customUserData.bio || '',
+        hourlyRate: customUserData.hourlyRate || 120,
+        skills: customUserData.skills || [],
+        location: customUserData.location || 'Remote',
+        avatar: customUserData.avatar || (userRole === 'consultant' ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'),
+        profileImage: customUserData.avatar || (userRole === 'consultant' ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'),
+        label: customUserData.label || (userRole === 'consultant' ? 'Consultant' : 'Client')
+      };
+      storageUpdateUser(id, targetUser);
+      setStorageActiveUser(id);
+    } else {
+      const defaultId = userRole === 'consultant' ? 'consultant_001' : 'client_001';
+      targetUser = getUserById(defaultId) || DEMO_USERS.find(u => u.id === defaultId);
+      setStorageActiveUser(defaultId);
+    }
+
+    setAuthSession({
+      userId: targetUser.id,
+      role: targetUser.role,
+      isAuthenticated: true,
+      createdAt: new Date().toISOString()
+    });
+    setActiveUserState(targetUser);
+    setIsAuthenticated(true);
+
+    if (userRole === 'consultant') {
+      setActiveTab('browse_thoughts');
+    } else {
+      setActiveTab('chat');
+    }
+
+    reloadFromStorage();
+    showToast('Authentication Successful', `Welcome, ${targetUser.name}! Opening ${userRole === 'consultant' ? 'Consultant' : 'Client'} Dashboard...`, 'success');
+    return { success: true, user: targetUser, role: targetUser.role };
+  };
+
+  const register = (userData) => {
+    const res = authRegisterUser(userData);
+    if (res.success) {
+      setIsAuthenticated(true);
+      setActiveUserState(res.user);
+      if (res.role === 'consultant') {
+        setActiveTab('browse_thoughts');
+      } else {
+        setActiveTab('chat');
+      }
+      reloadFromStorage();
+      showToast('Account Created!', `Welcome to THINK, ${res.user.name}!`, 'success');
+    }
+    return res;
   };
 
   const value = {
@@ -470,6 +583,12 @@ export function AppProvider({ children }) {
     jobs,
     auditLogs,
     logoutUser,
+    loginUser,
+    login: loginUser,
+    register,
+    verifyRegistrationOTP,
+    generateOTP,
+    resendOTP,
     DEMO_USERS
   };
 

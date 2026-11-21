@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext';
 import {
   User,
   Briefcase,
-  Settings,
   ShieldCheck,
   LogOut,
   ChevronDown,
@@ -178,19 +177,6 @@ export default function ProfileDropdown({ onToggleSidebar }) {
               })}
             </div>
           </div>
-
-          {/* Account Settings - Client Only */}
-          {role === 'client' && (
-            <div className="p-1 border-b border-slate-100">
-              <button
-                onClick={() => handleNav('settings')}
-                className="w-full px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50 hover:text-[#004845] flex items-center gap-2.5 cursor-pointer font-medium transition-colors rounded-xl"
-              >
-                <Settings className="w-4 h-4 text-slate-400" />
-                <span>Account Settings</span>
-              </button>
-            </div>
-          )}
 
           {/* Logout */}
           <div className="pt-1.5 px-1.5">

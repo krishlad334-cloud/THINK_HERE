@@ -27,8 +27,24 @@ import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
-  const { role, activeTab, isAuthenticated, toast, closeToast } = useApp();
+  const { role, activeTab, setActiveTab, isAuthenticated, toast, closeToast } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Enforce strict role-based route isolation
+  React.useEffect(() => {
+    if (!isAuthenticated) return;
+    if (role === 'client') {
+      const consultantTabs = ['browse_thoughts', 'my_consultations', 'profile', 'analytics', 'completed'];
+      if (consultantTabs.includes(activeTab)) {
+        setActiveTab('chat');
+      }
+    } else if (role === 'consultant') {
+      const clientTabs = ['my_thoughts', 'consultant_responses', 'ai_responses', 'saved_solutions', 'jobs', 'find_consultants'];
+      if (clientTabs.includes(activeTab)) {
+        setActiveTab('browse_thoughts');
+      }
+    }
+  }, [role, activeTab, isAuthenticated, setActiveTab]);
 
   // If user is not authenticated (or clicked login / logout / switch account), render dedicated AuthPage with zero background chat
   if (!isAuthenticated) {
