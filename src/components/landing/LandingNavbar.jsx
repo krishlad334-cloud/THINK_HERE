@@ -46,8 +46,8 @@ export default function LandingNavbar({
     <header
       className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.04)] py-2.5 sm:py-3.5'
-          : 'bg-white/90 backdrop-blur-md border-b border-slate-100 py-3 sm:py-4'
+          ? 'bg-white/35 backdrop-blur-md border-b border-slate-200/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] py-2.5 sm:py-3'
+          : 'bg-transparent py-3 sm:py-4 border-b border-transparent'
       }`}
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 flex items-center justify-between gap-4">

@@ -3,7 +3,6 @@ import CharacterVisual from './CharacterVisual';
 import {
   CheckCircle2,
   TrendingUp,
-  Award,
   Sparkles,
   ArrowRight,
   Zap
@@ -67,11 +66,6 @@ export default function Scene5ApplySucceed({
     <div className="relative w-full min-h-[920px] flex flex-col items-center justify-center py-16 px-4 sm:px-6">
       {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-10 z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-[#004845] shadow-xs">
-          <Award className="w-4 h-4 text-[#16a34a]" />
-          <span>Scene 05 • Apply & Succeed</span>
-        </div>
-
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Turn The Right Advice Into <span className="text-[#16a34a]">Real Progress</span>.
         </h2>

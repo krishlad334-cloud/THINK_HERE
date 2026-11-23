@@ -1,7 +1,7 @@
 import React from 'react';
 import CharacterVisual from './CharacterVisual';
 import FloatingWindows from './FloatingWindows';
-import { Globe, AlertTriangle, XCircle, CheckCircle2, Bot, Users } from 'lucide-react';
+import { AlertTriangle, XCircle, CheckCircle2, Bot, Users } from 'lucide-react';
 
 /**
  * Scene2SearchingEverywhere
@@ -17,11 +17,6 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
     <div className="relative w-full min-h-[720px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 overflow-hidden">
       {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mb-6 z-30">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-xs font-semibold text-blue-800 shadow-xs">
-          <Globe className="w-4 h-4 text-blue-600" />
-          <span>Scene 02 • Searching Everywhere</span>
-        </div>
-
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           More Answers. Still <span className="text-amber-600">No Clear Direction</span>.
         </h2>

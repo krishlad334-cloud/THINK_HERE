@@ -2,7 +2,6 @@ import React from 'react';
 import CharacterVisual from './CharacterVisual';
 import ConsultantVisual from './ConsultantVisual';
 import {
-  Users,
   CheckCircle2,
   MessageSquare,
   ShieldCheck,
@@ -30,11 +29,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
     <div className="relative w-full min-h-[780px] flex flex-col items-center justify-center py-12 px-4 sm:px-6">
       {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-8 z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-200 text-xs font-semibold text-[#004845] shadow-xs">
-          <Users className="w-4 h-4 text-[#16a34a]" />
-          <span>Scene 04 • Human Connection</span>
-        </div>
-
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Not Just Answers. <span className="text-[#004845]">Real Human</span> <span className="text-[#16a34a]">Understanding</span>.
         </h2>

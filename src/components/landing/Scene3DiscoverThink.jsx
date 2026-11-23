@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CharacterVisual from './CharacterVisual';
 import Logo from '../common/Logo';
-import { Sparkles, Send, Shield, Users, Rocket, Cloud, Briefcase } from 'lucide-react';
+import { Send, Shield, Users, Rocket, Cloud, Briefcase } from 'lucide-react';
 
 /**
  * Scene3DiscoverThink
@@ -47,11 +47,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
     <div className="relative w-full min-h-[640px] sm:min-h-[720px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6">
       {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mb-8 z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-[#004845] shadow-xs">
-          <Sparkles className="w-4 h-4 text-[#16a34a]" />
-          <span>Scene 03 • The Turning Point</span>
-        </div>
-
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Discover <span className="text-[#004845]">THINK</span>. Find The Right <span className="text-[#16a34a]">Perspective</span>.
         </h2>
