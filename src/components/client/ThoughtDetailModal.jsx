@@ -97,7 +97,7 @@ export default function ThoughtDetailModal() {
                 }}
                 className="px-3.5 py-1.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
               >
-                Accept Think
+                Accept OverThink
               </button>
             )}
 
@@ -150,7 +150,7 @@ export default function ThoughtDetailModal() {
                   Awaiting Consultant Acceptance
                 </h4>
                 <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                  This Think is saved locally and listed in the Consultant Panel under <strong>Available Thinks</strong>.
+                  This OverThink is saved locally and listed in the Consultant Panel under <strong>Available OverThinks</strong>.
                   A consultant can claim it to start the shared consultation chat.
                 </p>
               </div>
@@ -285,7 +285,7 @@ export default function ThoughtDetailModal() {
                   Waiting for a Consultant to Accept
                 </h4>
                 <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-                  Once a consultant accepts this Think from their Available Thinks feed, you can chat directly here.
+                  Once a consultant accepts this OverThink from their Available OverThinks feed, you can chat directly here.
                 </p>
               </div>
             )}

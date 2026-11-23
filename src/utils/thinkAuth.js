@@ -1,5 +1,5 @@
 /**
- * THINK Local Authentication & User Management Service (Frontend Only)
+ * OverThink Local Authentication & User Management Service (Frontend Only)
  * 
  * Implements a pure client-side simulated auth system using LocalStorage.
  * Handles:
@@ -276,9 +276,21 @@ export function loginUser(identifier, password) {
   const normalizedEmail = isEmail ? rawId.toLowerCase() : null;
   const cleanMobile = !isEmail ? rawId.replace(/\D/g, '') : null;
 
-  // Search by email or mobile
+  // Search by email, mobile, or username/demo match
   const user = users.find(u => {
-    if (normalizedEmail && u.email && u.email.toLowerCase() === normalizedEmail) {
+    if (normalizedEmail && u.email) {
+      const uEmail = u.email.toLowerCase();
+      if (uEmail === normalizedEmail) return true;
+      // Cross-match @overthink.platform and legacy @think.platform
+      if (normalizedEmail.replace('@overthink.platform', '') === uEmail.replace('@think.platform', '')) return true;
+      if (normalizedEmail.replace('@think.platform', '') === uEmail.replace('@overthink.platform', '')) return true;
+    }
+    // Match username prefix (e.g. "alex.morgan" matches "alex.morgan@overthink.platform")
+    if (rawId && u.email && u.email.toLowerCase().startsWith(rawId.toLowerCase() + '@')) {
+      return true;
+    }
+    // Match by ID or Name for demo convenience
+    if (rawId && (u.id === rawId || u.name?.toLowerCase() === rawId.toLowerCase())) {
       return true;
     }
     if (cleanMobile && u.mobile && u.mobile.replace(/\D/g, '') === cleanMobile) {
@@ -336,7 +348,7 @@ export function loginUser(identifier, password) {
 export function quickRegisterUser(identifier, password, role = 'client') {
   const cleanId = (identifier || '').trim();
   const isEmail = cleanId.includes('@');
-  const email = isEmail ? cleanId.toLowerCase() : `${cleanId.toLowerCase()}@think.platform`;
+  const email = isEmail ? cleanId.toLowerCase() : `${cleanId.toLowerCase()}@overthink.platform`;
   const mobile = !isEmail ? cleanId.replace(/\D/g, '') : `987${Math.floor(1000000 + Math.random() * 9000000)}`;
   const prefix = isEmail ? cleanId.split('@')[0] : 'User';
   const name = prefix.charAt(0).toUpperCase() + prefix.slice(1).replace(/[^a-zA-Z0-9]/g, ' ');

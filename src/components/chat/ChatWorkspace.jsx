@@ -249,8 +249,8 @@ export default function ChatWorkspace() {
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
               {activeUser.role === 'consultant'
-                ? `You are signed in as ${activeUser.label}. Head to Available Thinks to accept client submissions and start consultation rooms.`
-                : 'Submit a Think to start. Once a verified consultant accepts your Think, your private 1-on-1 consultation chat will appear here.'}
+                ? `You are signed in as ${activeUser.label}. Head to Available OverThinks to accept client submissions and start consultation rooms.`
+                : 'Submit an OverThink to start. Once a verified consultant accepts your OverThink, your private 1-on-1 consultation chat will appear here.'}
             </p>
           </div>
 
@@ -260,7 +260,7 @@ export default function ChatWorkspace() {
                 onClick={() => setActiveTab('browse_thoughts')}
                 className="px-5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs cursor-pointer"
               >
-                Browse Available Thinks
+                Browse Available OverThinks
               </button>
             ) : (
               <button
@@ -664,7 +664,7 @@ export default function ChatWorkspace() {
                       className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <Info className="w-4 h-4 text-[#004845]" />
-                      <span>{showContextDrawer ? 'Hide Think Details' : 'View Think Details'}</span>
+                      <span>{showContextDrawer ? 'Hide OverThink Details' : 'View OverThink Details'}</span>
                     </button>
                   </div>
 
@@ -702,7 +702,7 @@ export default function ChatWorkspace() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#004845]">
-                    Original Think #{activeThought.id}
+                    Original OverThink #{activeThought.id}
                   </span>
                   <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-[#e6f2f1] text-[#004845]">
                     {activeThought.category}
@@ -757,7 +757,7 @@ export default function ChatWorkspace() {
                 "{activeThought?.title || 'Problem Consultation'}"
               </h4>
               <p className="text-[10px] sm:text-[11px] text-slate-500 truncate sm:whitespace-normal">
-                Think #{currentConversation.thinkId} • Verified discussion between {currentConversation.clientName} and {currentConversation.consultantName}
+                OverThink #{currentConversation.thinkId} • Verified discussion between {currentConversation.clientName} and {currentConversation.consultantName}
               </p>
             </div>
 
@@ -1094,7 +1094,7 @@ export default function ChatWorkspace() {
               <span>Press <kbd className="px-1 py-0.5 rounded bg-slate-100 font-mono text-slate-600">Enter</kbd> to send</span>
               <span className="flex items-center gap-1">
                 <Lock className="w-2.5 h-2.5 text-[#16a34a]" />
-                <span>Protected by THINK Verified Consultation</span>
+                <span>Protected by OverThink Verified Consultation</span>
               </span>
             </div>
           </div>

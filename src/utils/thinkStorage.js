@@ -1,5 +1,5 @@
 /**
- * THINK LocalStorage Management Service
+ * OverThink LocalStorage Management Service
  * Pure frontend prototype persistence layer supporting Client and Consultant connection workflow.
  * 
  * Keys used:
@@ -28,7 +28,7 @@ export const DEMO_USERS = [
     bio: 'Passionate about building scalable digital products and exploring modern solutions. Always looking for expert consultation.',
     profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-    email: 'alex.morgan@think.platform',
+    email: 'alex.morgan@overthink.platform',
     mobile: '9876543210',
     password: 'password123',
     isVerified: true,
@@ -44,7 +44,7 @@ export const DEMO_USERS = [
     bio: 'Managing multichannel e-commerce operations. Seeking expert guidance on performance marketing and conversion optimization.',
     profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
-    email: 'sarah.jenkins@think.platform',
+    email: 'sarah.jenkins@overthink.platform',
     mobile: '9876543213',
     password: 'password123',
     isVerified: true,
@@ -60,7 +60,7 @@ export const DEMO_USERS = [
     bio: '14+ years designing high-throughput distributed systems and scaling early-stage B2B products.',
     profileImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
-    email: 'elena.vance@think.platform',
+    email: 'elena.vance@overthink.platform',
     mobile: '9876543211',
     password: 'password123',
     isVerified: true,
@@ -79,7 +79,7 @@ export const DEMO_USERS = [
     bio: 'Guided 350+ engineers, product managers, and leaders to land top-tier offers. Specializing in technical growth and roadmap execution.',
     profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-    email: 'marcus.sterling@think.platform',
+    email: 'marcus.sterling@overthink.platform',
     mobile: '9876543212',
     password: 'password123',
     isVerified: true,
@@ -133,24 +133,31 @@ export function initializeThinkStorage() {
     let updated = false;
     const userMap = new Map();
 
-    // 1. Keep existing registered users
+    // 1. Keep existing registered users and migrate any old @think.platform emails
     existingUsers.forEach(u => {
-      userMap.set(u.id, u);
+      let email = u.email;
+      if (email && email.includes('@think.platform')) {
+        email = email.replace('@think.platform', '@overthink.platform');
+        updated = true;
+      }
+      userMap.set(u.id, { ...u, email });
     });
 
-    // 2. Ensure all DEMO_USERS are present with valid password & mobile
+    // 2. Ensure all DEMO_USERS are present with valid email, password & mobile
     DEMO_USERS.forEach(demo => {
       if (!userMap.has(demo.id)) {
         userMap.set(demo.id, demo);
         updated = true;
       } else {
         const current = userMap.get(demo.id);
-        if (!current.mobile || !current.password || current.isVerified === undefined) {
+        // Force canonical demo email and ensure password & verification
+        if (current.email !== demo.email || !current.mobile || !current.password || current.isVerified === undefined) {
           userMap.set(demo.id, {
             ...current,
+            email: demo.email,
             mobile: current.mobile || demo.mobile,
             password: current.password || demo.password,
-            isVerified: current.isVerified !== undefined ? current.isVerified : true
+            isVerified: true
           });
           updated = true;
         }
@@ -294,7 +301,7 @@ export function saveThink(thinkData) {
   addNotification({
     recipientId: null,
     recipientRole: 'consultant',
-    title: 'New Think Submitted',
+    title: 'New OverThink Submitted',
     message: `${newThink.clientName} submitted: "${newThink.title.slice(0, 45)}..." in ${newThink.category}`,
     type: 'thought_matched',
     thinkId: newThink.id
@@ -358,12 +365,12 @@ export function getConversationByThinkId(thinkId) {
 export function acceptThink(thinkId, consultantUser) {
   const think = getThinkById(thinkId);
   if (!think) {
-    throw new Error('Think not found.');
+    throw new Error('OverThink not found.');
   }
 
   // Prevent duplicate acceptance
   if (think.status !== 'pending' && think.consultantId) {
-    throw new Error(`This Think has already been accepted by ${think.assignedConsultantName || 'another consultant'}.`);
+    throw new Error(`This OverThink has already been accepted by ${think.assignedConsultantName || 'another consultant'}.`);
   }
 
   // Check if conversation already exists
@@ -419,8 +426,8 @@ export function acceptThink(thinkId, consultantUser) {
   addNotification({
     recipientId: think.clientId,
     recipientRole: 'client',
-    title: 'Your Think Has Been Accepted!',
-    message: `${consultant.name} accepted your Think: "${think.title.slice(0, 45)}...". Click to chat.`,
+    title: 'Your OverThink Has Been Accepted!',
+    message: `${consultant.name} accepted your OverThink: "${think.title.slice(0, 45)}...". Click to chat.`,
     type: 'consultant_accepted',
     thinkId: think.id,
     conversationId

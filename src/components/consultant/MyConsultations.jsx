@@ -100,7 +100,7 @@ export default function MyConsultations() {
             onClick={() => setActiveTab('browse_thoughts')}
             className="mt-4 px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold cursor-pointer"
           >
-            Browse Available Thinks
+            Browse Available OverThinks
           </button>
         </div>
       ) : (

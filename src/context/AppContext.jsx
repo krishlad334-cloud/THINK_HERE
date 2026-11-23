@@ -190,11 +190,11 @@ export function AppProvider({ children }) {
   };
 
   // -------------------------------------------------------------
-  // 1. CLIENT PANEL: SUBMIT THINK
+  // 1. CLIENT PANEL: SUBMIT OVERTHINK
   // -------------------------------------------------------------
   const submitThink = ({ title, description = '', category = 'General Consultation', attachments = [], urgency = 'Standard' }) => {
     if (!title || !title.trim()) {
-      showToast('Validation Error', 'Please enter a title for your Think.', 'error');
+      showToast('Validation Error', 'Please enter a title for your OverThink.', 'error');
       return null;
     }
 
@@ -217,7 +217,7 @@ export function AppProvider({ children }) {
     setActiveChatThoughtId(newThink.id);
     setSelectedThoughtId(newThink.id);
 
-    showToast('Think Submitted!', `"${newThink.title.slice(0, 40)}..." is now live for consultants to review. Status: Pending`, 'success');
+    showToast('OverThink Submitted!', `"${newThink.title.slice(0, 40)}..." is now live for consultants to review. Status: Pending`, 'success');
 
     return newThink;
   };
@@ -226,7 +226,7 @@ export function AppProvider({ children }) {
   const submitThought = (params) => submitThink(params);
 
   // -------------------------------------------------------------
-  // 2. CONSULTANT PANEL: ACCEPT THINK
+  // 2. CONSULTANT PANEL: ACCEPT OVERTHINK
   // -------------------------------------------------------------
   const acceptThink = (thinkId) => {
     try {
@@ -235,9 +235,9 @@ export function AppProvider({ children }) {
       reloadFromStorage();
 
       if (alreadyAccepted) {
-        showToast('Already Accepted', 'You have already accepted this Think. Opening conversation...', 'info');
+        showToast('Already Accepted', 'You have already accepted this OverThink. Opening conversation...', 'info');
       } else {
-        showToast('Think Accepted!', `Assigned to ${activeUser.name}. Shared conversation created.`, 'success');
+        showToast('OverThink Accepted!', `Assigned to ${activeUser.name}. Shared conversation created.`, 'success');
       }
 
       // Navigate to chat
@@ -250,7 +250,7 @@ export function AppProvider({ children }) {
 
       return { think, conversation };
     } catch (err) {
-      showToast('Acceptance Failed', err.message || 'Could not accept Think.', 'error');
+      showToast('Acceptance Failed', err.message || 'Could not accept OverThink.', 'error');
       return null;
     }
   };
@@ -259,7 +259,7 @@ export function AppProvider({ children }) {
   const claimThought = (thoughtId) => acceptThink(thoughtId);
 
   // -------------------------------------------------------------
-  // 3 & 4. THINK STATUS MANAGEMENT
+  // 3 & 4. OVERTHINK STATUS MANAGEMENT
   // (Pending, Accepted, In Progress, Resolved, Closed)
   // -------------------------------------------------------------
   const updateThinkStatus = (thinkId, newStatus) => {
@@ -267,7 +267,7 @@ export function AppProvider({ children }) {
     reloadFromStorage();
 
     const formattedStatus = newStatus.replace('_', ' ').toUpperCase();
-    showToast('Status Updated', `Think status changed to ${formattedStatus}`, 'success');
+    showToast('Status Updated', `OverThink status changed to ${formattedStatus}`, 'success');
 
     return updated;
   };
@@ -507,7 +507,7 @@ export function AppProvider({ children }) {
         setActiveTab('chat');
       }
       reloadFromStorage();
-      showToast('Account Created!', `Welcome to THINK, ${res.user.name}!`, 'success');
+      showToast('Account Created!', `Welcome to OverThink, ${res.user.name}!`, 'success');
     }
     return res;
   };

@@ -147,7 +147,7 @@ export default function NotificationDropdown() {
 
           <div className="p-2.5 bg-slate-50/80 border-t border-slate-100 text-center">
             <span className="text-[11px] text-slate-500 font-medium">
-              THINK Real-time Notifications
+              OverThink Real-time Notifications
             </span>
           </div>
         </div>

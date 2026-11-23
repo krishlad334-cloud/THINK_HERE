@@ -17,7 +17,7 @@ export default function ClientSettings() {
 
   const fileInputRef = useRef(null);
   const [name, setName] = useState(clientUser.name || 'Alex Morgan');
-  const [email, setEmail] = useState(clientUser.email || 'alex.morgan@think.platform');
+  const [email, setEmail] = useState(clientUser.email || 'alex.morgan@overthink.platform');
   const [bio, setBio] = useState(clientUser.bio || 'Passionate about building scalable digital products and exploring modern AI solutions. Always looking for expert consultation.');
   const [location, setLocation] = useState(clientUser.location || 'San Francisco, CA');
   const [title, setTitle] = useState(clientUser.title || 'Startup Founder & Tech Innovator');
@@ -30,7 +30,7 @@ export default function ClientSettings() {
   useEffect(() => {
     if (clientUser) {
       setName(clientUser.name || 'Alex Morgan');
-      setEmail(clientUser.email || 'alex.morgan@think.platform');
+      setEmail(clientUser.email || 'alex.morgan@overthink.platform');
       setBio(clientUser.bio || '');
       setLocation(clientUser.location || 'San Francisco, CA');
       setTitle(clientUser.title || 'Startup Founder & Tech Innovator');
@@ -161,10 +161,10 @@ export default function ClientSettings() {
           <div className="bg-[#f0fdf4] rounded-2xl border border-[#16a34a]/20 p-5 space-y-2">
             <h4 className="text-xs font-bold text-[#004845] flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#16a34a]" />
-              THINK Privacy Guarantee
+              OverThink Privacy Guarantee
             </h4>
             <p className="text-[11px] text-slate-600 leading-relaxed">
-              Your real contact details are strictly shielded. Human consultants only communicate with you through THINK's internal channels.
+              Your real contact details are strictly shielded. Human consultants only communicate with you through OverThink's internal channels.
             </p>
           </div>
         </div>
@@ -178,7 +178,7 @@ export default function ClientSettings() {
                 <User className="w-4 h-4 text-[#004845]" />
                 <span>Personal Profile Information</span>
               </h3>
-              <span className="text-xs text-slate-400">Public within THINK consultations</span>
+              <span className="text-xs text-slate-400">Public within OverThink consultations</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

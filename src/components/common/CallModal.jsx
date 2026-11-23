@@ -90,7 +90,7 @@ export default function CallModal() {
               <h2 className="text-white text-xl font-bold">{activeCall.participantName}</h2>
               <p className="text-slate-400 text-sm mt-1 flex items-center gap-1.5">
                 <Video className="w-4 h-4 text-emerald-400" />
-                Live THINK Consultation Session
+                Live OverThink Consultation Session
               </p>
 
               {/* Audio wave simulation */}

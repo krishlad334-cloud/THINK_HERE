@@ -17,7 +17,8 @@ import {
   LayoutGrid,
   LogOut,
   ChevronsUpDown,
-  Check
+  Check,
+  Sparkles
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -95,13 +96,13 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Mobile Header with THINK Brand & Close Button (Hidden on Desktop) */}
+        {/* Mobile Header with OverThink Brand & Close Button (Hidden on Desktop) */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 lg:hidden bg-slate-50/80 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="THINK" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
+            <img src="/logo.jpg" alt="OverThink" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
             <span className="font-black text-sm tracking-tight text-slate-900">
-              <span className="text-[#004845]">TH</span>
-              <span className="text-[#16a34a]">INK</span> Menu
+              <span className="text-[#004845]">Over</span>
+              <span className="text-[#16a34a]">Think</span> Menu
             </span>
           </div>
           <button
@@ -153,7 +154,7 @@ export default function Sidebar({ isOpen, onClose }) {
             >
               <div className="flex items-center gap-2.5">
                 <FileSearch className="w-4 h-4 text-[#16a34a]" />
-                <span className="font-semibold text-white">Client Thinks</span>
+                <span className="font-semibold text-white">Client OverThinks</span>
               </div>
               <span className="text-[10px] bg-[#16a34a] text-white px-2 py-0.5 rounded-full font-black">
                 {openThoughtsCount}
@@ -341,6 +342,20 @@ export default function Sidebar({ isOpen, onClose }) {
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
                 Account
               </span>
+              <button
+                onClick={() => { setActiveTab('landing'); if (onClose) onClose(); }}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer mb-1 ${
+                  activeTab === 'landing' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-[#16a34a]" />
+                  <span>Product Story</span>
+                </div>
+                <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">
+                  5 Scenes
+                </span>
+              </button>
               <button
                 onClick={() => { setActiveTab('settings'); if (onClose) onClose(); }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${

@@ -107,7 +107,7 @@ export default function NewThoughtModal() {
     setValidationError('');
 
     if (!title.trim()) {
-      setValidationError('Please enter a title for your Think.');
+      setValidationError('Please enter a title for your OverThink.');
       return;
     }
 
@@ -146,7 +146,7 @@ export default function NewThoughtModal() {
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                Submit a Think, Problem or Business Challenge
+                Submit an OverThink, Problem or Business Challenge
               </h3>
               <p className="text-[11px] sm:text-xs text-slate-500">
                 Direct connection to verified consultants with real-time consultation chat
@@ -172,7 +172,7 @@ export default function NewThoughtModal() {
           {/* Title */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              Think Title *
+              OverThink Title *
             </label>
             <input
               type="text"
@@ -332,7 +332,7 @@ export default function NewThoughtModal() {
               type="submit"
               className="w-full py-3 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold text-sm shadow-md shadow-[#004845]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
             >
-              <span>Submit Think & Send to Consultants</span>
+              <span>Submit OverThink & Send to Consultants</span>
               <ArrowRight className="w-4 h-4 text-[#16a34a]" />
             </button>
           </div>

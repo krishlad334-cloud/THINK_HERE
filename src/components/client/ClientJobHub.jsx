@@ -37,7 +37,7 @@ export default function ClientJobHub() {
 
   const handleApply = (job) => {
     applyJob(job.id);
-    setAppliedNotification(`Application successfully submitted to ${job.company} via your verified THINK profile!`);
+    setAppliedNotification(`Application successfully submitted to ${job.company} via your verified OverThink profile!`);
     setTimeout(() => setAppliedNotification(null), 4000);
   };
 

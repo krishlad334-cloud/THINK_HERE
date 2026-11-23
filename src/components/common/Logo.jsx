@@ -21,7 +21,7 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
       <div className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-white p-0.5 border border-slate-200/60 shadow-xs flex items-center justify-center ${iconSizes[size]}`}>
         <img
           src="/logo.jpg"
-          alt="THINK"
+          alt="OverThink"
           className="w-full h-full object-contain transform transition-transform hover:scale-105"
         />
       </div>
@@ -31,8 +31,8 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
         <div className="flex flex-col justify-center leading-none">
           <div className="flex items-baseline gap-1.5">
             <span className={`font-black tracking-tight ${textSizes[size]}`}>
-              <span className="text-[#004845]">TH</span>
-              <span className="text-[#16a34a]">INK</span>
+              <span className="text-[#004845]">Over</span>
+              <span className="text-[#16a34a]">Think</span>
             </span>
           </div>
           {showTagline && (

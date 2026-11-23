@@ -5,7 +5,8 @@ import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
 import {
   Search,
-  Menu
+  Menu,
+  Sparkles
 } from 'lucide-react';
 
 export default function Navbar({ onToggleSidebar }) {
@@ -53,6 +54,21 @@ export default function Navbar({ onToggleSidebar }) {
 
         {/* Right Section: Notifications (always visible) & Profile (desktop only) */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* Animated Story Button */}
+          <button
+            type="button"
+            onClick={() => setActiveTab(activeTab === 'landing' ? (role === 'consultant' ? 'browse_thoughts' : 'chat') : 'landing')}
+            className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'landing'
+                ? 'bg-[#004845] text-white shadow-xs'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+            }`}
+            title="View 5-scene animated landing story"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#16a34a]" />
+            <span>{activeTab === 'landing' ? 'Back to App' : 'Story'}</span>
+          </button>
+
           {/* Notifications Dropdown */}
           <NotificationDropdown />
 

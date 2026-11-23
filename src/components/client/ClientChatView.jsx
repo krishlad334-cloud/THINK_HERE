@@ -391,7 +391,7 @@ export default function ClientChatView() {
               className={`p-2 rounded-xl border transition-colors cursor-pointer ${
                 activeThought.isSaved ? 'bg-amber-50 text-amber-600 border-amber-200' : 'text-slate-400 hover:text-slate-700 border-slate-200'
               }`}
-              title={activeThought.isSaved ? 'Saved' : 'Save Think'}
+              title={activeThought.isSaved ? 'Saved' : 'Save OverThink'}
             >
               <Bookmark className="w-3.5 h-3.5 fill-current" />
             </button>
@@ -405,7 +405,7 @@ export default function ClientChatView() {
           /* Empty State - Authentic Minimalist ChatGPT Style Landing */
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center max-w-3xl mx-auto space-y-6 pt-6">
             <div className="w-16 h-16 rounded-3xl bg-white border border-slate-200 p-2 shadow-xs flex items-center justify-center">
-              <img src="/logo.jpg" alt="THINK" className="w-full h-full object-contain" />
+              <img src="/logo.jpg" alt="OverThink" className="w-full h-full object-contain" />
             </div>
 
             <div className="space-y-2">
@@ -742,7 +742,7 @@ export default function ClientChatView() {
           </div>
 
           <p className="text-[10px] text-center text-slate-400 mt-2">
-            THINK guarantees meaningful human solutions within 24 hours. Keep communications inside THINK for safety.
+            OverThink guarantees meaningful human solutions within 24 hours. Keep communications inside OverThink for safety.
           </p>
         </form>
       </div>

@@ -30,7 +30,7 @@ export default function BrowseClientThoughts() {
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState('Pending'); // Default to Available / Pending Thinks
+  const [filterStatus, setFilterStatus] = useState('Pending'); // Default to Available / Pending OverThinks
   const [sortBy, setSortBy] = useState('latest');
 
   const categories = [
@@ -139,10 +139,10 @@ export default function BrowseClientThoughts() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Available Thinks & Client Submissions
+              Available OverThinks & Client Submissions
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Review client questions, claim ownership by clicking Accept Think, and enter direct 1-on-1 consultation chat.
+              Review client questions, claim ownership by clicking Accept OverThink, and enter direct 1-on-1 consultation chat.
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function BrowseClientThoughts() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by Think ID, keyword, client name..."
+              placeholder="Search by OverThink ID, keyword, client name..."
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] bg-slate-50/50 focus:bg-white transition-all font-medium"
             />
           </div>
@@ -182,13 +182,13 @@ export default function BrowseClientThoughts() {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845] cursor-pointer flex-1 md:flex-initial"
             >
-              <option value="Pending">Available Thinks (Pending)</option>
+              <option value="Pending">Available OverThinks (Pending)</option>
               <option value="All">All Submissions</option>
-              <option value="Accepted">Accepted Thinks</option>
+              <option value="Accepted">Accepted OverThinks</option>
               <option value="In Progress">In Progress</option>
               <option value="Resolved">Resolved</option>
               <option value="Closed">Closed</option>
-              <option value="My Accepted">My Accepted Thinks</option>
+              <option value="My Accepted">My Accepted OverThinks</option>
             </select>
 
             <select
@@ -244,8 +244,8 @@ export default function BrowseClientThoughts() {
               <h3 className="text-sm font-bold text-slate-800">No client submissions available</h3>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
                 {filterStatus === 'Pending'
-                  ? 'All submitted Thinks have been accepted, or no Thinks have been submitted yet. Switch to Demo Client in the profile menu to submit a new Think, and it will appear here instantly!'
-                  : 'No Thinks match your search keywords or filter.'}
+                  ? 'All submitted OverThinks have been accepted, or no OverThinks have been submitted yet. Switch to Demo Client in the profile menu to submit a new OverThink, and it will appear here instantly!'
+                  : 'No OverThinks match your search keywords or filter.'}
               </p>
               <button
                 onClick={() => { setSelectedCategory('All'); setFilterStatus('All'); setSearchQuery(''); }}
@@ -355,10 +355,10 @@ export default function BrowseClientThoughts() {
                         <button
                           onClick={() => handleAccept(thought)}
                           className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-md shadow-[#004845]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
-                          title="Accept this Think and start direct consultation"
+                          title="Accept this OverThink and start direct consultation"
                         >
                           <CheckCircle className="w-3.5 h-3.5 text-[#16a34a]" />
-                          <span>Accept Think</span>
+                          <span>Accept OverThink</span>
                         </button>
                       ) : isClaimedByMe ? (
                         <button

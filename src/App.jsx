@@ -8,6 +8,7 @@ import CallModal from './components/common/CallModal';
 import ContactViolationAlert from './components/common/ContactViolationAlert';
 import ToastContainer from './components/common/ToastContainer';
 import AuthPage from './components/auth/AuthPage';
+import LandingPage from './components/landing/LandingPage';
 
 // Client Views
 import ClientChatView from './components/client/ClientChatView';
@@ -29,6 +30,8 @@ import ChatWorkspace from './components/chat/ChatWorkspace';
 function AppContent() {
   const { role, activeTab, setActiveTab, isAuthenticated, toast, closeToast } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [authView, setAuthView] = useState('landing'); // 'landing' | 'auth'
+  const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'register'
 
   // Enforce strict role-based route isolation
   React.useEffect(() => {
@@ -46,13 +49,44 @@ function AppContent() {
     }
   }, [role, activeTab, isAuthenticated, setActiveTab]);
 
-  // If user is not authenticated (or clicked login / logout / switch account), render dedicated AuthPage with zero background chat
+  // If user is not authenticated: render animated landing page or auth page with seamless transition
   if (!isAuthenticated) {
-    return <AuthPage />;
+    if (authView === 'auth') {
+      return (
+        <AuthPage
+          initialMode={authInitialMode}
+          onBackToLanding={() => setAuthView('landing')}
+        />
+      );
+    }
+
+    return (
+      <LandingPage
+        onSignIn={() => {
+          setAuthInitialMode('login');
+          setAuthView('auth');
+        }}
+        onStartThink={() => {
+          setAuthInitialMode('register');
+          setAuthView('auth');
+        }}
+      />
+    );
   }
 
   // Router dispatcher
   const renderCurrentView = () => {
+    if (activeTab === 'landing') {
+      return (
+        <div className="w-full h-full overflow-y-auto">
+          <LandingPage
+            onSignIn={() => setActiveTab(role === 'consultant' ? 'browse_thoughts' : 'chat')}
+            onStartThink={() => setActiveTab('chat')}
+          />
+        </div>
+      );
+    }
+
     if (activeTab === 'messages') {
       return <ChatWorkspace />;
     }

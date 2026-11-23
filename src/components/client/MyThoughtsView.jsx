@@ -154,7 +154,7 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search problems, #think_id..."
+            placeholder="Search problems, #id..."
             className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] font-medium"
           />
         </div>

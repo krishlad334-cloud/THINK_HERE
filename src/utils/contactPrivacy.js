@@ -1,6 +1,6 @@
 /**
  * Contact Privacy & Moderation Guard
- * Requirement 10: Clients and consultants must communicate exclusively inside THINK.
+ * Requirement 10: Clients and consultants must communicate exclusively inside OverThink.
  * Automatically detects attempts to share personal mobile numbers, emails, WhatsApp, etc.
  */
 
@@ -55,7 +55,7 @@ export function inspectMessageForPrivacy(text) {
     cleanText: maskedText,
     violations,
     warningMessage: containsViolation
-      ? 'THINK Safety Guard: Off-platform contact sharing is restricted to protect your security and consultation guarantees.'
+      ? 'OverThink Safety Guard: Off-platform contact sharing is restricted to protect your security and consultation guarantees.'
       : null
   };
 }

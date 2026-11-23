@@ -94,7 +94,7 @@ export default function ConsultantProfileView() {
           <CheckCircle2 className="w-5 h-5 text-[#16a34a] flex-shrink-0" />
           <div>
             <p className="font-extrabold text-slate-900">Profile Changes Saved Successfully!</p>
-            <p className="text-[11px] text-slate-500 font-medium">Your updated consultant title, rate, location, and bio are now live across THINK.</p>
+            <p className="text-[11px] text-slate-500 font-medium">Your updated consultant title, rate, location, and bio are now live across OverThink.</p>
           </div>
         </div>
       )}

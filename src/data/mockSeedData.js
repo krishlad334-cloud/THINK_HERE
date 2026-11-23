@@ -1,5 +1,5 @@
 /**
- * Comprehensive Seed Data for THINK
+ * Comprehensive Seed Data for OverThink
  * Combines ChatGPT, Freelancer.com, and LinkedIn experiences.
  */
 
@@ -8,7 +8,7 @@ export const INITIAL_USERS = {
     id: 'user-client-1',
     name: 'Alex Morgan',
     role: 'client',
-    email: 'alex.morgan@think.platform',
+    email: 'alex.morgan@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     title: 'Startup Founder & Tech Innovator',
     bio: 'Passionate about building scalable digital products and exploring modern AI solutions. Always looking for expert consultation.',
@@ -22,7 +22,7 @@ export const INITIAL_USERS = {
     id: 'user-cons-1',
     name: 'Dr. Elena Vance',
     role: 'consultant',
-    email: 'elena.vance@think.platform',
+    email: 'elena.vance@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     title: 'Principal Product & Cloud Solutions Architect | ex-Stripe & AWS Advisor',
     rating: 4.98,
@@ -60,7 +60,7 @@ export const INITIAL_USERS = {
         id: 'port-1',
         title: 'Fintech High-Frequency Ledger Scaling',
         description: 'Reduced sub-50ms latency across 12M daily transactions via distributed caching and partitioning.',
-        link: 'https://github.com/think-case-studies/ledger',
+        link: 'https://github.com/overthink-case-studies/ledger',
         tag: 'Fintech / Systems'
       },
       {
@@ -74,9 +74,9 @@ export const INITIAL_USERS = {
   },
   admin: {
     id: 'user-admin-1',
-    name: 'THINK Platform Operations & Compliance',
+    name: 'OverThink Platform Operations & Compliance',
     role: 'admin',
-    email: 'admin@think.platform',
+    email: 'admin@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
     title: 'Platform Chief Moderator',
     permissions: ['all_access', 'verify_consultants', 'moderate_thoughts', 'audit_privacy', 'trigger_ai_fallback']
@@ -89,7 +89,7 @@ export const MOCK_CONSULTANTS = [
     id: 'user-cons-2',
     name: 'Marcus Sterling',
     role: 'consultant',
-    email: 'marcus.sterling@think.platform',
+    email: 'marcus.sterling@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     title: 'Tech Career Strategist & Former Senior Recruiter @ Meta & Uber',
     rating: 4.95,
@@ -123,7 +123,7 @@ export const MOCK_CONSULTANTS = [
     id: 'user-cons-3',
     name: 'Priya Sharma',
     role: 'consultant',
-    email: 'priya.sharma@think.platform',
+    email: 'priya.sharma@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80',
     title: 'Startup Growth Lead & Fractional CMO | Exited Founder ($14M)',
     rating: 4.92,
@@ -155,7 +155,7 @@ export const MOCK_CONSULTANTS = [
     id: 'user-cons-4',
     name: 'David Chen',
     role: 'consultant',
-    email: 'david.chen@think.platform',
+    email: 'david.chen@overthink.platform',
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80',
     title: 'Design Director & UI/UX Specialist | Red Dot Award Winner',
     rating: 4.97,
@@ -287,22 +287,22 @@ export const INITIAL_THOUGHTS = [
         id: 'ai-sol-fallback-3',
         isAIGenerated: true,
         author: {
-          name: 'THINK Intelligence AI',
-          role: 'Automated 24h Fallback Engine (THINK AI v4)',
+          name: 'OverThink Intelligence AI',
+          role: 'Automated 24h Fallback Engine (OverThink AI v4)',
           avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80',
           badge: 'Certified AI Engine'
         },
         createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-        executiveSummary: 'This submission reached the 24-hour response deadline. THINK AI has generated this actionable business blueprint. To overcome the cold-start problem, anchor demand first with 3 commercial wholesalers rather than recruiting hundreds of individual drivers.',
+        executiveSummary: 'This submission reached the 24-hour response deadline. OverThink AI has generated this actionable business blueprint. To overcome the cold-start problem, anchor demand first with 3 commercial wholesalers rather than recruiting hundreds of individual drivers.',
         actionPlan: [
           { step: 1, title: 'Single-Route Micro-Corridor Pilot', details: 'Limit your trial to one 50-mile agricultural corridor with high tomato/berry density. Guarantee truck capacity manually before software build.' },
           { step: 2, title: 'Take-Rate vs SaaS Hybrid Model', details: 'Charge a 8-10% take-rate on successful deliveries, or offer cold-chain telemetry tracking as a $49/month IoT subscription.' },
           { step: 3, title: 'Regulatory Compliance & Food Safety Check', details: 'Verify regional cold-chain transport regulations (FDA FSMA compliance) to shield liability.' },
-          { step: 4, title: 'Human Consultant Review Recommendation', details: 'Schedule a session with an AgTech supply chain mentor on THINK to stress-test your fuel-cost margins.' }
+          { step: 4, title: 'Human Consultant Review Recommendation', details: 'Schedule a session with an AgTech supply chain mentor on OverThink to stress-test your fuel-cost margins.' }
         ],
         recommendedTools: ['FreightWaves Freight Data', 'Mapbox Route Optimizer', 'Stripe Connect Multi-party Escrow'],
         nextStepsPrompt: 'Human consultants can still review this AI solution and provide custom operational guidance.',
-        disclaimer: 'This solution was automatically generated by the THINK 24-Hour Fallback Guarantee Engine because no human consultant accepted the submission within 24 hours.'
+        disclaimer: 'This solution was automatically generated by the OverThink 24-Hour Fallback Guarantee Engine because no human consultant accepted the submission within 24 hours.'
       }
     ],
     isSaved: true
@@ -350,7 +350,7 @@ export const INITIAL_THOUGHTS = [
           { step: 3, title: 'Tune WAL and Checkpoint Settings', details: 'Increase max_wal_size to 16GB and checkpoint_completion_target to 0.9 to smooth out disk I/O spikes.' }
         ],
         recommendedTools: ['PgBouncer', 'TimescaleDB Extension', 'pghero Performance Monitor'],
-        nextStepsPrompt: 'Let us hop on our video call in the THINK Consultation Room to live-tune your configuration.'
+        nextStepsPrompt: 'Let us hop on our video call in the OverThink Consultation Room to live-tune your configuration.'
       }
     ],
     isSaved: true
@@ -483,7 +483,7 @@ export const INITIAL_MESSAGES = [
     senderName: 'Dr. Elena Vance',
     senderRole: 'consultant',
     senderAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
-    text: 'That explains the lock contention! 240 direct connections causes massive context-switching overhead in Postgres. Putting PgBouncer in transaction pooling mode will drop active connections to 15-20 while easily handling 20,000 requests/sec. Would you like to jump on a quick 15-minute consultation video call right here in THINK to test this?',
+    text: 'That explains the lock contention! 240 direct connections causes massive context-switching overhead in Postgres. Putting PgBouncer in transaction pooling mode will drop active connections to 15-20 while easily handling 20,000 requests/sec. Would you like to jump on a quick 15-minute consultation video call right here in OverThink to test this?',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     attachments: []
   }
@@ -577,7 +577,7 @@ export const INITIAL_NOTIFICATIONS = [
     id: 'notif-2',
     recipientRole: 'client',
     title: '24-Hour AI Fallback Solution Generated',
-    message: 'Your thought "B2B AI Farm Logistics" reached the 24-hr mark. THINK AI has generated a complete step-by-step blueprint.',
+    message: 'Your thought "B2B AI Farm Logistics" reached the 24-hr mark. OverThink AI has generated a complete step-by-step blueprint.',
     type: 'ai_fallback',
     linkThoughtId: 'thought-3',
     createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
@@ -617,7 +617,7 @@ export const INITIAL_AUDIT_LOGS = [
   {
     id: 'log-2',
     type: 'AI_FALLBACK_TRIGGER',
-    actor: 'THINK 24h Engine',
+    actor: 'OverThink 24h Engine',
     details: 'Automatic fallback activated for Thought #thought-3 ("Farm Supply Logistics") after 24 hours of open review.',
     severity: 'warning',
     timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString()

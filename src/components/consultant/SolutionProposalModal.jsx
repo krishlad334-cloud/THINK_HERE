@@ -12,7 +12,7 @@ export default function SolutionProposalModal({ thought, onClose }) {
     { step: 3, title: 'Validation & Metrics Tracking', details: '' }
   ]);
   const [toolsInput, setToolsInput] = useState('');
-  const [nextSteps, setNextSteps] = useState('I invite you to enter our THINK Consultation Room to review the implementation roadmap live.');
+  const [nextSteps, setNextSteps] = useState('I invite you to enter our OverThink Consultation Room to review the implementation roadmap live.');
 
   const handleStepChange = (index, field, value) => {
     setSteps(prev => {
@@ -40,7 +40,7 @@ export default function SolutionProposalModal({ thought, onClose }) {
 
     const recommendedTools = toolsInput
       ? toolsInput.split(',').map(t => t.trim()).filter(Boolean)
-      : ['THINK Consultation Room', 'Architecture Canvas'];
+      : ['OverThink Consultation Room', 'Architecture Canvas'];
 
     submitSolution(thought.id, {
       executiveSummary: diagnostic.trim(),
