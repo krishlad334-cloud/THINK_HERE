@@ -9,13 +9,10 @@ import {
   Send,
   FileText,
   Bookmark,
-  Printer,
   PhoneCall,
   Video,
   ArrowRight,
   Trash2,
-  Bell,
-  BellOff,
   RotateCcw,
   MoreVertical,
   Copy,
@@ -26,7 +23,6 @@ import {
   CheckCircle,
   Clock,
   Lock,
-  ExternalLink,
   Smile
 } from 'lucide-react';
 
@@ -40,8 +36,6 @@ export default function ClientChatView() {
     sendMessage,
     deleteMessage,
     clearChat,
-    toggleMuteChat,
-    mutedThoughtIds,
     submitThink,
     activeChatThoughtId,
     setActiveChatThoughtId,
@@ -50,8 +44,7 @@ export default function ClientChatView() {
     setActiveConversationId,
     setActiveTab,
     toggleSaveThought,
-    startCall,
-    showToast
+    startCall
   } = useApp();
 
   const allThinks = thinks || thoughts || [];
@@ -90,7 +83,6 @@ export default function ClientChatView() {
 
   // Active thought determination
   const activeThought = allThinks.find(t => t.id === activeChatThoughtId) || null;
-  const isMuted = activeThought ? (mutedThoughtIds || []).includes(activeThought.id) : false;
 
   // Find linked shared conversation messages
   const currentConversation = conversations.find(c => c.thinkId === activeThought?.id || c.id === activeThought?.id);
@@ -512,7 +504,6 @@ export default function ClientChatView() {
             {/* Messages Stream */}
             {thoughtMessages.map((msg) => {
               const isMine = msg.senderId === currentUser.id;
-              const isConsultantMsg = msg.senderRole === 'consultant' || (!isMine && assignedConsName);
               const isMenuOpen = activeMsgMenuId === msg.id;
 
               return (

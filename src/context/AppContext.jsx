@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   initializeThinkStorage,
   getUsers,
@@ -19,7 +19,6 @@ import {
   getUserById,
   getAuthSession,
   setAuthSession,
-  clearAuthSession,
   DEMO_USERS
 } from '../utils/thinkStorage';
 import {
@@ -30,18 +29,14 @@ import {
   verifyRegistrationOTP,
   generateOTP,
   resendOTP,
-  isAuthenticated as checkIsAuthenticated,
-  getCurrentUser,
-  getUserRole,
-  redirectByRole
+  isAuthenticated as checkIsAuthenticated
 } from '../utils/thinkAuth';
 import {
   MOCK_CONSULTANTS,
   INITIAL_JOBS,
   INITIAL_AUDIT_LOGS
 } from '../data/mockSeedData';
-import { analyzeThought, generateAISolution } from '../utils/aiEngine';
-import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
+import { analyzeThought } from '../utils/aiEngine';
 
 const AppContext = createContext(null);
 
@@ -113,9 +108,9 @@ export function AppProvider({ children }) {
   const [mutedThoughtIds, setMutedThoughtIds] = useState([]);
 
   // Mock companion states for secondary views
-  const [consultants, setConsultants] = useState(MOCK_CONSULTANTS);
-  const [jobs, setJobs] = useState(INITIAL_JOBS);
-  const [auditLogs, setAuditLogs] = useState(INITIAL_AUDIT_LOGS);
+  const [consultants] = useState(MOCK_CONSULTANTS);
+  const [jobs] = useState(INITIAL_JOBS);
+  const [auditLogs] = useState(INITIAL_AUDIT_LOGS);
 
   // Synchronize state when storage changes (Cross-Tab via 'storage', Same-Tab via 'think_storage_updated')
   const reloadFromStorage = useCallback(() => {
@@ -148,8 +143,12 @@ export function AppProvider({ children }) {
   }, [reloadFromStorage]);
 
   // Keep notifications fresh when active user changes
+  const prevUserRef = useRef(activeUser?.id);
   useEffect(() => {
-    setNotificationsState(getNotifications(activeUser?.id, activeUser?.role));
+    if (activeUser?.id !== prevUserRef.current) {
+      prevUserRef.current = activeUser?.id;
+      setNotificationsState(getNotifications(activeUser?.id, activeUser?.role));
+    }
   }, [activeUser]);
 
   // -------------------------------------------------------------
@@ -616,7 +615,8 @@ export function AppProvider({ children }) {
 export function useApp() {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
+    console.warn('useApp must be used within an AppProvider');
+    return {};
   }
   return context;
 }

@@ -27,8 +27,10 @@ export default function ClientSettings() {
   const [timerAlerts, setTimerAlerts] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
 
+  const prevUserIdRef = useRef(clientUser?.id);
   useEffect(() => {
-    if (clientUser) {
+    if (clientUser && clientUser.id !== prevUserIdRef.current) {
+      prevUserIdRef.current = clientUser.id;
       setName(clientUser.name || 'Alex Morgan');
       setEmail(clientUser.email || 'alex.morgan@overthink.platform');
       setBio(clientUser.bio || '');

@@ -19,8 +19,7 @@ export default function NewThoughtModal() {
     setIsNewThoughtModalOpen,
     submitThink,
     setActiveChatThoughtId,
-    setActiveTab,
-    showToast
+    setActiveTab
   } = useApp();
 
   const [title, setTitle] = useState('');

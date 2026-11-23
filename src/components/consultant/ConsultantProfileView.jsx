@@ -30,8 +30,10 @@ export default function ConsultantProfileView() {
   const [newSkill, setNewSkill] = useState('');
   const [skills, setSkills] = useState(consultantUser.skills || []);
 
+  const prevUserIdRef = useRef(consultantUser?.id);
   useEffect(() => {
-    if (consultantUser && !isEditing) {
+    if (consultantUser && !isEditing && consultantUser.id !== prevUserIdRef.current) {
+      prevUserIdRef.current = consultantUser.id;
       setHeadline(consultantUser.title || '');
       setBio(consultantUser.bio || '');
       setHourlyRate(consultantUser.hourlyRate || 150);

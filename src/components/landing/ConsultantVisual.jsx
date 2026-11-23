@@ -181,7 +181,7 @@ export default function ConsultantVisual({
             poster="/scene4_consultant.jpg"
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             onLoadedMetadata={handleLoadedMetadata}
             onSeeking={handleSeeking}
             onSeeked={handleSeeked}

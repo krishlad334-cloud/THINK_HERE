@@ -208,7 +208,7 @@ export default function CharacterVisual({
             poster={currentImage}
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             onLoadedMetadata={handleLoadedMetadata}
             onSeeking={handleSeeking}
             onSeeked={handleSeeked}

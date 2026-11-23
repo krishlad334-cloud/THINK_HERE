@@ -57,8 +57,8 @@ export default function Navbar({ onToggleSidebar, onGoToLanding }) {
           {/* Notifications Dropdown */}
           <NotificationDropdown />
 
-          {/* Desktop Profile Dropdown (Hidden on mobile; on mobile, profile is in the sidebar) */}
-          <div className="hidden lg:block">
+          {/* Profile Dropdown */}
+          <div className="block">
             <ProfileDropdown onGoToLanding={onGoToLanding} />
           </div>
         </div>

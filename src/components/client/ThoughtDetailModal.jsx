@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   X,
   Clock,
-  CheckCircle,
   FileText,
   Bookmark,
   MessageSquare,
-  PhoneCall,
-  Printer,
-  Lock,
-  UserCheck
+  Printer
 } from 'lucide-react';
 
 export default function ThoughtDetailModal() {
@@ -23,8 +19,6 @@ export default function ThoughtDetailModal() {
     thinks,
     toggleSaveThought,
     activeTab,
-    setActiveTab,
-    startCall,
     acceptThink,
     openChatWithThought,
     activeUser
@@ -41,27 +35,10 @@ export default function ThoughtDetailModal() {
   if (!thought) return null;
 
   const isPending = thought.status === 'pending' || thought.status === 'pending_human';
-  const isAccepted = thought.status === 'accepted';
-  const isInProgress = thought.status === 'in_progress';
-  const isResolved = thought.status === 'resolved';
-  const isClosed = thought.status === 'closed';
 
   const handleOpenChat = () => {
     openChatWithThought(thought.id);
     setSelectedThoughtId(null);
-  };
-
-  const handleStartCall = () => {
-    const participant = thought.assignedConsultantName
-      ? { name: thought.assignedConsultantName, avatar: thought.assignedConsultantAvatar }
-      : { name: 'Assigned Specialist', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200' };
-
-    startCall({
-      thoughtId: thought.id,
-      participantName: participant.name,
-      participantAvatar: participant.avatar,
-      callType: 'video'
-    });
   };
 
   const printSolution = () => {

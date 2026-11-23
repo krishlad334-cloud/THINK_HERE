@@ -17,9 +17,7 @@ import {
   STORAGE_KEYS,
   getUsers,
   getUserById,
-  getActiveUser,
   setActiveUser,
-  updateUser,
   getAuthSession,
   setAuthSession,
   clearAuthSession

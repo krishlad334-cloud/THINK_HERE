@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import UserAvatar from '../common/UserAvatar';
-import { calculateTimeRemaining, timeAgo, formatDate } from '../../utils/formatters';
+import { timeAgo } from '../../utils/formatters';
 import {
   MessageSquare,
   Clock,
   CheckCircle,
   PlusCircle,
   Search,
-  ArrowRight,
   Lock
 } from 'lucide-react';
 
-export default function MyThoughtsView({ filterMode = 'all' }) {
+export default function MyThoughtsView() {
   const {
     thinks,
     thoughts,
@@ -177,14 +176,11 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((thought) => {
-            const timeInfo = calculateTimeRemaining(thought.createdAt, thought.deadlineHours || 24);
-
-            return (
-              <div
-                key={thought.id}
-                className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
-              >
+          {filtered.map((thought) => (
+            <div
+              key={thought.id}
+              className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 hover:border-[#004845]/40 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+            >
                 <div className="space-y-2 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
@@ -263,8 +259,8 @@ export default function MyThoughtsView({ filterMode = 'all' }) {
                   </button>
                 </div>
               </div>
-            );
-          })}
+            ))
+          }
         </div>
       )}
     </div>

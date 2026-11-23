@@ -15,7 +15,7 @@ import {
   Home
 } from 'lucide-react';
 
-export default function ProfileDropdown({ onToggleSidebar, onGoToLanding }) {
+export default function ProfileDropdown({ onGoToLanding }) {
   const {
     currentUser,
     role,
@@ -58,13 +58,6 @@ export default function ProfileDropdown({ onToggleSidebar, onGoToLanding }) {
   };
 
   const handleTriggerClick = () => {
-    if (window.innerWidth < 1024) {
-      setIsOpen(false);
-      if (onToggleSidebar) {
-        onToggleSidebar();
-      }
-      return;
-    }
     setIsOpen((prev) => !prev);
   };
 

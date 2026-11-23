@@ -6,8 +6,6 @@ import {
   FileSearch,
   CheckCircle,
   Search,
-  Image as ImageIcon,
-  Video,
   FileText,
   ShieldCheck,
   MessageSquare,
@@ -258,7 +256,6 @@ export default function BrowseClientThoughts() {
             filtered.map((thought) => {
               const assignedConsId = thought.consultantId || thought.assignedConsultantId;
               const isClaimedByMe = assignedConsId === activeUser.id;
-              const isClaimedByOther = assignedConsId && !isClaimedByMe;
               const isPending = thought.status === 'pending' || thought.status === 'pending_human';
 
               return (

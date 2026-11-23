@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import UserAvatar from '../common/UserAvatar';
-import { timeAgo, formatDate } from '../../utils/formatters';
+import { timeAgo } from '../../utils/formatters';
 import {
   MessageSquare,
   PhoneCall,
@@ -10,13 +10,9 @@ import {
   Paperclip,
   FileText,
   ChevronDown,
-  ChevronUp,
-  Download,
   Mic,
   CheckCheck,
   Info,
-  Trash2,
-  RotateCcw,
   MoreVertical,
   Search,
   Copy,
@@ -24,8 +20,6 @@ import {
   Lock,
   ArrowLeft,
   CheckCircle,
-  Clock,
-  ExternalLink,
   Smile
 } from 'lucide-react';
 
@@ -36,7 +30,7 @@ function isOnlyEmojis(text) {
   try {
     const emojiRegex = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation}|\s)+$/u;
     return emojiRegex.test(clean) && Array.from(clean).length <= 4;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -49,7 +43,6 @@ export default function ChatWorkspace() {
     sendChatMessage,
     updateThinkStatus,
     activeUser,
-    role,
     activeConversationId,
     setActiveConversationId,
     activeChatThoughtId,
@@ -75,9 +68,7 @@ export default function ChatWorkspace() {
   const [inputMessage, setInputMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showContextDrawer, setShowContextDrawer] = useState(false);
-  const [showCallMenu, setShowCallMenu] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
-  const [statusMenuTimer, setStatusMenuTimer] = useState(null);
 
   // Active conversation selection
   const currentConversation = myConversations.find(c => c.id === activeConversationId)
@@ -100,7 +91,6 @@ export default function ChatWorkspace() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [copiedThinkId, setCopiedThinkId] = useState(false);
 
-  const callMenuTimerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const emojiPickerRef = useRef(null);
@@ -136,18 +126,6 @@ export default function ChatWorkspace() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentConversation?.messages?.length]);
-
-  const handleCallMouseEnter = () => {
-    if (callMenuTimerRef.current) clearTimeout(callMenuTimerRef.current);
-    setShowCallMenu(true);
-  };
-
-  const handleCallMouseLeave = () => {
-    if (callMenuTimerRef.current) clearTimeout(callMenuTimerRef.current);
-    callMenuTimerRef.current = setTimeout(() => {
-      setShowCallMenu(false);
-    }, 280);
-  };
 
   // Close message popup when clicking outside
   useEffect(() => {

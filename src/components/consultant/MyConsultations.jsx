@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import UserAvatar from '../common/UserAvatar';
-import { timeAgo, formatDate } from '../../utils/formatters';
+import { timeAgo } from '../../utils/formatters';
 import {
   FolderKanban,
   MessageSquare,
