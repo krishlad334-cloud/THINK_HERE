@@ -43,7 +43,7 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
         {/* Top Split Characters: Client (Alex) on Left, Consultant (Elena) on Right */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
           {/* Client Environment Card */}
-          <div className="relative p-5 rounded-3xl bg-white border border-slate-200/80 shadow-lg flex flex-col items-center text-center">
+          <div className="relative p-5 sm:p-6 rounded-3xl bg-white/95 border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5 flex flex-col items-center text-center">
             <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 text-left">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -87,7 +87,7 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
           </div>
 
           {/* Consultant Environment Card */}
-          <div className="relative p-5 rounded-3xl bg-white border border-slate-200/80 shadow-lg flex flex-col items-center text-center">
+          <div className="relative p-5 sm:p-6 rounded-3xl bg-white/95 border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5 flex flex-col items-center text-center">
             <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 text-left">
                 <span className="w-2.5 h-2.5 rounded-full bg-teal-500" />
@@ -125,7 +125,7 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
 
         {/* Central Connecting Consultation Room & Dialogue */}
         <div
-          className="rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl overflow-hidden transition-all duration-500"
+          className="rounded-3xl bg-white/98 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(0,72,69,0.09)] ring-1 ring-black/5 overflow-hidden transition-all duration-500"
           style={{
             transform: `translateY(${(1 - Math.min(progress * 1.3, 1)) * 20}px)`,
             opacity: Math.min(progress * 2, 1)

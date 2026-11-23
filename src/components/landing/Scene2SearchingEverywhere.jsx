@@ -73,7 +73,7 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Card A: Searching AI Alone */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-lg space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-rose-200/80 shadow-[0_4px_20px_rgba(244,63,94,0.05)] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
@@ -107,7 +107,7 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
           </div>
 
           {/* Card B: With OverThink Human Guidance */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-emerald-50/60 to-teal-50/60 border border-emerald-200/80 shadow-lg space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-emerald-50/70 to-teal-50/70 border-2 border-emerald-300/80 shadow-[0_8px_30px_rgba(16,185,129,0.1)] ring-1 ring-emerald-500/15 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-emerald-100">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-xl bg-emerald-600 flex items-center justify-center text-white">

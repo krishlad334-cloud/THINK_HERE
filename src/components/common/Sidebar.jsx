@@ -395,6 +395,12 @@ export default function Sidebar({ isOpen, onClose }) {
               <LogOut className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Developed by Krish Lad Footer Credit */}
+          <div className="mt-2 pt-2 border-t border-slate-200/50 flex items-center justify-center gap-1 text-[11px] text-slate-400 select-none">
+            <span>Developed by</span>
+            <span className="font-semibold text-slate-600">Krish Lad</span>
+          </div>
         </div>
       </aside>
     </>

@@ -70,16 +70,16 @@ export default function Scene1Overthinking({
           </div>
 
           {/* Thought Dilemma Grid Cards (highlight with scroll progress) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             {/* Dilemma 1 */}
             <div
-              className={`p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2.5 transition-all duration-300 ${
+              className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble1
-                  ? 'border-teal-300 ring-2 ring-teal-500/10 shadow-xs'
-                  : 'opacity-70'
+                  ? 'border-teal-400 ring-2 ring-teal-500/10 shadow-sm'
+                  : 'border-slate-200/80 shadow-2xs opacity-75'
               }`}
             >
-              <div className="w-7 h-7 rounded-xl bg-teal-50 border border-teal-200/80 text-[#004845] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-teal-50 border border-teal-200/80 text-[#004845] flex items-center justify-center flex-shrink-0 shadow-2xs">
                 <HelpCircle className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold text-slate-800">"How do I solve this?"</span>
@@ -87,13 +87,13 @@ export default function Scene1Overthinking({
 
             {/* Dilemma 2 */}
             <div
-              className={`p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2.5 transition-all duration-300 ${
+              className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble2
-                  ? 'border-amber-300 ring-2 ring-amber-500/10 shadow-xs'
-                  : 'opacity-70'
+                  ? 'border-amber-400 ring-2 ring-amber-500/10 shadow-sm'
+                  : 'border-slate-200/80 shadow-2xs opacity-75'
               }`}
             >
-              <div className="w-7 h-7 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-2xs">
                 <Sparkles className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold text-slate-800">"What should I do next?"</span>
@@ -101,27 +101,27 @@ export default function Scene1Overthinking({
 
             {/* Dilemma 3 */}
             <div
-              className={`p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2.5 transition-all duration-300 ${
+              className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble3
-                  ? 'border-rose-300 ring-2 ring-rose-500/10 shadow-xs'
-                  : 'opacity-70'
+                  ? 'border-rose-400 ring-2 ring-rose-500/10 shadow-sm'
+                  : 'border-slate-200/80 shadow-2xs opacity-75'
               }`}
             >
-              <div className="w-7 h-7 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center flex-shrink-0 shadow-2xs">
                 <AlertCircle className="w-4 h-4" />
               </div>
-              <span className="text-xs font-bold text-slate-800">"Right decision?"</span>
+              <span className="text-xs font-bold text-slate-800">"Am I making the right decision?"</span>
             </div>
 
             {/* Dilemma 4 */}
             <div
-              className={`p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center gap-2.5 transition-all duration-300 ${
+              className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble4
-                  ? 'border-emerald-300 ring-2 ring-emerald-500/10 shadow-xs'
-                  : 'opacity-70'
+                  ? 'border-emerald-400 ring-2 ring-emerald-500/10 shadow-sm'
+                  : 'border-slate-200/80 shadow-2xs opacity-75'
               }`}
             >
-              <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center flex-shrink-0 shadow-2xs">
                 <Brain className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold text-slate-800">"Where to find guidance?"</span>
@@ -133,7 +133,7 @@ export default function Scene1Overthinking({
             <button
               type="button"
               onClick={onStartThink}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#004845] to-[#16a34a] hover:from-[#003836] hover:to-[#15803d] text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-900/15 hover:shadow-lg hover:shadow-emerald-900/25 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-7 py-3.5 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/25 hover:shadow-lg hover:shadow-emerald-600/35 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer ring-1 ring-emerald-400/30"
             >
               <span>Start Your Think</span>
               <ArrowRight className="w-4 h-4" />
@@ -194,7 +194,7 @@ export default function Scene1Overthinking({
             return (
               <div
                 key={cat.label}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:shadow-xs transition-shadow whitespace-nowrap flex-shrink-0"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/95 hover:bg-white border border-slate-200/90 hover:border-emerald-300/80 shadow-2xs hover:shadow-xs transition-all whitespace-nowrap flex-shrink-0 cursor-default"
               >
                 <Icon className={`w-4 h-4 ${cat.color}`} />
                 <span>{cat.label}</span>

@@ -63,7 +63,7 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
         <>
           {/* WINDOW 1: SEARCH ENGINE SERP (Top-Left Layer) */}
           <div
-            className="absolute top-2 sm:top-6 left-1 sm:left-4 md:left-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xl overflow-hidden transition-transform duration-300 pointer-events-auto"
+            className="absolute top-2 sm:top-6 left-1 sm:left-4 md:left-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-[0_16px_40px_rgba(0,0,0,0.07)] ring-1 ring-black/5 overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
               opacity: w1Opacity,
               transform: `translateX(${w1X}px) translateY(${progress * -15}px) rotateY(${w1RotateY}deg) rotateX(${w1RotateX}deg) translateZ(${progress * 20}px)`,
@@ -163,7 +163,7 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
         <>
           {/* WINDOW 2: AI CHAT ASSISTANT (Top-Right Layer) */}
           <div
-            className="absolute top-0 sm:top-4 right-1 sm:right-4 md:right-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-indigo-100 shadow-2xl overflow-hidden transition-transform duration-300 pointer-events-auto"
+            className="absolute top-0 sm:top-4 right-1 sm:right-4 md:right-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-indigo-100/90 shadow-[0_20px_50px_rgba(79,70,229,0.1)] ring-1 ring-indigo-500/10 overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
               opacity: w2Opacity,
               transform: `translateX(${w2X}px) translateY(${progress * -20}px) rotateY(${w2RotateY}deg) rotateX(${w2RotateX}deg) translateZ(${progress * 60}px)`,

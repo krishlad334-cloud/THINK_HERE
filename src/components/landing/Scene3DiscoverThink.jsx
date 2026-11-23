@@ -79,7 +79,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
         {/* Right Column: The Real OverThink Submission Interface */}
         <div className="lg:col-span-7">
           <div
-            className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-5 sm:p-8 space-y-5 transition-all duration-500"
+            className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(0,72,69,0.08)] ring-1 ring-black/5 p-5 sm:p-8 space-y-5 transition-all duration-500"
             style={{
               transform: `translateY(${(1 - Math.min(progress * 1.5, 1)) * 15}px)`,
               opacity: Math.min(progress * 2, 1)
@@ -120,10 +120,10 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
                       key={sc.id}
                       type="button"
                       onClick={() => setActiveScenarioId(sc.id)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-[#004845] text-white shadow-xs scale-102'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                          ? 'bg-[#004845] text-white shadow-xs scale-102 ring-2 ring-[#004845]/20'
+                          : 'bg-slate-100 hover:bg-emerald-50/80 text-slate-700 hover:text-[#004845]'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
             </div>
 
             {/* The Live Typing Problem Input Box */}
-            <div className="relative rounded-2xl bg-slate-50 border-2 border-emerald-500/60 p-3.5 sm:p-4 shadow-inner">
+            <div className="relative rounded-2xl bg-slate-50/90 border-2 border-emerald-500/70 p-3.5 sm:p-4 shadow-inner ring-2 ring-emerald-500/10">
               <div className="min-h-[75px] sm:min-h-[90px] font-sans text-xs sm:text-sm md:text-base text-slate-800 leading-relaxed">
                 {currentTyped}
                 <span className="inline-block w-1.5 sm:w-2 h-3.5 sm:h-4 ml-1 bg-[#16a34a] animate-pulse align-middle" />
@@ -162,10 +162,10 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
 
               <button
                 type="button"
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg transition-all duration-300 ${
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-white shadow-md transition-all duration-300 cursor-pointer ${
                   isReadyToSend
-                    ? 'bg-[#16a34a] hover:bg-[#15803d] shadow-emerald-600/30 ring-4 ring-emerald-500/20 scale-102'
-                    : 'bg-[#004845] hover:bg-[#023b39] shadow-[#004845]/20'
+                    ? 'bg-[#16a34a] hover:bg-[#15803d] shadow-emerald-600/35 ring-4 ring-emerald-500/25 scale-102'
+                    : 'bg-[#16a34a] hover:bg-[#15803d] shadow-emerald-600/20 hover:scale-[1.02]'
                 }`}
               >
                 <span>Submit OverThink</span>

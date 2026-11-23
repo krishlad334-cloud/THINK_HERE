@@ -79,7 +79,7 @@ export default function Scene5ApplySucceed({
       <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
         {/* Left Column: 5 Action Plan Milestones + Dynamic Progress Bar */}
         <div className="lg:col-span-7">
-          <div className="rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-6 sm:p-8 space-y-6">
+          <div className="rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(22,163,74,0.08)] ring-1 ring-black/5 p-6 sm:p-8 space-y-6">
             {/* Header with Progress Bar */}
             <div className="space-y-3 pb-4 border-b border-slate-100">
               <div className="flex items-center justify-between">
@@ -118,8 +118,8 @@ export default function Scene5ApplySucceed({
                   key={step.num}
                   className={`p-3.5 rounded-2xl border transition-all duration-500 flex items-start gap-3.5 ${
                     step.isDone
-                      ? 'bg-emerald-50/70 border-emerald-200/90 shadow-xs'
-                      : 'bg-slate-50/60 border-slate-200/60 opacity-60'
+                      ? 'bg-gradient-to-r from-emerald-50/90 to-teal-50/60 border-emerald-300 shadow-xs ring-1 ring-emerald-500/10'
+                      : 'bg-slate-50/70 border-slate-200/70 opacity-60'
                   }`}
                 >
                   <div
@@ -241,10 +241,10 @@ export default function Scene5ApplySucceed({
             <button
               type="button"
               onClick={isAuthenticated ? onGoToApp : onStartThink}
-              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#16a34a] to-[#22c55e] text-slate-950 font-black text-sm sm:text-base hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-102 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg cursor-pointer"
+              className="w-full sm:w-auto px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-[#16a34a] hover:bg-[#15803d] text-white font-extrabold text-sm sm:text-base shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer ring-1 ring-white/20"
             >
               <span>{isAuthenticated ? 'Open Your Workspace' : 'Start Your Think'}</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
 
             {isAuthenticated ? (

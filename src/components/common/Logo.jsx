@@ -2,6 +2,7 @@ import React from 'react';
 
 export default function Logo({ size = 'md', showTagline = false, showText = true, className = '' }) {
   const iconSizes = {
+    xs: 'w-6 h-6',
     sm: 'w-7 h-7',
     md: 'w-9 h-9',
     lg: 'w-12 h-12',
@@ -9,16 +10,20 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
   };
 
   const textSizes = {
+    xs: 'text-sm',
     sm: 'text-base',
     md: 'text-xl',
     lg: 'text-2xl',
     xl: 'text-3xl'
   };
 
+  const iconClass = iconSizes[size] || iconSizes.md;
+  const textClass = textSizes[size] || textSizes.md;
+
   return (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>
       {/* Official Brain-Bulb Logo Icon from user upload */}
-      <div className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-white p-0.5 border border-slate-200/60 shadow-xs flex items-center justify-center ${iconSizes[size]}`}>
+      <div className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-white p-0.5 border border-slate-200/60 shadow-xs flex items-center justify-center ${iconClass}`}>
         <img
           src="/logo.jpg"
           alt="OverThink"
@@ -30,7 +35,7 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
       {showText && (
         <div className="flex flex-col justify-center leading-none">
           <div className="flex items-baseline gap-1.5">
-            <span className={`font-black tracking-tight ${textSizes[size]}`}>
+            <span className={`font-black tracking-tight ${textClass}`}>
               <span className="text-[#004845]">Over</span>
               <span className="text-[#16a34a]">Think</span>
             </span>

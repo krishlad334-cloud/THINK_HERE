@@ -106,7 +106,7 @@ export default function LandingNavbar({
           <button
             type="button"
             onClick={isAuthenticated ? onGoToApp : onStartThink}
-            className="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-[#004845] to-[#16a34a] hover:from-[#003836] hover:to-[#15803d] text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-800/15 hover:shadow-lg hover:shadow-emerald-700/25 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            className="px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/25 hover:shadow-lg hover:shadow-emerald-600/35 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
             <span>{isAuthenticated ? 'Open Workspace' : 'Start Your Think'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export default function LandingNavbar({
                 <button
                   type="button"
                   onClick={onStartThink}
-                  className="w-full py-2.5 rounded-xl bg-[#004845] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md"
+                  className="w-full py-2.5 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/25 transition-all"
                 >
                   <span>Start Your Think</span>
                   <ArrowRight className="w-3.5 h-3.5" />

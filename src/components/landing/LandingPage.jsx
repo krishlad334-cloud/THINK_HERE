@@ -109,9 +109,9 @@ export default function LandingPage({
 
       {/* Hero Atmosphere / Background Lighting Gradients */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-200/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-teal-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/3 w-[600px] h-[600px] bg-blue-100/30 rounded-full blur-3xl" />
+        <div className="absolute -top-40 left-1/4 w-[700px] h-[700px] bg-emerald-100/40 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-teal-100/35 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/6 w-[700px] h-[700px] bg-emerald-50/60 rounded-full blur-3xl" />
       </div>
 
       {/* =================================================================== */}
@@ -183,11 +183,17 @@ export default function LandingPage({
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-200 bg-white py-10 px-4 sm:px-8 lg:px-12 xl:px-16">
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <Logo size="sm" showTagline={true} />
-          <div className="text-xs text-slate-500 text-center sm:text-right">
-            &copy; {CURRENT_YEAR} OverThink Platform. All rights reserved.
-            <div className="mt-1 text-slate-400">
+
+          {/* Developed by Krish Lad - Clean Modern Credit */}
+          <div className="text-xs text-slate-500 font-medium select-none text-center">
+            Developed by <span className="font-bold text-[#004845]">Krish Lad</span>
+          </div>
+
+          <div className="text-xs text-slate-500 text-center md:text-right space-y-1">
+            <div>&copy; {CURRENT_YEAR} OverThink Platform. All rights reserved.</div>
+            <div className="text-slate-400">
               AI Can Give You Answers. THINK Connects You With The Right Human Expertise.
             </div>
           </div>
