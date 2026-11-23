@@ -7,16 +7,15 @@ import {
   ShieldCheck,
   LogOut,
   ChevronDown,
-  Mail,
   Phone,
-  DollarSign,
   Star,
   CheckCircle2,
   FileText,
-  MessageSquare
+  MessageSquare,
+  Home
 } from 'lucide-react';
 
-export default function ProfileDropdown({ onToggleSidebar }) {
+export default function ProfileDropdown({ onToggleSidebar, onGoToLanding }) {
   const {
     currentUser,
     role,
@@ -239,6 +238,20 @@ export default function ProfileDropdown({ onToggleSidebar }) {
                   <span>My Thoughts</span>
                 </button>
               </>
+            )}
+
+            {onGoToLanding && (
+              <button
+                type="button"
+                onClick={() => {
+                  onGoToLanding();
+                  setIsOpen(false);
+                }}
+                className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <Home className="w-4 h-4 text-slate-400" />
+                <span>Return to Home Page</span>
+              </button>
             )}
           </div>
 

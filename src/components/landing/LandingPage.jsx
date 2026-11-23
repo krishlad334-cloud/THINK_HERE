@@ -25,13 +25,19 @@ const CURRENT_YEAR = new Date().getFullYear();
  * 4. HUMAN CONNECTION – Dr. Elena Vance accepts OverThink, 1-on-1 dialogue & action plan
  * 5. APPLY, GROW & SUCCEED – Milestones checked off, 0% -> 100% progress, triumph, final CTA
  */
-export default function LandingPage({ onSignIn, onStartThink }) {
+export default function LandingPage({
+  onSignIn,
+  onStartThink,
+  isAuthenticated = false,
+  currentUser = null,
+  onGoToApp
+}) {
   const [sceneProgress, setSceneProgress] = useState({
-    1: 0.5,
-    2: 0.5,
-    3: 0.5,
-    4: 0.5,
-    5: 0.5
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0
   });
 
   const scene1Ref = useRef(null);
@@ -40,21 +46,30 @@ export default function LandingPage({ onSignIn, onStartThink }) {
   const scene4Ref = useRef(null);
   const scene5Ref = useRef(null);
 
-  // Set up GSAP ScrollTrigger for all 5 scenes
+  // Set up GSAP ScrollTrigger for all 5 scenes with calibrated triggers
   useEffect(() => {
-    // Check reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const refs = [scene1Ref, scene2Ref, scene3Ref, scene4Ref, scene5Ref];
+
+    // Calibrated start/end points per scene for natural storytelling scrub
+    const sceneConfigs = [
+      { start: 'top 90px', end: 'bottom 25%' }, // Scene 1: Starts at top of page (0.0) -> scrolls to exit (1.0)
+      { start: 'top 75%', end: 'bottom 25%' },  // Scene 2: Searching Everywhere 3D clutter
+      { start: 'top 75%', end: 'bottom 25%' },  // Scene 3: Discovering THINK & live typing
+      { start: 'top 75%', end: 'bottom 25%' },  // Scene 4: 1-on-1 Human Connection
+      { start: 'top 75%', end: 'bottom 75%' }   // Scene 5: Action Plan & 100% Progress
+    ];
 
     const triggers = refs.map((ref, idx) => {
       const sceneNum = idx + 1;
       if (!ref.current) return null;
+      const config = sceneConfigs[idx] || { start: 'top 75%', end: 'bottom 25%' };
 
       return ScrollTrigger.create({
         trigger: ref.current,
-        start: 'top 80%',
-        end: 'bottom 20%',
-        scrub: prefersReducedMotion ? false : 0.4,
+        start: config.start,
+        end: config.end,
+        scrub: prefersReducedMotion ? false : 0.35,
         onUpdate: (self) => {
           setSceneProgress((prev) => ({
             ...prev,
@@ -63,6 +78,8 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         }
       });
     });
+
+    ScrollTrigger.refresh();
 
     return () => {
       triggers.forEach((t) => t && t.kill());
@@ -85,6 +102,9 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         onNavigateScene={scrollToScene}
         onSignIn={onSignIn}
         onStartThink={onStartThink}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onGoToApp={onGoToApp}
       />
 
       {/* Hero Atmosphere / Background Lighting Gradients */}
@@ -102,9 +122,12 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         <section
           ref={scene1Ref}
           id="scene-1"
-          className="min-h-[85vh] w-full max-w-7xl mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-6 lg:px-8"
+          className="min-h-[85vh] w-full max-w-[1440px] mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-8 lg:px-12 xl:px-16"
         >
-          <Scene1Overthinking progress={sceneProgress[1]} />
+          <Scene1Overthinking
+            progress={sceneProgress[1]}
+            onStartThink={onStartThink}
+          />
           {/* Scroll Down Hint */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold animate-pulse">
             <span>Scroll to explore the journey</span>
@@ -116,7 +139,7 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         <section
           ref={scene2Ref}
           id="scene-2"
-          className="min-h-[95vh] w-full max-w-7xl mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-6 lg:px-8"
+          className="min-h-[95vh] w-full max-w-[1440px] mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-8 lg:px-12 xl:px-16"
         >
           <Scene2SearchingEverywhere progress={sceneProgress[2]} />
         </section>
@@ -125,7 +148,7 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         <section
           ref={scene3Ref}
           id="scene-3"
-          className="min-h-[85vh] w-full max-w-7xl mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-6 lg:px-8"
+          className="min-h-[85vh] w-full max-w-[1440px] mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-8 lg:px-12 xl:px-16"
         >
           <Scene3DiscoverThink progress={sceneProgress[3]} />
         </section>
@@ -134,7 +157,7 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         <section
           ref={scene4Ref}
           id="scene-4"
-          className="min-h-[95vh] w-full max-w-7xl mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-6 lg:px-8"
+          className="min-h-[95vh] w-full max-w-[1440px] mx-auto flex items-center justify-center border-b border-slate-200/40 relative px-4 sm:px-8 lg:px-12 xl:px-16"
         >
           <Scene4HumanConnection progress={sceneProgress[4]} />
         </section>
@@ -143,12 +166,14 @@ export default function LandingPage({ onSignIn, onStartThink }) {
         <section
           ref={scene5Ref}
           id="scene-5"
-          className="min-h-[95vh] w-full max-w-7xl mx-auto flex items-center justify-center relative px-4 sm:px-6 lg:px-8"
+          className="min-h-[95vh] w-full max-w-[1440px] mx-auto flex items-center justify-center relative px-4 sm:px-8 lg:px-12 xl:px-16"
         >
           <Scene5ApplySucceed
             progress={sceneProgress[5]}
             onStartThink={onStartThink}
             onSignIn={onSignIn}
+            isAuthenticated={isAuthenticated}
+            onGoToApp={onGoToApp}
           />
         </section>
 
@@ -157,8 +182,8 @@ export default function LandingPage({ onSignIn, onStartThink }) {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-200 bg-white py-10 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <footer className="relative z-10 border-t border-slate-200 bg-white py-10 px-4 sm:px-8 lg:px-12 xl:px-16">
+        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <Logo size="sm" showTagline={true} />
           <div className="text-xs text-slate-500 text-center sm:text-right">
             &copy; {CURRENT_YEAR} OverThink Platform. All rights reserved.

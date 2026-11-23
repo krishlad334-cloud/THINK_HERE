@@ -33,7 +33,7 @@ export default function LandingFAQ() {
   ];
 
   return (
-    <section className="w-full max-w-4xl mx-auto py-14 sm:py-20 px-4 sm:px-6">
+    <section className="w-full max-w-5xl xl:max-w-6xl mx-auto py-14 sm:py-20 px-4 sm:px-8">
       <div className="text-center space-y-3 mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
           <HelpCircle className="w-3.5 h-3.5 text-[#004845]" />

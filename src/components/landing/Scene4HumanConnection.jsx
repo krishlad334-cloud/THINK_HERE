@@ -45,7 +45,7 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
       </div>
 
       {/* Main Dual-Environment Stage */}
-      <div className="relative w-full max-w-6xl mx-auto">
+      <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto">
         {/* Top Split Characters: Client (Alex) on Left, Consultant (Elena) on Right */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
           {/* Client Environment Card */}
@@ -63,6 +63,8 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
 
             <CharacterVisual
               state="connecting"
+              progress={progress}
+              scrub={true}
               lookDirection="right"
               size="md"
               className="w-full max-w-[280px] my-2"
@@ -105,6 +107,8 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
 
             <ConsultantVisual
               hasAccepted={isAccepted}
+              progress={progress}
+              scrub={true}
               size="md"
               className="w-full max-w-[280px] my-2"
             />

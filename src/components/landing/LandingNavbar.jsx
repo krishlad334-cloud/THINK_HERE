@@ -13,7 +13,10 @@ import { ArrowRight, User, Menu, X } from 'lucide-react';
 export default function LandingNavbar({
   onNavigateScene,
   onSignIn,
-  onStartThink
+  onStartThink,
+  isAuthenticated = false,
+  currentUser = null,
+  onGoToApp
 }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -47,7 +50,7 @@ export default function LandingNavbar({
           : 'bg-white/90 backdrop-blur-md border-b border-slate-100 py-3 sm:py-4'
       }`}
     >
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 flex items-center justify-between gap-4">
         {/* Brand Logo - Compact on mobile */}
         <div
           onClick={() => handleNavClick(1)}
@@ -78,23 +81,34 @@ export default function LandingNavbar({
 
         {/* Right Action CTAs - Sized perfectly for mobile and desktop */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
-          {/* Sign In button - Desktop & Tablet */}
-          <button
-            type="button"
-            onClick={onSignIn}
-            className="hidden sm:inline-flex px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-[#004845] hover:bg-slate-100 transition-colors items-center gap-1.5 cursor-pointer whitespace-nowrap"
-          >
-            <User className="w-4 h-4 text-slate-500" />
-            <span>Sign In</span>
-          </button>
+          {/* Sign In / User account pill */}
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={onGoToApp}
+              className="hidden sm:inline-flex px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-[#004845] hover:bg-slate-100 transition-colors items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <User className="w-4 h-4 text-emerald-600" />
+              <span>{currentUser?.name?.split(' ')[0] || 'My Account'}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onSignIn}
+              className="hidden sm:inline-flex px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-700 hover:text-[#004845] hover:bg-slate-100 transition-colors items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <User className="w-4 h-4 text-slate-500" />
+              <span>Sign In</span>
+            </button>
+          )}
 
           {/* Primary CTA button - Responsive sizing */}
           <button
             type="button"
-            onClick={onStartThink}
+            onClick={isAuthenticated ? onGoToApp : onStartThink}
             className="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-[#004845] to-[#16a34a] hover:from-[#003836] hover:to-[#15803d] text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-800/15 hover:shadow-lg hover:shadow-emerald-700/25 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
-            <span>Start Your Think</span>
+            <span>{isAuthenticated ? 'Open Workspace' : 'Start Your Think'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
@@ -130,22 +144,35 @@ export default function LandingNavbar({
           </div>
 
           <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={onSignIn}
-              className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
-            >
-              <User className="w-4 h-4 text-slate-500" />
-              <span>Sign In to Existing Account</span>
-            </button>
-            <button
-              type="button"
-              onClick={onStartThink}
-              className="w-full py-2.5 rounded-xl bg-[#004845] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md"
-            >
-              <span>Start Your Think</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={onGoToApp}
+                className="w-full py-2.5 rounded-xl bg-[#004845] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md"
+              >
+                <User className="w-4 h-4 text-emerald-400" />
+                <span>Open {currentUser?.role === 'consultant' ? 'Consultant Panel' : 'Client Workspace'}</span>
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onSignIn}
+                  className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
+                >
+                  <User className="w-4 h-4 text-slate-500" />
+                  <span>Sign In to Existing Account</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onStartThink}
+                  className="w-full py-2.5 rounded-xl bg-[#004845] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md"
+                >
+                  <span>Start Your Think</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

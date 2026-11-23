@@ -30,7 +30,13 @@ import {
  * Brand Statement:
  * "Don't Just Search for Answers. Find the Right People to Move Forward."
  */
-export default function Scene5ApplySucceed({ progress = 0.5, onStartThink, onSignIn }) {
+export default function Scene5ApplySucceed({
+  progress = 0.5,
+  onStartThink,
+  onSignIn,
+  isAuthenticated = false,
+  onGoToApp
+}) {
   // Compute milestone checkoffs based on scroll progress:
   // Step 1: >= 0.15
   // Step 2: >= 0.30
@@ -76,7 +82,7 @@ export default function Scene5ApplySucceed({ progress = 0.5, onStartThink, onSig
       </div>
 
       {/* Main Dual Grid: Action Plan Checklist on Left, Victorious Character on Right */}
-      <div className="relative w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
+      <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
         {/* Left Column: 5 Action Plan Milestones + Dynamic Progress Bar */}
         <div className="lg:col-span-7">
           <div className="rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-6 sm:p-8 space-y-6">
@@ -171,6 +177,8 @@ export default function Scene5ApplySucceed({ progress = 0.5, onStartThink, onSig
           >
             <CharacterVisual
               state="succeeding"
+              progress={progress}
+              scrub={true}
               lookDirection="center"
               size="lg"
               className="w-full max-w-[420px]"
@@ -207,7 +215,7 @@ export default function Scene5ApplySucceed({ progress = 0.5, onStartThink, onSig
       {/* =================================================================== */}
       {/* FINAL HERO CALL TO ACTION (Connects directly to Registration)       */}
       {/* =================================================================== */}
-      <div className="w-full max-w-4xl mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#002826] via-[#004845] to-[#023b39] p-6 sm:p-10 lg:p-12 text-white shadow-2xl text-center relative overflow-hidden">
+      <div className="w-full max-w-5xl xl:max-w-6xl mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#002826] via-[#004845] to-[#023b39] p-6 sm:p-10 lg:p-14 text-white shadow-2xl text-center relative overflow-hidden">
         {/* Subtle decorative glow */}
         <div className="absolute -top-24 -left-24 w-80 h-80 bg-[#16a34a]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-300/10 rounded-full blur-3xl pointer-events-none" />
@@ -234,18 +242,26 @@ export default function Scene5ApplySucceed({ progress = 0.5, onStartThink, onSig
             Your next breakthrough could start with one conversation. Share your challenge with verified experts who help you execute with confidence.
           </p>
 
-          {/* Core Action Button: Start Your Think */}
+          {/* Core Action Button: Start Your Think / Open Workspace */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <button
               type="button"
-              onClick={onStartThink}
+              onClick={isAuthenticated ? onGoToApp : onStartThink}
               className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#16a34a] to-[#22c55e] text-slate-950 font-black text-sm sm:text-base hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-102 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg cursor-pointer"
             >
-              <span>Start Your Think</span>
+              <span>{isAuthenticated ? 'Open Your Workspace' : 'Start Your Think'}</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-950" />
             </button>
 
-            {onSignIn && (
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={onGoToApp}
+                className="w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer"
+              >
+                Go to Dashboard
+              </button>
+            ) : onSignIn && (
               <button
                 type="button"
                 onClick={onSignIn}

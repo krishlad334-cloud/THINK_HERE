@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 /**
  * CharacterVisual
- * Real Human Cinematic Video Animation with 3D Depth & Tilt
+ * Real Human Cinematic Live-Action Character with Scroll-Scrubbed Video & 3D Tilt
  * 
  * Features:
- * - Real human continuous video motion (typing, thinking, reacting, breathing)
+ * - Scroll-driven video playback (video.currentTime scrubbed bidirectional forward/backward)
+ * - Live-action real human footage (breathing, typing, sighing, smiling)
+ * - Low-latency seek coordination with fastSeek / currentTime fallback
  * - Photorealistic poster fallback with graceful error recovery
  * - Soft feathered perimeter blending into the background canvas
  * - Interactive 3D cursor tilt & parallax
@@ -13,6 +15,8 @@ import React, { useState, useRef, useEffect } from 'react';
  */
 export default function CharacterVisual({
   state = 'overthinking', // 'overthinking' | 'searching' | 'discovering' | 'connecting' | 'succeeding'
+  progress = 0,
+  scrub = true,
   className = '',
   aspect = 'portrait',
   enableTilt = true
@@ -20,6 +24,11 @@ export default function CharacterVisual({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
+
+  // References for low-latency, stutter-free video scrubbing
+  const targetTimeRef = useRef(0);
+  const isSeekingRef = useRef(false);
+  const lastSeekTimeRef = useRef(0);
 
   const videoMap = {
     overthinking: '/scene1_overthinking.mp4',
@@ -48,19 +57,112 @@ export default function CharacterVisual({
     succeeding: 'from-emerald-500/35 via-green-400/25 to-transparent'
   };
 
-  // Ensure autoplay works reliably across mobile & desktop browsers
+  // Perform seek to target time
+  const applySeek = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || !video.duration || isNaN(video.duration)) return;
+    if (video.readyState < 1) return;
+
+    // Safety timeout: if seeking for > 120ms, release the seeking lock
+    const now = Date.now();
+    if (isSeekingRef.current && now - lastSeekTimeRef.current > 120) {
+      isSeekingRef.current = false;
+    }
+    if (isSeekingRef.current) return;
+
+    const target = Math.max(0, Math.min(video.duration, targetTimeRef.current));
+    if (Math.abs(video.currentTime - target) > 0.02) {
+      try {
+        isSeekingRef.current = true;
+        lastSeekTimeRef.current = now;
+        if (typeof video.fastSeek === 'function') {
+          video.fastSeek(target);
+        } else {
+          video.currentTime = target;
+        }
+      } catch {
+        isSeekingRef.current = false;
+      }
+    }
+  }, []);
+
+  // Update target scrub position whenever scroll progress updates
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      const playPromise = videoRef.current.play();
+    if (!scrub) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const clampedProgress = Math.max(0, Math.min(1, typeof progress === 'number' ? progress : 0));
+    if (video.duration && !isNaN(video.duration) && video.duration > 0) {
+      targetTimeRef.current = clampedProgress * video.duration;
+      applySeek();
+    }
+  }, [progress, scrub, applySeek]);
+
+  // Handle video source changes and initial playback policy
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+
+    if (scrub) {
+      video.pause();
+    } else {
+      const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Autoplay policy or low power mode - video remains ready
+          // Autoplay policy or low-power mode fallback
         });
       }
     }
-  }, [currentVideo]);
+  }, [currentVideo, scrub]);
+
+  // Periodic safety heartbeat to release any stalled seeks
+  useEffect(() => {
+    if (!scrub) return;
+    const interval = setInterval(() => {
+      if (isSeekingRef.current && videoRef.current) {
+        const now = Date.now();
+        if (now - lastSeekTimeRef.current > 120) {
+          isSeekingRef.current = false;
+          applySeek();
+        }
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [scrub, applySeek]);
+
+  const handleLoadedMetadata = (e) => {
+    const video = e.currentTarget;
+    video.defaultMuted = true;
+    video.muted = true;
+
+    if (scrub) {
+      video.pause();
+      const clampedProgress = Math.max(0, Math.min(1, typeof progress === 'number' ? progress : 0));
+      if (video.duration && !isNaN(video.duration)) {
+        targetTimeRef.current = clampedProgress * video.duration;
+        applySeek();
+      }
+    }
+  };
+
+  const handleSeeking = () => {
+    isSeekingRef.current = true;
+  };
+
+  const handleSeeked = () => {
+    isSeekingRef.current = false;
+    const video = videoRef.current;
+    if (video && video.duration && !isNaN(video.duration)) {
+      const target = Math.max(0, Math.min(video.duration, targetTimeRef.current));
+      if (Math.abs(video.currentTime - target) > 0.02) {
+        applySeek();
+      }
+    }
+  };
 
   const handleMouseMove = (e) => {
     if (!enableTilt) return;
@@ -104,11 +206,12 @@ export default function CharacterVisual({
             ref={videoRef}
             src={currentVideo}
             poster={currentImage}
-            autoPlay
-            loop
             muted
             playsInline
             preload="auto"
+            onLoadedMetadata={handleLoadedMetadata}
+            onSeeking={handleSeeking}
+            onSeeked={handleSeeked}
             onError={() => setVideoError(true)}
             className="w-full h-auto object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
             style={{
@@ -119,7 +222,7 @@ export default function CharacterVisual({
         ) : (
           <img
             src={currentImage}
-            alt={`Alex Morgan - ${state}`}
+            alt={`Character - ${state}`}
             className="w-full h-auto object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
             style={{
               maxHeight: aspect === 'portrait' ? '450px' : '350px',

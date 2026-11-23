@@ -62,7 +62,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
       </div>
 
       {/* Main Split Layout: Character on Left, OverThink Submission Interface on Right */}
-      <div className="relative w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left Column: Character Discovering THINK (Hopeful, Upright, Hand on Mouse) */}
         <div className="lg:col-span-5 flex justify-center">
           <div
@@ -73,6 +73,8 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
           >
             <CharacterVisual
               state="discovering"
+              progress={progress}
+              scrub={true}
               aspect="portrait"
               className="w-full"
             />

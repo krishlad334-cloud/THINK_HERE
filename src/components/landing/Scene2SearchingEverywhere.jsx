@@ -38,7 +38,7 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
       </div>
 
       {/* Main Visual Stage: Character Immersed in 3-Layer Depth Sandwich */}
-      <div className="relative w-full max-w-5xl mx-auto min-h-[480px] sm:min-h-[560px] flex items-center justify-center">
+      <div className="relative w-full max-w-6xl mx-auto min-h-[480px] sm:min-h-[560px] flex items-center justify-center">
         {/* Layer 1: Background Floating Windows (Behind the human) */}
         <FloatingWindows progress={progress} layer="back" />
 
@@ -51,6 +51,8 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
         >
           <CharacterVisual
             state="searching"
+            progress={progress}
+            scrub={true}
             aspect="portrait"
             enableTilt={true}
             className="w-full max-w-[360px] sm:max-w-[440px]"
@@ -64,7 +66,7 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
       {/* =================================================================== */}
       {/* BEFORE VS. AFTER: AI SEARCH ALONE VS. OVERTHINK HUMAN GUIDANCE      */}
       {/* =================================================================== */}
-      <div className="w-full max-w-4xl mx-auto mt-10 sm:mt-14 z-20">
+      <div className="w-full max-w-5xl mx-auto mt-10 sm:mt-14 z-20">
         <div className="text-center mb-6">
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
             Why Generic Information Leaves You Stuck

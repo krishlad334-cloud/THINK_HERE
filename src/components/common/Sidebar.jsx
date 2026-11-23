@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext';
 import UserAvatar from './UserAvatar';
 import {
   Plus,
-  PlusCircle,
   MessageSquare,
   Bookmark,
   Briefcase,
@@ -14,11 +13,7 @@ import {
   BarChart3,
   CheckCircle2,
   X,
-  LayoutGrid,
-  LogOut,
-  ChevronsUpDown,
-  Check,
-  Sparkles
+  LogOut
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -31,10 +26,7 @@ export default function Sidebar({ isOpen, onClose }) {
     startNewChat,
     openChatWithThought,
     currentUser,
-    logoutUser,
-    switchDemoUser,
-    demoUsers,
-    setIsNewThoughtModalOpen
+    logoutUser
   } = useApp();
 
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
@@ -60,12 +52,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const handleSelectThought = (thoughtId) => {
     openChatWithThought(thoughtId);
-    if (onClose) onClose();
-  };
-
-  const handleSelectDemoUser = (userId) => {
-    switchDemoUser(userId);
-    setIsAccountMenuOpen(false);
     if (onClose) onClose();
   };
 
@@ -342,20 +328,6 @@ export default function Sidebar({ isOpen, onClose }) {
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
                 Account
               </span>
-              <button
-                onClick={() => { setActiveTab('landing'); if (onClose) onClose(); }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer mb-1 ${
-                  activeTab === 'landing' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Sparkles className="w-4 h-4 text-[#16a34a]" />
-                  <span>Product Story</span>
-                </div>
-                <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">
-                  5 Scenes
-                </span>
-              </button>
               <button
                 onClick={() => { setActiveTab('settings'); if (onClose) onClose(); }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${

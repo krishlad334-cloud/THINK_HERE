@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bell, CheckCheck, Clock, MessageSquare, CheckCircle, X } from 'lucide-react';
+import { Bell, Clock, MessageSquare, CheckCircle, X } from 'lucide-react';
 import { timeAgo } from '../../utils/formatters';
 
 export default function NotificationDropdown() {
@@ -8,8 +8,7 @@ export default function NotificationDropdown() {
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
-    openChatWithThought,
-    setSelectedThoughtId
+    openChatWithThought
   } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);

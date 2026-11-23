@@ -28,9 +28,10 @@ import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
-  const { role, activeTab, setActiveTab, isAuthenticated, toast, closeToast } = useApp();
+  const { role, activeTab, setActiveTab, isAuthenticated, currentUser, toast, closeToast } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [authView, setAuthView] = useState('landing'); // 'landing' | 'auth'
+  // Default entry flow: ANYONE who opens the website is ALWAYS shown the landing page first!
+  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'auth' | 'app'
   const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'register'
 
   // Enforce strict role-based route isolation
@@ -49,26 +50,53 @@ function AppContent() {
     }
   }, [role, activeTab, isAuthenticated, setActiveTab]);
 
-  // If user is not authenticated: render animated landing page or auth page with seamless transition
-  if (!isAuthenticated) {
-    if (authView === 'auth') {
-      return (
-        <AuthPage
-          initialMode={authInitialMode}
-          onBackToLanding={() => setAuthView('landing')}
-        />
-      );
-    }
-
+  // 1. DEFAULT ENTRY VIEW: If user is on 'landing' (shown to everyone opening the site link)
+  if (currentView === 'landing') {
     return (
       <LandingPage
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onGoToApp={() => setCurrentView('app')}
         onSignIn={() => {
           setAuthInitialMode('login');
-          setAuthView('auth');
+          setCurrentView('auth');
         }}
         onStartThink={() => {
           setAuthInitialMode('register');
-          setAuthView('auth');
+          setCurrentView('auth');
+        }}
+      />
+    );
+  }
+
+  // 2. AUTHENTICATION VIEW: Sign In or Register Screen
+  if (currentView === 'auth') {
+    return (
+      <AuthPage
+        initialMode={authInitialMode}
+        onBackToLanding={() => setCurrentView('landing')}
+        onSuccess={() => setCurrentView('app')}
+      />
+    );
+  }
+
+  // 3. Fallback: If in 'app' but not authenticated, safely route to landing
+  if (!isAuthenticated) {
+    return (
+      <LandingPage
+        isAuthenticated={false}
+        currentUser={null}
+        onGoToApp={() => {
+          setAuthInitialMode('login');
+          setCurrentView('auth');
+        }}
+        onSignIn={() => {
+          setAuthInitialMode('login');
+          setCurrentView('auth');
+        }}
+        onStartThink={() => {
+          setAuthInitialMode('register');
+          setCurrentView('auth');
         }}
       />
     );
@@ -144,7 +172,10 @@ function AppContent() {
   return (
     <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
       {/* Top Header - 100% full viewport width */}
-      <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Navbar
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onGoToLanding={() => setCurrentView('landing')}
+      />
 
       {/* Main Container - 100% full width, edge-to-edge */}
       <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">

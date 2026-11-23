@@ -23,7 +23,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
+export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuccess }) {
   const {
     login,
     register,
@@ -126,6 +126,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
       if (!res.success) {
         setLoginError(res.error || 'Authentication failed. Please verify your details.');
         setLoginIsNotFound(!!res.notFound);
+      } else if (onSuccess) {
+        onSuccess();
       }
     }, 300);
   };
@@ -142,6 +144,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
       setIsLoggingIn(false);
       if (!res.success) {
         setLoginError(res.error || 'Authentication failed. Please verify your details.');
+      } else if (onSuccess) {
+        onSuccess();
       }
     }, 250);
   };
@@ -324,6 +328,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
       setIsRegistering(false);
       if (!regRes.success) {
         setRegError(regRes.error || 'Registration failed.');
+      } else if (onSuccess) {
+        onSuccess();
       }
     }, 500);
   };
@@ -427,19 +433,18 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
       <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 overflow-y-auto">
         {/* Top Navbar / Header with Mobile Brand and Mode Switcher */}
         <div className="flex items-center justify-between w-full max-w-lg mx-auto mb-6 flex-shrink-0">
-          {/* Back to Story / Landing Page button */}
+          {/* Back to Home / Landing Page button */}
           {onBackToLanding && (
             <button
               type="button"
               onClick={onBackToLanding}
               className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold text-[#004845] hover:text-white bg-white hover:bg-[#004845] border-2 border-[#004845]/20 hover:border-[#004845] shadow-[0_2px_10px_rgba(0,72,69,0.08)] hover:shadow-[0_4px_16px_rgba(0,72,69,0.22)] transition-all duration-250 mr-auto cursor-pointer select-none active:scale-95"
-              title="Return to the OverThink animated landing story"
+              title="Return to the home page"
             >
               <div className="w-5 h-5 rounded-full bg-emerald-50 group-hover:bg-white/20 flex items-center justify-center text-[#004845] group-hover:text-white transition-colors flex-shrink-0">
                 <ArrowLeft className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform duration-200" />
               </div>
-              <span className="font-extrabold tracking-tight">Back to Story</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:bg-emerald-300 animate-pulse ml-0.5" />
+              <span className="font-semibold tracking-tight">Back to Home</span>
             </button>
           )}
 
@@ -656,6 +661,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
                           type="button"
                           onClick={() => {
                             quickRegister(loginIdentifier.trim(), loginPassword, 'client');
+                            if (onSuccess) onSuccess();
                           }}
                           className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
@@ -665,6 +671,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding }) {
                           type="button"
                           onClick={() => {
                             quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
+                            if (onSuccess) onSuccess();
                           }}
                           className="py-1.5 px-2 bg-[#004845] hover:bg-[#003836] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
