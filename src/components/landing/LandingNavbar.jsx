@@ -51,17 +51,17 @@ export default function LandingNavbar({
       }`}
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 flex items-center justify-between gap-4">
-        {/* Brand Logo - Compact on mobile */}
+        {/* Brand Logo - Always shows tagline even on scroll */}
         <div
           onClick={() => handleNavClick(1)}
           className="cursor-pointer flex-shrink-0"
         >
-          {/* Logo with tagline only on desktop */}
+          {/* Logo with tagline always visible */}
           <div className="hidden sm:block">
-            <Logo size="md" showTagline={!isScrolled} />
+            <Logo size="md" showTagline={true} />
           </div>
           <div className="sm:hidden">
-            <Logo size="sm" showTagline={false} />
+            <Logo size="sm" showTagline={true} />
           </div>
         </div>
 
