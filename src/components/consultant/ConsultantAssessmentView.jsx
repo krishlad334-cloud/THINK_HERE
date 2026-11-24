@@ -322,11 +322,11 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 border border-cyan-200 flex-shrink-0">
-                    Consultant Exam
+                    Mandatory Consultant Exam
                   </span>
                   <span className="hidden md:inline text-xs text-slate-400">•</span>
                   <span className="hidden md:inline text-xs font-semibold text-slate-700 truncate">
-                    Role Qualification & Skills Verification
+                    Skills Qualification (Mandatory for all consultants • Score ≥ 10/15 to unlock portal)
                   </span>
                 </div>
               </div>
@@ -337,8 +337,8 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               {/* Passing Requirement Badge */}
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#ecfeff] text-[#020617] border border-[#0891b2]/30">
                 <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
-                <span className="hidden sm:inline">Pass Criteria:</span>
-                <span className="font-extrabold text-[#0891b2]">10 / 15 Right</span>
+                <span className="hidden sm:inline">Requirement:</span>
+                <span className="font-extrabold text-[#0891b2]">10 / 15 Right (Mandatory)</span>
               </div>
 
               {/* Questions Counter Badge */}
@@ -369,15 +369,15 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    Consultant Skills & Qualification Exam
+                    Mandatory Consultant Qualification Exam
                   </h1>
                   {currentUser?.assessmentPassed ? (
                     <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
-                      Qualified (Passed)
+                      Qualified & Passed
                     </span>
                   ) : (
-                    <span className="text-[10px] bg-cyan-50 text-cyan-800 border border-cyan-200 px-2 py-0.5 rounded-full font-bold">
-                      Required (≥10 to pass)
+                    <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                      Mandatory (Must score ≥ 10/15)
                     </span>
                   )}
                 </div>

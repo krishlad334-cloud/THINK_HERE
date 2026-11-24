@@ -270,8 +270,8 @@ export default function Sidebar({ isOpen, onClose }) {
                         Passed
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-cyan-50 text-cyan-800 border border-cyan-200 px-1.5 py-0.5 rounded-full font-bold">
-                        Required
+                      <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded-full font-bold">
+                        Mandatory
                       </span>
                     )}
                   </button>
