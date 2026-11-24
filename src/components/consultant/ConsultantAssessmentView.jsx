@@ -472,21 +472,22 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   <span className="text-xs font-bold text-slate-500">
                     <strong className="text-slate-900">{answeredCount}</strong> of {totalQuestions} Answered
                   </span>
-                  <span className="text-xs font-black text-[#0891b2] bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
-                    {progressPercent}%
+                  <span className="text-xs font-black text-[#0891b2] bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200/70">
+                    {progressPercent}% Complete
                   </span>
                 </div>
               </div>
 
               {/* Progress Line Bar inside Navigator */}
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#0891b2] to-[#22d3ee] rounded-full transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-[#0891b2] via-[#06b6d4] to-[#22d3ee] rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-1">
+              {/* Full-width Responsive 15-Column Question Grid */}
+              <div className="grid grid-cols-5 sm:grid-cols-8 lg:[grid-template-columns:repeat(15,minmax(0,1fr))] gap-2 w-full pt-1">
                 {CONSULTANT_QUESTIONS.map((q, idx) => {
                   const isAnswered = !!answers[q.id];
                   const isCurrent = idx === currentIndex;
@@ -495,16 +496,23 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                       key={q.id}
                       type="button"
                       onClick={() => setCurrentIndex(idx)}
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center ${
+                      className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
                         isCurrent
-                          ? 'bg-[#020617] text-white ring-2 ring-[#0891b2] shadow-sm scale-105 font-black'
+                          ? 'bg-[#020617] text-white ring-2 ring-[#0891b2] shadow-md scale-105 font-black z-10'
                           : isAnswered
                           ? 'bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/40 font-black hover:bg-cyan-100'
                           : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                       }`}
-                      title={`Go to Question ${idx + 1}`}
+                      title={`Question ${idx + 1}: ${q.category}`}
                     >
-                      {idx + 1}
+                      <span className="leading-none">{idx + 1}</span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        isCurrent
+                          ? 'bg-[#22d3ee]'
+                          : isAnswered
+                          ? 'bg-[#0891b2]'
+                          : 'bg-slate-300'
+                      }`} />
                     </button>
                   );
                 })}
@@ -517,27 +525,31 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 type="button"
                 disabled={currentIndex === 0}
                 onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
+                className="px-6 py-3 rounded-2xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-all shadow-2xs active:scale-98"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <span>Previous Question</span>
               </button>
+
+              <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-500">
+                <span>Question <strong className="text-slate-900 font-black">{currentIndex + 1}</strong> of {totalQuestions}</span>
+              </div>
 
               <div className="flex items-center gap-2 sm:gap-3">
                 {currentIndex < totalQuestions - 1 ? (
                   <button
                     type="button"
                     onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
+                    className="px-8 py-3 rounded-2xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
                   >
-                    <span>Next</span>
+                    <span>Next Question</span>
                     <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setShowReviewModal(true)}
-                    className="px-6 sm:px-9 py-2.5 sm:py-3 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
+                    className="px-8 py-3 rounded-2xl bg-gradient-to-r from-[#0891b2] to-[#0e7490] hover:from-[#0e7490] hover:to-[#155e75] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Submit & Finish Exam</span>
                     <CheckCircle2 className="w-4 h-4 text-white" />
