@@ -77,9 +77,7 @@ function AppContent() {
         initialMode={authInitialMode}
         onBackToLanding={() => setCurrentView('landing')}
         onSuccess={(userObj, isNewRegistration) => {
-          const targetRole = userObj?.role || role;
-          const hasPassed = userObj?.assessmentPassed;
-          if (targetRole === 'consultant' && !hasPassed) {
+          if (isNewRegistration && (userObj?.role === 'consultant' || role === 'consultant')) {
             setCurrentView('consultant_test');
           } else {
             setCurrentView('app');
@@ -168,16 +166,6 @@ function AppContent() {
 
     // Consultant Panel
     if (role === 'consultant') {
-      // Mandatory Exam Enforcement: Consultant MUST score >= 10 on the assessment to unlock client thoughts & features
-      if (!currentUser?.assessmentPassed) {
-        return (
-          <ConsultantAssessmentView
-            isStandalone={false}
-            onComplete={() => setActiveTab('browse_thoughts')}
-          />
-        );
-      }
-
       switch (activeTab) {
         case 'browse_thoughts':
           return <BrowseClientThoughts />;
