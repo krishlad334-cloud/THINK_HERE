@@ -313,54 +313,51 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
       {/* 1. TOP RESPONSIVE HEADER BAR (STANDALONE POST-REGISTRATION MODE)    */}
       {/* =================================================================== */}
       {isStandalone ? (
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs py-3 px-4 sm:px-8 lg:px-12 w-full">
-          <div className="w-full flex items-center justify-between gap-3 sm:gap-6">
-            {/* Logo & Title */}
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <Logo size="sm" showTagline={false} />
-              <div className="hidden sm:block h-6 w-px bg-slate-200" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 border border-cyan-200 flex-shrink-0">
-                    Mandatory Consultant Exam
-                  </span>
-                  <span className="hidden md:inline text-xs text-slate-400">•</span>
-                  <span className="hidden md:inline text-xs font-semibold text-slate-700 truncate">
-                    Skills Qualification (Mandatory for all consultants • Score ≥ 10/15 to unlock portal)
-                  </span>
-                </div>
+        <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-16 px-4 sm:px-8 lg:px-12 w-full flex items-center justify-between gap-4">
+          {/* Logo & Title */}
+          <div className="flex items-center gap-3 min-w-0">
+            <Logo size="sm" showTagline={false} />
+            <div className="hidden sm:block h-5 w-px bg-slate-200 mx-0.5" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-900 border border-cyan-200 flex-shrink-0">
+                  Mandatory Exam
+                </span>
+                <span className="hidden md:inline text-xs font-bold text-slate-800 truncate">
+                  Consultant Skills & Qualification
+                </span>
               </div>
             </div>
+          </div>
 
-            {/* Right: Passing criteria requirement & Progress */}
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              {/* Passing Requirement Badge */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#ecfeff] text-[#020617] border border-[#0891b2]/30">
-                <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
-                <span className="hidden sm:inline">Requirement:</span>
-                <span className="font-extrabold text-[#0891b2]">10 / 15 Right (Mandatory)</span>
-              </div>
+          {/* Right: Passing criteria requirement & Progress */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            {/* Passing Requirement Badge */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#ecfeff] text-[#020617] border border-[#0891b2]/30 shadow-2xs">
+              <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
+              <span className="hidden sm:inline text-slate-600 font-semibold">Requirement:</span>
+              <span className="font-extrabold text-[#0891b2]">10 / 15 Right</span>
+            </div>
 
-              {/* Questions Counter Badge */}
-              <div className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                <span className="text-slate-500 font-semibold hidden sm:inline">Answered: </span>
-                <span className="text-[#0891b2] font-black">{answeredCount}</span>
-                <span className="text-slate-400">/{totalQuestions}</span>
-              </div>
+            {/* Questions Counter Badge */}
+            <div className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1">
+              <span className="text-slate-500 font-medium hidden sm:inline">Answered:</span>
+              <span className="text-[#0891b2] font-black">{answeredCount}</span>
+              <span className="text-slate-400">/{totalQuestions}</span>
             </div>
           </div>
         </header>
       ) : (
         /* Top Banner Card for In-App Dashboard Tab */
-        <div className="w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-2 pb-4">
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-2 pb-2">
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
                 <GraduationCap className="w-6 h-6 text-[#0891b2]" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
                     Mandatory Consultant Qualification Exam
                   </h1>
                   {currentUser?.assessmentPassed ? (
@@ -369,7 +366,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                     </span>
                   ) : (
                     <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
-                      Mandatory (Must score ≥ 10/15)
+                      Mandatory (Score ≥ 10/15)
                     </span>
                   )}
                 </div>
@@ -396,61 +393,61 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
       {/* =================================================================== */}
       {/* 2. MAIN ASSESSMENT CANVAS - FULL WIDTH MATCHING ALL PAGES           */}
       {/* =================================================================== */}
-      <main className="flex-1 w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex flex-col justify-start space-y-6">
+      <main className="flex-1 w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-5 sm:py-6 flex flex-col justify-start space-y-6">
         {!isSubmitted ? (
           /* ================================================================= */
           /* QUESTION IN PROGRESS SCREEN                                        */
           /* ================================================================= */
           <div className="w-full space-y-5 animate-in fade-in duration-300">
             {/* Question Progress Meta Strip */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-slate-200/80">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-xl bg-[#020617] text-white text-xs font-black">
+                <span className="px-3 py-1 rounded-xl bg-[#020617] text-white text-xs font-black shadow-2xs">
                   Question {currentIndex + 1} of {totalQuestions}
                 </span>
-                <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
+                <span className="text-xs font-bold text-cyan-900 bg-cyan-50 px-3 py-1 rounded-xl border border-cyan-200/80">
                   {currentQ.category}
                 </span>
               </div>
               <div className="text-xs text-slate-500 font-medium">
-                Core Competency: <strong className="text-slate-900 font-bold">{currentQ.competency}</strong>
+                Core Competency: <strong className="text-slate-900 font-bold ml-1">{currentQ.competency}</strong>
               </div>
             </div>
 
             {/* Question Prompt Card */}
-            <div className="w-full bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-sm space-y-6">
-              <h2 className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-slate-900 leading-snug tracking-tight">
+            <div className="w-full bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-6">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 leading-snug tracking-tight">
                 {currentQ.question}
               </h2>
 
               {/* 4 Interactive Option Cards */}
-              <div className="space-y-3.5">
+              <div className="space-y-3">
                 {currentQ.options.map((opt) => {
                   const isSelected = answers[currentQ.id] === opt.id;
                   return (
                     <div
                       key={opt.id}
                       onClick={() => handleSelectOption(opt.id)}
-                      className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-4 group select-none ${
+                      className={`p-4 sm:p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-start gap-4 group select-none ${
                         isSelected
-                          ? 'border-[#0891b2] bg-[#ecfeff]/60 shadow-sm ring-2 ring-[#0891b2]/15'
-                          : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/70'
+                          ? 'border-[#0891b2] bg-[#ecfeff]/70 shadow-xs ring-4 ring-[#0891b2]/10 scale-[1.003]'
+                          : 'border-slate-200/80 bg-white hover:border-[#0891b2]/40 hover:bg-slate-50/70 shadow-2xs'
                       }`}
                     >
                       {/* Option Letter Indicator */}
                       <div
-                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black flex-shrink-0 transition-colors ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black flex-shrink-0 transition-all ${
                           isSelected
-                            ? 'bg-[#0891b2] text-white shadow-xs'
-                            : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
+                            ? 'bg-[#0891b2] text-white shadow-md shadow-[#0891b2]/25'
+                            : 'bg-slate-100 text-slate-700 group-hover:bg-[#ecfeff] group-hover:text-[#0891b2]'
                         }`}
                       >
                         {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : opt.id}
                       </div>
 
                       {/* Option Text */}
-                      <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-1 font-medium ${
-                        isSelected ? 'text-slate-950 font-bold' : 'text-slate-700'
+                      <p className={`text-xs sm:text-sm md:text-[15px] leading-relaxed mt-1 font-medium transition-colors ${
+                        isSelected ? 'text-slate-950 font-bold' : 'text-slate-700 group-hover:text-slate-900'
                       }`}>
                         {opt.text}
                       </p>
@@ -461,21 +458,35 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
             </div>
 
             {/* Question Quick Jump Bar (1 to 15) */}
-            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+            <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
-                    Question Palette
+                    Question Navigator
                   </span>
-                  <span className="text-[11px] font-bold text-[#0891b2] bg-[#ecfeff] px-2 py-0.5 rounded-full border border-[#0891b2]/30">
+                  <span className="text-[11px] font-bold text-[#0891b2] bg-[#ecfeff] px-2.5 py-0.5 rounded-full border border-[#0891b2]/30">
                     Must get ≥ 10 right to pass
                   </span>
                 </div>
-                <span className="text-xs font-bold text-slate-500">
-                  <strong className="text-slate-900">{answeredCount}</strong> of {totalQuestions} Answered
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-slate-500">
+                    <strong className="text-slate-900">{answeredCount}</strong> of {totalQuestions} Answered
+                  </span>
+                  <span className="text-xs font-black text-[#0891b2] bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                    {progressPercent}%
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+
+              {/* Progress Line Bar inside Navigator */}
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#0891b2] to-[#22d3ee] rounded-full transition-all duration-300"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-1">
                 {CONSULTANT_QUESTIONS.map((q, idx) => {
                   const isAnswered = !!answers[q.id];
                   const isCurrent = idx === currentIndex;
@@ -486,10 +497,10 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                       onClick={() => setCurrentIndex(idx)}
                       className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center ${
                         isCurrent
-                          ? 'bg-[#020617] text-white ring-2 ring-cyan-400 shadow-xs scale-105'
+                          ? 'bg-[#020617] text-white ring-2 ring-[#0891b2] shadow-sm scale-105 font-black'
                           : isAnswered
-                          ? 'bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/40 font-black'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200/60'
+                          ? 'bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/40 font-black hover:bg-cyan-100'
+                          : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                       }`}
                       title={`Go to Question ${idx + 1}`}
                     >
@@ -501,7 +512,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
             </div>
 
             {/* Bottom Actions: Previous, Next & Submit */}
-            <div className="w-full flex items-center justify-between gap-4 pt-2">
+            <div className="w-full flex items-center justify-between gap-4 pt-1">
               <button
                 type="button"
                 disabled={currentIndex === 0}
@@ -517,7 +528,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   <button
                     type="button"
                     onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Next</span>
                     <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
