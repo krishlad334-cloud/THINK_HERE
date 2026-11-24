@@ -400,7 +400,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
           /* ================================================================= */
           <div className="w-full space-y-5 animate-in fade-in duration-300">
             {/* Question Progress Meta Strip */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-slate-200/80">
+            <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-200/80">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-3 py-1 rounded-xl bg-[#020617] text-white text-xs font-black shadow-2xs">
                   Question {currentIndex + 1} of {totalQuestions}
@@ -409,8 +409,10 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   {currentQ.category}
                 </span>
               </div>
-              <div className="text-xs text-slate-500 font-medium">
-                Core Competency: <strong className="text-slate-900 font-bold ml-1">{currentQ.competency}</strong>
+              <div className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200/80">
+                <span className="text-slate-400 font-normal hidden sm:inline">Progress: </span>
+                <span className="text-[#0891b2] font-black">{answeredCount}</span>
+                <span className="text-slate-400">/{totalQuestions}</span>
               </div>
             </div>
 
@@ -457,58 +459,65 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               </div>
             </div>
 
-            {/* Simple, Clean Pagination Controls */}
-            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-              {/* Previous Button */}
-              <button
-                type="button"
-                disabled={currentIndex === 0}
-                onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-2xs active:scale-98"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Previous</span>
-              </button>
-
-              {/* Simple Center Question Counter & Slim Progress */}
-              <div className="flex flex-col items-center gap-1.5 text-center">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-500">Question</span>
-                  <span className="px-2.5 py-0.5 rounded-lg bg-[#020617] text-white text-xs font-black">
-                    {currentIndex + 1}
-                  </span>
-                  <span className="text-xs font-bold text-slate-400">of {totalQuestions}</span>
+            {/* Simple, Mobile-Responsive Navigation Bar */}
+            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs space-y-3.5">
+              {/* Question Count and Progress Bar */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-bold text-slate-500">Question</span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#020617] text-white text-xs font-black">
+                      {currentIndex + 1}
+                    </span>
+                    <span className="font-semibold text-slate-400">of {totalQuestions}</span>
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-semibold text-slate-500">
+                    <span className="text-[#0891b2] font-black">{answeredCount}</span>
+                    <span className="text-slate-400">/{totalQuestions} Answered</span>
+                    <span className="hidden sm:inline text-slate-400"> • </span>
+                    <span className="hidden sm:inline text-[#0891b2] font-bold">10+ needed to pass</span>
+                  </div>
                 </div>
-                <div className="w-40 sm:w-56 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+
+                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-[#0891b2] to-[#22d3ee] rounded-full transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500">
-                  {answeredCount} of {totalQuestions} Answered • Pass requires 10+ right
-                </span>
               </div>
 
-              {/* Next / Submit Button */}
-              <div className="w-full sm:w-auto">
+              {/* Action Buttons: Clean 2-column balanced grid on mobile and desktop */}
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                {/* Previous Button */}
+                <button
+                  type="button"
+                  disabled={currentIndex === 0}
+                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                  className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-35 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-2xs active:scale-98"
+                >
+                  <ArrowLeft className="w-4 h-4 flex-shrink-0" />
+                  <span>Previous</span>
+                </button>
+
+                {/* Next / Submit Button */}
                 {currentIndex < totalQuestions - 1 ? (
                   <button
                     type="button"
                     onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
+                    className="w-full py-3 sm:py-3.5 px-4 sm:px-7 rounded-xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all active:scale-98"
                   >
-                    <span>Next Question</span>
-                    <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
+                    <span>Next</span>
+                    <ArrowRight className="w-4 h-4 text-[#22d3ee] flex-shrink-0" />
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setShowReviewModal(true)}
-                    className="w-full sm:w-auto px-7 py-2.5 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
+                    className="w-full py-3 sm:py-3.5 px-4 sm:px-7 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all active:scale-98"
                   >
-                    <span>Submit & Finish Exam</span>
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>Submit Exam</span>
+                    <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
                   </button>
                 )}
               </div>
