@@ -10,6 +10,8 @@ import {
   acceptThink as storageAcceptThink,
   getConversations,
   sendMessage as storageSendMessage,
+  deleteMessage as storageDeleteMessage,
+  clearChatMessages as storageClearChatMessages,
   markMessagesAsRead as storageMarkMessagesRead,
   getNotifications,
   markNotificationRead as storageMarkNotifRead,
@@ -108,8 +110,8 @@ export function AppProvider({ children }) {
   const [mutedThoughtIds, setMutedThoughtIds] = useState([]);
 
   // Mock companion states for secondary views
-  const [consultants] = useState(MOCK_CONSULTANTS);
-  const [jobs] = useState(INITIAL_JOBS);
+  const [consultants, setConsultants] = useState(MOCK_CONSULTANTS);
+  const [jobs, setJobs] = useState(INITIAL_JOBS);
   const [auditLogs] = useState(INITIAL_AUDIT_LOGS);
 
   // Synchronize state when storage changes (Cross-Tab via 'storage', Same-Tab via 'think_storage_updated')
@@ -314,6 +316,67 @@ export function AppProvider({ children }) {
 
   // Legacy alias
   const sendMessage = (targetId, text, attachments = []) => sendChatMessage(targetId, text, attachments);
+
+  const deleteMessage = (messageId) => {
+    const success = storageDeleteMessage(messageId);
+    if (success) {
+      reloadFromStorage();
+      showToast('Message Deleted', 'Message removed from consultation.', 'info');
+    }
+  };
+
+  const clearChat = (targetId) => {
+    const success = storageClearChatMessages(targetId);
+    if (success) {
+      reloadFromStorage();
+      showToast('Chat Cleared', 'All messages cleared from consultation.', 'info');
+    }
+  };
+
+  const submitSolution = (thoughtId, solutionData) => {
+    const updated = storageUpdateThink(thoughtId, {
+      status: 'resolved',
+      solution: {
+        ...solutionData,
+        submittedAt: new Date().toISOString(),
+        consultantId: activeUser?.id,
+        consultantName: activeUser?.name
+      }
+    });
+    reloadFromStorage();
+    showToast('Solution Proposal Submitted!', 'Your structured solution has been delivered to the client.', 'success');
+    return updated;
+  };
+
+  const triggerAIFallback = (thoughtId) => {
+    const target = (thinks || []).find(t => t.id === thoughtId);
+    if (!target) return;
+    const aiAnalysis = analyzeThought(target.title, target.description);
+    const updated = storageUpdateThink(thoughtId, {
+      status: 'ai_fallback',
+      aiResponse: aiAnalysis.summary || 'Automated diagnostic analysis complete.',
+      aiDiagnosticPlan: aiAnalysis.actionChecklist || []
+    });
+    reloadFromStorage();
+    showToast('AI Triage Triggered', `Generated automated response for #${thoughtId}`, 'info');
+    return updated;
+  };
+
+  const toggleSaveJob = (jobId) => {
+    setJobs(prev => prev.map(j => j.id === jobId ? { ...j, isSaved: !j.isSaved } : j));
+    showToast('Job Saved', 'Job listing updated in your saved items.', 'info');
+  };
+
+  const applyJob = (jobId) => {
+    setJobs(prev => prev.map(j => j.id === jobId ? { ...j, isApplied: true, applicantsCount: (j.applicantsCount || 0) + 1 } : j));
+    showToast('Application Submitted', 'Your application has been delivered to the hiring team.', 'success');
+  };
+
+  const setConsultantVerification = (consultantId, status) => {
+    const isApproved = status === 'approved';
+    setConsultants(prev => prev.map(c => c.id === consultantId ? { ...c, isVerified: isApproved } : c));
+    showToast('Verification Updated', `Consultant credentials ${isApproved ? 'approved' : 'revoked'}.`, 'info');
+  };
 
   const markConversationRead = (conversationId) => {
     storageMarkMessagesRead(conversationId, activeUser.id);
@@ -553,6 +616,13 @@ export function AppProvider({ children }) {
     updateThinkStatus,
     sendChatMessage,
     sendMessage,
+    deleteMessage,
+    clearChat,
+    submitSolution,
+    triggerAIFallback,
+    toggleSaveJob,
+    applyJob,
+    setConsultantVerification,
     markConversationRead,
     markNotificationRead,
     markAllNotificationsRead,

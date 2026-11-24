@@ -56,8 +56,9 @@ export default function ChatWorkspace() {
 
   const allThinks = thinks || thoughts || [];
 
-  // Filter conversations strictly for the active demo user (security/isolation requirement)
+  // Filter conversations strictly for the active user (security/isolation requirement)
   const myConversations = conversations.filter(c => {
+    if (!activeUser) return false;
     if (activeUser.role === 'client') {
       return c.clientId === activeUser.id;
     } else {
@@ -221,19 +222,19 @@ export default function ChatWorkspace() {
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900">
-              {activeUser.role === 'consultant'
+              {activeUser?.role === 'consultant'
                 ? 'No Active Consultations Yet'
                 : 'No Consultation Conversations'}
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
-              {activeUser.role === 'consultant'
-                ? `You are signed in as ${activeUser.label}. Head to Available OverThinks to accept client submissions and start consultation rooms.`
+              {activeUser?.role === 'consultant'
+                ? `You are signed in as ${activeUser?.label || activeUser?.name || 'Consultant'}. Head to Available OverThinks to accept client submissions and start consultation rooms.`
                 : 'Submit an OverThink to start. Once a verified consultant accepts your OverThink, your private 1-on-1 consultation chat will appear here.'}
             </p>
           </div>
 
           <div className="pt-2">
-            {activeUser.role === 'consultant' ? (
+            {activeUser?.role === 'consultant' ? (
               <button
                 onClick={() => setActiveTab('browse_thoughts')}
                 className="px-5 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs cursor-pointer"
@@ -859,9 +860,9 @@ export default function ChatWorkspace() {
                       className="flex items-start gap-2.5 sm:gap-3 max-w-md sm:max-w-lg lg:max-w-xl ml-auto flex-row-reverse group relative"
                     >
                       <UserAvatar
-                        src={msg.senderAvatar || activeUser.profileImage || activeUser.avatar}
-                        name={msg.senderName || activeUser.name}
-                        role={activeUser.role}
+                        src={msg.senderAvatar || activeUser?.profileImage || activeUser?.avatar}
+                        name={msg.senderName || activeUser?.name}
+                        role={activeUser?.role}
                         size="sm"
                         className="ring-2 ring-white shadow-xs mt-0.5"
                       />

@@ -3,18 +3,12 @@ import { useApp } from '../../context/AppContext';
 import Logo from '../common/Logo';
 import {
   CheckCircle2,
-  XCircle,
-  Award,
   ShieldCheck,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
   AlertCircle,
   Check,
-  ChevronRight,
-  HelpCircle,
-  BookOpen,
-  Briefcase,
   GraduationCap
 } from 'lucide-react';
 
@@ -303,7 +297,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
   };
 
   const isPassed = isSubmitted && score >= PASSING_THRESHOLD;
-  const passPercentage = Math.round((score / totalQuestions) * 100);
 
   return (
     <div className={`w-full text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-cyan-500/20 selection:text-cyan-950 ${

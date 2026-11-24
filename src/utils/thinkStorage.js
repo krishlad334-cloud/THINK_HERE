@@ -540,6 +540,46 @@ export function markMessagesAsRead(conversationId, readerId) {
   }
 }
 
+export function deleteMessage(messageId) {
+  const convs = getConversations();
+  let found = false;
+  const updated = convs.map(c => {
+    if ((c.messages || []).some(m => m.id === messageId)) {
+      found = true;
+      return {
+        ...c,
+        messages: c.messages.filter(m => m.id !== messageId)
+      };
+    }
+    return c;
+  });
+  if (found) {
+    safeSetItem(STORAGE_KEYS.CONVERSATIONS, updated);
+    return true;
+  }
+  return false;
+}
+
+export function clearChatMessages(targetId) {
+  const convs = getConversations();
+  let found = false;
+  const updated = convs.map(c => {
+    if (c.id === targetId || c.thinkId === targetId) {
+      found = true;
+      return {
+        ...c,
+        messages: []
+      };
+    }
+    return c;
+  });
+  if (found) {
+    safeSetItem(STORAGE_KEYS.CONVERSATIONS, updated);
+    return true;
+  }
+  return false;
+}
+
 // -------------------------------------------------------------
 // NOTIFICATIONS MANAGEMENT
 // -------------------------------------------------------------

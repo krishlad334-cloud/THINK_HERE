@@ -25,7 +25,7 @@ export default function MyConsultations() {
   const allThinks = thinks || thoughts || [];
 
   const myConsultations = allThinks.filter(t =>
-    t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id
+    activeUser?.id && (t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id)
   );
 
   const handleStartCall = (thought) => {
@@ -85,14 +85,14 @@ export default function MyConsultations() {
           <span>My Active Consultations</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Manage claimed client engagements, delivery roadmaps, and real-time calling sessions for {activeUser.name}
+          Manage claimed client engagements, delivery roadmaps, and real-time calling sessions for {activeUser?.name || 'Consultant'}
         </p>
       </div>
 
       {myConsultations.length === 0 ? (
         <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center">
           <FolderKanban className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-sm font-bold text-slate-800">No active consultations assigned to {activeUser.name}</h3>
+          <h3 className="text-sm font-bold text-slate-800">No active consultations assigned to {activeUser?.name || 'Consultant'}</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Head to the problem discovery feed to browse incoming thoughts and claim ownership.
           </p>

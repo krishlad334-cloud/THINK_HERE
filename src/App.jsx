@@ -25,6 +25,12 @@ import ConsultantProfileView from './components/consultant/ConsultantProfileView
 import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
 import ConsultantAssessmentView from './components/consultant/ConsultantAssessmentView';
 
+// Admin Views
+import AdminDashboard from './components/admin/AdminDashboard';
+import UserManagement from './components/admin/UserManagement';
+import DisputeAndLogs from './components/admin/DisputeAndLogs';
+import ThoughtFeedModeration from './components/admin/ThoughtFeedModeration';
+
 // Shared Chat & Consultation Room
 import ChatWorkspace from './components/chat/ChatWorkspace';
 

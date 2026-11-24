@@ -61,7 +61,7 @@ export default function ConsultantAnalytics() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Total Revenue</span>
-          <p className="text-3xl font-black text-slate-900 mt-1.5">${(consultantUser.earningsTotal || 34500).toLocaleString()}</p>
+          <p className="text-3xl font-black text-slate-900 mt-1.5">${(consultantUser?.earningsTotal || 34500).toLocaleString()}</p>
           <span className="text-xs text-[#0891b2] font-bold flex items-center gap-1 mt-2">
             <TrendingUp className="w-3.5 h-3.5" /> +18.4% vs last quarter
           </span>
@@ -77,9 +77,9 @@ export default function ConsultantAnalytics() {
 
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Client Satisfaction</span>
-          <p className="text-3xl font-black text-slate-900 mt-1.5">{consultantUser.rating || 4.98} <span className="text-base text-slate-400 font-semibold">/ 5.0</span></p>
+          <p className="text-3xl font-black text-slate-900 mt-1.5">{consultantUser?.rating || 4.98} <span className="text-base text-slate-400 font-semibold">/ 5.0</span></p>
           <span className="text-xs text-amber-600 font-semibold mt-2 flex items-center gap-1">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> {consultantUser.reviewsCount || 142} verified reviews
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> {consultantUser?.reviewsCount || 142} verified reviews
           </span>
         </div>
 

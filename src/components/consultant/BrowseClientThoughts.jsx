@@ -55,7 +55,7 @@ export default function BrowseClientThoughts() {
     } else if (filterStatus === 'Closed') {
       if (t.status !== 'closed') return false;
     } else if (filterStatus === 'My Accepted') {
-      if (t.consultantId !== activeUser.id && t.assignedConsultantId !== activeUser.id) return false;
+      if (t.consultantId !== activeUser?.id && t.assignedConsultantId !== activeUser?.id) return false;
     }
 
     if (searchQuery) {
@@ -255,7 +255,7 @@ export default function BrowseClientThoughts() {
           ) : (
             filtered.map((thought) => {
               const assignedConsId = thought.consultantId || thought.assignedConsultantId;
-              const isClaimedByMe = assignedConsId === activeUser.id;
+              const isClaimedByMe = activeUser?.id && assignedConsId === activeUser.id;
               const isPending = thought.status === 'pending' || thought.status === 'pending_human';
 
               return (
@@ -384,8 +384,8 @@ export default function BrowseClientThoughts() {
           <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xs">
             <div className="flex items-center gap-3">
               <UserAvatar
-                src={activeUser.profileImage || activeUser.avatar}
-                name={activeUser.name}
+                src={activeUser?.profileImage || activeUser?.avatar}
+                name={activeUser?.name || 'Consultant'}
                 role="consultant"
                 size="lg"
                 rounded="2xl"
@@ -393,23 +393,23 @@ export default function BrowseClientThoughts() {
               />
               <div>
                 <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                  {activeUser.name}
+                  {activeUser?.name || 'Verified Consultant'}
                   <ShieldCheck className="w-3.5 h-3.5 text-[#0891b2]" />
                 </h4>
-                <p className="text-[10px] text-slate-400">{activeUser.label}</p>
-                <span className="text-xs font-black text-slate-800">${activeUser.hourlyRate || 150}/hr</span>
+                <p className="text-[10px] text-slate-400">{activeUser?.label || 'Consultant'}</p>
+                <span className="text-xs font-black text-slate-800">${activeUser?.hourlyRate || 150}/hr</span>
               </div>
             </div>
 
             <div className="p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100 text-xs">
               <div className="flex justify-between text-slate-600">
                 <span>Client Rating:</span>
-                <span className="font-bold text-amber-600">★ {activeUser.rating || '4.98'}</span>
+                <span className="font-bold text-amber-600">★ {activeUser?.rating || '4.98'}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>My Active Consultations:</span>
                 <span className="font-bold text-[#0891b2]">
-                  {allThinks.filter(t => (t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id)).length}
+                  {allThinks.filter(t => activeUser?.id && (t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id)).length}
                 </span>
               </div>
             </div>

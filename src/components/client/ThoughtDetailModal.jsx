@@ -66,7 +66,7 @@ export default function ThoughtDetailModal() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {activeUser.role === 'consultant' && isPending && (
+            {activeUser?.role === 'consultant' && isPending && (
               <button
                 onClick={() => {
                   acceptThink(thought.id);

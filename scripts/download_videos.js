@@ -1,6 +1,5 @@
 import https from 'https';
 import fs from 'fs';
-import path from 'path';
 
 const videos = [
   { id: '5601', dest: 'public/scene1_overthinking.mp4', name: 'Scene 1: Overthinking' },

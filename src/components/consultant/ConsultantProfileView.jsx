@@ -22,13 +22,13 @@ export default function ConsultantProfileView() {
   const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [headline, setHeadline] = useState(consultantUser.title || '');
-  const [bio, setBio] = useState(consultantUser.bio || '');
-  const [hourlyRate, setHourlyRate] = useState(consultantUser.hourlyRate || 150);
-  const [location, setLocation] = useState(consultantUser.location || '');
-  const [avatar, setAvatar] = useState(consultantUser.avatar || consultantUser.profileImage || '');
+  const [headline, setHeadline] = useState(consultantUser?.title || '');
+  const [bio, setBio] = useState(consultantUser?.bio || '');
+  const [hourlyRate, setHourlyRate] = useState(consultantUser?.hourlyRate || 150);
+  const [location, setLocation] = useState(consultantUser?.location || '');
+  const [avatar, setAvatar] = useState(consultantUser?.avatar || consultantUser?.profileImage || '');
   const [newSkill, setNewSkill] = useState('');
-  const [skills, setSkills] = useState(consultantUser.skills || []);
+  const [skills, setSkills] = useState(consultantUser?.skills || []);
 
   const prevUserIdRef = useRef(consultantUser?.id);
   useEffect(() => {
