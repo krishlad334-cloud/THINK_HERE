@@ -8,7 +8,8 @@ import {
   CheckCircle,
   PlusCircle,
   Search,
-  Lock
+  Lock,
+  X
 } from 'lucide-react';
 
 export default function MyThoughtsView() {
@@ -47,12 +48,15 @@ export default function MyThoughtsView() {
     }
 
     if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      const matchId = t.id.toLowerCase().includes(q);
-      const matchTitle = t.title.toLowerCase().includes(q);
+      const q = searchQuery.toLowerCase().trim();
+      const matchId = t.id?.toLowerCase().includes(q);
+      const matchTitle = t.title?.toLowerCase().includes(q);
       const matchDesc = t.description?.toLowerCase().includes(q);
-      const matchCat = t.category.toLowerCase().includes(q);
-      if (!matchId && !matchTitle && !matchDesc && !matchCat) return false;
+      const matchCat = t.category?.toLowerCase().includes(q);
+      const matchStatus = t.status?.toLowerCase().includes(q);
+      const matchCons = t.assignedConsultantName?.toLowerCase().includes(q);
+      const matchUrgency = t.urgency?.toLowerCase().includes(q);
+      if (!matchId && !matchTitle && !matchDesc && !matchCat && !matchStatus && !matchCons && !matchUrgency) return false;
     }
 
     return true;
@@ -128,51 +132,105 @@ export default function MyThoughtsView() {
       </div>
 
       {/* Search & Category Filter Ribbon */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                activeCategory === cat
-                  ? 'bg-[#020617] text-white shadow-xs'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      <div className="space-y-3.5">
+        {/* Full-width Responsive Search Bar */}
+        <div className="relative w-full">
+          <div className="relative flex items-center">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3.5 sm:left-4 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search your thoughts, roadmaps & questions by title, keyword, category, or #ID..."
+              className="w-full pl-10 sm:pl-12 pr-10 py-2.5 sm:py-3.5 bg-white border border-slate-200/90 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all font-medium"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                title="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative min-w-[240px]">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search problems, #id..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] font-medium"
-          />
+        {/* Category Pills & Live Count Ribbon */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          {/* Horizontal Scrolling Category Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 sm:pb-0 scrollbar-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  activeCategory === cat
+                    ? 'bg-[#020617] text-white shadow-xs'
+                    : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/90'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Results Count & Clear Filter Indicator */}
+          <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-slate-500 font-medium px-1 sm:px-0 flex-shrink-0">
+            <span>
+              Showing <strong className="text-slate-900 font-bold">{filtered.length}</strong> of {myThinks.length} thoughts
+            </span>
+            {(searchQuery || activeCategory !== 'All') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setActiveCategory('All');
+                }}
+                className="text-[#0891b2] hover:text-[#0e7490] font-bold text-xs underline cursor-pointer ml-1"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Thoughts Feed */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
+        <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 sm:p-14 text-center">
           <MessageSquare className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-sm font-bold text-slate-800">No thoughts match your current filters</h3>
+          <h3 className="text-sm font-bold text-slate-800">
+            {searchQuery
+              ? `No thoughts found matching "${searchQuery}"`
+              : 'No thoughts match your current filters'}
+          </h3>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Try adjusting your search query or submit a new thought to start a 24-hour consultation.
+            {searchQuery
+              ? 'Try using different keywords, searching by #ID, or reset your filters.'
+              : 'Try selecting a different category or submit a new thought to start a consultation.'}
           </p>
-          <button
-            onClick={startNewChat}
-            className="mt-4 px-4 py-2 rounded-xl bg-[#020617] text-white text-xs font-bold hover:bg-[#091528] cursor-pointer"
-          >
-            Start a Thought
-          </button>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            {(searchQuery || activeCategory !== 'All') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setActiveCategory('All');
+                }}
+                className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 cursor-pointer"
+              >
+                Clear Search & Filters
+              </button>
+            )}
+            <button
+              onClick={startNewChat}
+              className="px-4 py-2 rounded-xl bg-[#020617] text-white text-xs font-bold hover:bg-[#091528] cursor-pointer"
+            >
+              Start a Thought
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

@@ -3,13 +3,10 @@ import { useApp } from '../../context/AppContext';
 import Logo from './Logo';
 import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
-import {
-  Search,
-  Menu
-} from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 export default function Navbar({ onToggleSidebar, onGoToLanding }) {
-  const { role, activeTab, setActiveTab } = useApp();
+  const { role, setActiveTab } = useApp();
 
   return (
     <header className="sticky top-0 z-40 w-full h-16 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex-shrink-0">
@@ -30,25 +27,6 @@ export default function Navbar({ onToggleSidebar, onGoToLanding }) {
             title="Return to Home"
           >
             <Logo size="md" showTagline={false} />
-          </div>
-        </div>
-
-        {/* Center: Search / Context Input */}
-        <div className="hidden md:flex items-center flex-1 max-w-lg mx-6">
-          <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
-            <input
-              type="text"
-              placeholder={role === 'consultant' ? 'Search all client problems & skills...' : 'Search your thoughts, roadmaps & jobs...'}
-              onClick={() => {
-                if (role === 'consultant' && activeTab !== 'browse_thoughts') {
-                  setActiveTab('browse_thoughts');
-                } else if (role === 'client' && activeTab !== 'my_thoughts') {
-                  setActiveTab('my_thoughts');
-                }
-              }}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all cursor-text"
-            />
           </div>
         </div>
 
