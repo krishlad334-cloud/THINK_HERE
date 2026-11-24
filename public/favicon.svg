@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Left Side: Deep Ocean Cyan Brain -->
+  <!-- Crisp white rounded squircle container matching website logo badge -->
+  <rect width="92" height="92" x="4" y="4" rx="22" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- Left Side: Deep Ocean Cyan Brain (#0e7490) -->
   <path d="M48 20 C42 18, 35 22, 33 28 C28 29, 25 34, 27 40 C23 44, 24 51, 28 55 C25 60, 29 67, 35 68 C39 69, 43 67, 48 65" 
         stroke="#0e7490" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
   <!-- Internal Brain Folds -->
@@ -7,10 +10,10 @@
   <path d="M36 48 C38 52, 44 54, 45 50" stroke="#0e7490" stroke-width="5" stroke-linecap="round"/>
   <path d="M48 20 L48 65" stroke="#0e7490" stroke-width="6" stroke-linecap="round"/>
 
-  <!-- Right Side: Bright Glacial Cyan Bulb -->
+  <!-- Right Side: Bright Glacial Cyan Bulb (#22d3ee) -->
   <path d="M52 20 C68 20, 78 32, 78 46 C78 56, 70 62, 65 67 L52 67" 
         stroke="#22d3ee" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Center Glacial Filament Highlight -->
+  <!-- Center Glacial Filament Highlight (#67e8f9) -->
   <circle cx="56" cy="38" r="4" stroke="#67e8f9" stroke-width="4"/>
   <path d="M56 42 L53 62" stroke="#22d3ee" stroke-width="4.5" stroke-linecap="round"/>
 
