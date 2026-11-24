@@ -216,8 +216,8 @@ export default function ChatWorkspace() {
     return (
       <div className="w-full h-full flex items-center justify-center bg-white p-6 sm:p-12">
         <div className="text-center max-w-md space-y-4">
-          <div className="w-16 h-16 rounded-3xl bg-[#e6f2f1] text-[#004845] flex items-center justify-center mx-auto shadow-xs">
-            <MessageSquare className="w-8 h-8 text-[#16a34a]" />
+          <div className="w-16 h-16 rounded-3xl bg-[#ecfeff] text-[#020617] flex items-center justify-center mx-auto shadow-xs">
+            <MessageSquare className="w-8 h-8 text-[#0891b2]" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900">
@@ -236,14 +236,14 @@ export default function ChatWorkspace() {
             {activeUser.role === 'consultant' ? (
               <button
                 onClick={() => setActiveTab('browse_thoughts')}
-                className="px-5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs cursor-pointer"
               >
                 Browse Available OverThinks
               </button>
             ) : (
               <button
                 onClick={() => setActiveTab('chat')}
-                className="px-5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs cursor-pointer"
               >
                 Go to Client Workspace
               </button>
@@ -266,11 +266,11 @@ export default function ChatWorkspace() {
       case 'pending_human':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">Pending</span>;
       case 'accepted':
-        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Accepted</span>;
+        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">Accepted</span>;
       case 'in_progress':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">In Progress</span>;
       case 'resolved':
-        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">Completed</span>;
+        return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200">Completed</span>;
       case 'closed':
         return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">Closed</span>;
       default:
@@ -288,14 +288,14 @@ export default function ChatWorkspace() {
         <div className="p-3.5 border-b border-slate-200/80 bg-white space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#e6f2f1] flex items-center justify-center text-[#004845]">
-                <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
+              <div className="w-7 h-7 rounded-lg bg-[#ecfeff] flex items-center justify-center text-[#020617]">
+                <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
               </div>
               <h3 className="text-xs font-black text-slate-900 tracking-tight uppercase">
                 {isClientRole ? 'My Consultations' : 'Client Conversations'}
               </h3>
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30 flex items-center gap-1">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30 flex items-center gap-1">
               <Lock className="w-2.5 h-2.5" />
               <span>LocalStorage Sync</span>
             </span>
@@ -309,7 +309,7 @@ export default function ChatWorkspace() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search conversations..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs bg-slate-50/80 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all font-medium"
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs bg-slate-50/80 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all font-medium"
             />
           </div>
         </div>
@@ -339,7 +339,7 @@ export default function ChatWorkspace() {
                 }}
                 className={`p-3 rounded-2xl cursor-pointer transition-all flex items-start gap-3 relative ${
                   isSelected
-                    ? 'bg-[#e6f2f1]/80 border-l-[3.5px] border-[#004845] shadow-xs'
+                    ? 'bg-[#ecfeff]/80 border-l-[3.5px] border-[#020617] shadow-xs'
                     : 'hover:bg-slate-100/70 border-l-[3.5px] border-transparent'
                 }`}
               >
@@ -370,7 +370,7 @@ export default function ChatWorkspace() {
                       #{conv.thinkId}
                     </span>
                     {think && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white border border-slate-200 text-[#004845] truncate max-w-[100px]">
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white border border-slate-200 text-[#020617] truncate max-w-[100px]">
                         {think.category}
                       </span>
                     )}
@@ -387,7 +387,7 @@ export default function ChatWorkspace() {
                     </p>
 
                     {unreadCount > 0 && (
-                      <span className="min-w-[16px] h-4 px-1 rounded-full bg-[#16a34a] text-white text-[9px] font-extrabold flex items-center justify-center flex-shrink-0">
+                      <span className="min-w-[16px] h-4 px-1 rounded-full bg-[#0891b2] text-white text-[9px] font-extrabold flex items-center justify-center flex-shrink-0">
                         {unreadCount}
                       </span>
                     )}
@@ -441,13 +441,16 @@ export default function ChatWorkspace() {
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate leading-tight">
                   {partnerName}
                 </h3>
-                <span className="hidden sm:inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-[#e6f2f1] text-[#004845] border border-[#004845]/20 flex-shrink-0">
+                <span className="hidden sm:inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex-shrink-0">
                   {partnerRoleLabel}
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse flex-shrink-0" />
-                <span className="text-[#16a34a] font-semibold leading-none">Online</span>
+                <span className="relative flex h-2 w-2 flex-shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="text-emerald-600 font-semibold leading-none">Online</span>
                 <span className="hidden sm:inline text-slate-300">•</span>
                 <span className="hidden sm:inline text-slate-500 truncate font-normal">
                   {activeThought?.title || 'Consultation Room'}
@@ -462,11 +465,11 @@ export default function ChatWorkspace() {
             <button
               type="button"
               onClick={() => handleStartCall('video')}
-              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#004845] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#020617] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
               title="Start Live Video Call"
               aria-label="Start Live Video Call"
             >
-              <Video className="w-5 h-5 text-slate-700 hover:text-[#004845]" />
+              <Video className="w-5 h-5 text-slate-700 hover:text-[#020617]" />
               <span className="hidden lg:inline text-xs font-semibold text-slate-700">Video</span>
             </button>
 
@@ -474,11 +477,11 @@ export default function ChatWorkspace() {
             <button
               type="button"
               onClick={() => handleStartCall('audio')}
-              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#004845] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-xl text-slate-700 hover:text-[#020617] hover:bg-slate-100 active:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
               title="Start Voice Call"
               aria-label="Start Voice Call"
             >
-              <PhoneCall className="w-4.5 h-4.5 text-slate-700 hover:text-[#004845]" />
+              <PhoneCall className="w-4.5 h-4.5 text-slate-700 hover:text-[#020617]" />
               <span className="hidden lg:inline text-xs font-semibold text-slate-700">Call</span>
             </button>
 
@@ -489,8 +492,8 @@ export default function ChatWorkspace() {
                   pending: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500 animate-pulse' },
                   pending_human: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500 animate-pulse' },
                   in_progress: { label: 'In Progress', bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500 animate-pulse' },
-                  accepted: { label: 'Accepted', bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200', dot: 'bg-emerald-500' },
-                  resolved: { label: 'Completed', bg: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200', dot: 'bg-teal-500' },
+                  accepted: { label: 'Accepted', bg: 'bg-cyan-50', text: 'text-cyan-800', border: 'border-cyan-200', dot: 'bg-cyan-500' },
+                  resolved: { label: 'Completed', bg: 'bg-sky-50', text: 'text-sky-800', border: 'border-sky-200', dot: 'bg-sky-500' },
                   closed: { label: 'Closed', bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', dot: 'bg-slate-400' }
                 }[currentStatus] || { label: currentStatus, bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-200', dot: 'bg-slate-400' };
 
@@ -530,9 +533,9 @@ export default function ChatWorkspace() {
                   <button
                     type="button"
                     onClick={() => handleStatusChange('accepted')}
-                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-emerald-50 text-emerald-800 flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-cyan-50 text-cyan-800 flex items-center gap-2 cursor-pointer"
                   >
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span className="w-2 h-2 rounded-full bg-cyan-500" />
                     <span>Accepted</span>
                   </button>
                   <button
@@ -546,9 +549,9 @@ export default function ChatWorkspace() {
                   <button
                     type="button"
                     onClick={() => handleStatusChange('resolved')}
-                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-teal-50 text-teal-800 flex items-center gap-2 cursor-pointer"
+                    className="w-full px-3 py-2 text-xs font-semibold text-left hover:bg-sky-50 text-sky-800 flex items-center gap-2 cursor-pointer"
                   >
-                    <span className="w-2 h-2 rounded-full bg-teal-500" />
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
                     <span>Completed</span>
                   </button>
                   <button
@@ -603,7 +606,7 @@ export default function ChatWorkspace() {
                       <button
                         type="button"
                         onClick={() => { handleStatusChange('accepted'); setShowMoreMenu(false); }}
-                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-center transition-colors"
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-cyan-50 hover:bg-cyan-100 text-cyan-700 text-center transition-colors"
                       >
                         Accepted
                       </button>
@@ -617,7 +620,7 @@ export default function ChatWorkspace() {
                       <button
                         type="button"
                         onClick={() => { handleStatusChange('resolved'); setShowMoreMenu(false); }}
-                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-teal-50 hover:bg-teal-100 text-teal-700 text-center transition-colors"
+                        className="py-1 px-2 rounded-lg text-[11px] font-semibold bg-sky-50 hover:bg-sky-100 text-sky-700 text-center transition-colors"
                       >
                         Completed
                       </button>
@@ -641,7 +644,7 @@ export default function ChatWorkspace() {
                       }}
                       className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
                     >
-                      <Info className="w-4 h-4 text-[#004845]" />
+                      <Info className="w-4 h-4 text-[#020617]" />
                       <span>{showContextDrawer ? 'Hide OverThink Details' : 'View OverThink Details'}</span>
                     </button>
                   </div>
@@ -661,8 +664,8 @@ export default function ChatWorkspace() {
                       className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-600 hover:bg-slate-50 rounded-xl flex items-center justify-between cursor-pointer transition-colors"
                     >
                       <span className="truncate font-mono text-[11px]">#{currentConversation.thinkId}</span>
-                      <span className="text-[10px] text-[#004845] font-bold flex items-center gap-1">
-                        {copiedThinkId ? <Check className="w-3 h-3 text-[#16a34a]" /> : <Copy className="w-3 h-3" />}
+                      <span className="text-[10px] text-[#020617] font-bold flex items-center gap-1">
+                        {copiedThinkId ? <Check className="w-3 h-3 text-[#0891b2]" /> : <Copy className="w-3 h-3" />}
                         {copiedThinkId ? 'Copied' : 'Copy'}
                       </span>
                     </button>
@@ -679,10 +682,10 @@ export default function ChatWorkspace() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#004845]">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#020617]">
                     Original OverThink #{activeThought.id}
                   </span>
-                  <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-[#e6f2f1] text-[#004845]">
+                  <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-[#ecfeff] text-[#020617]">
                     {activeThought.category}
                   </span>
                   {getStatusBadge(currentStatus)}
@@ -710,7 +713,7 @@ export default function ChatWorkspace() {
                     key={i}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
                   >
-                    <FileText className="w-3.5 h-3.5 text-[#004845]" />
+                    <FileText className="w-3.5 h-3.5 text-[#020617]" />
                     <span>{att.name}</span>
                     <span className="text-[10px] text-slate-400">({att.size || '1.2 MB'})</span>
                   </span>
@@ -727,8 +730,8 @@ export default function ChatWorkspace() {
           <div className="max-w-3xl sm:max-w-4xl mx-auto space-y-4">
             {/* Consultation Connected Banner at Top */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-2.5 sm:p-4 shadow-xs text-center space-y-1 max-w-xl mx-auto mb-3">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] text-[10px] sm:text-[11px] font-bold">
-                <CheckCircle className="w-3.5 h-3.5 text-[#16a34a]" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] text-[10px] sm:text-[11px] font-bold">
+                <CheckCircle className="w-3.5 h-3.5 text-[#0891b2]" />
                 <span>1-on-1 Consultation Connected</span>
               </div>
               <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 sm:line-clamp-2">
@@ -742,7 +745,7 @@ export default function ChatWorkspace() {
             {(!currentConversation.messages || currentConversation.messages.length === 0) ? (
               <div className="text-center py-16 text-slate-400 text-xs">
                 <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-2.5 shadow-xs">
-                  <MessageSquare className="w-6 h-6 text-[#004845]" />
+                  <MessageSquare className="w-6 h-6 text-[#020617]" />
                 </div>
                 <p className="font-bold text-slate-700 text-sm">Consultation Room Active</p>
                 <p className="mt-1 text-slate-500 max-w-sm mx-auto">
@@ -773,7 +776,7 @@ export default function ChatWorkspace() {
                         <div className="flex items-center gap-1.5 px-1 mb-1">
                           <span className="text-xs font-bold text-slate-900">{msg.senderName}</span>
                           {msg.senderRole === 'consultant' && (
-                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-800 border border-cyan-200">
                               Consultant
                             </span>
                           )}
@@ -798,7 +801,7 @@ export default function ChatWorkspace() {
                                     key={idx}
                                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700"
                                   >
-                                    <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                                    <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                                     <span className="font-semibold truncate max-w-[140px]">{att.name}</span>
                                     <span className="text-[10px] text-slate-400">({att.size || '1 MB'})</span>
                                   </div>
@@ -832,8 +835,8 @@ export default function ChatWorkspace() {
                               >
                                 {copiedMsgId === msg.id ? (
                                   <>
-                                    <Check className="w-3.5 h-3.5 text-[#16a34a]" />
-                                    <span className="text-[#16a34a]">Copied!</span>
+                                    <Check className="w-3.5 h-3.5 text-[#0891b2]" />
+                                    <span className="text-[#0891b2]">Copied!</span>
                                   </>
                                 ) : (
                                   <>
@@ -871,7 +874,7 @@ export default function ChatWorkspace() {
 
                         <div className="relative group/bubble w-fit max-w-full flex flex-col items-end">
                           <div
-                            className={`w-fit max-w-full rounded-2xl rounded-tr-xs bg-[#004845] text-white shadow-xs leading-relaxed text-left ${
+                            className={`w-fit max-w-full rounded-2xl rounded-tr-xs bg-[#020617] text-white shadow-xs leading-relaxed text-left ${
                               isOnlyEmojis(msg.text)
                                 ? 'px-3.5 py-2 text-2xl sm:text-3xl'
                                 : 'px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-[13.5px]'
@@ -887,16 +890,16 @@ export default function ChatWorkspace() {
                                     key={idx}
                                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 text-white text-xs"
                                   >
-                                    <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                                    <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                                     <span className="font-semibold truncate max-w-[140px]">{att.name}</span>
                                   </div>
                                 ))}
                               </div>
                             )}
 
-                            <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] text-emerald-200/80">
+                            <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] text-cyan-200/80">
                               <span>{timeAgo(msg.createdAt)}</span>
-                              <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#16a34a]' : 'text-emerald-300'}`} />
+                              <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#0891b2]' : 'text-cyan-300'}`} />
                             </div>
                           </div>
 
@@ -925,8 +928,8 @@ export default function ChatWorkspace() {
                               >
                                 {copiedMsgId === msg.id ? (
                                   <>
-                                    <Check className="w-3.5 h-3.5 text-[#16a34a]" />
-                                    <span className="text-[#16a34a]">Copied!</span>
+                                    <Check className="w-3.5 h-3.5 text-[#0891b2]" />
+                                    <span className="text-[#0891b2]">Copied!</span>
                                   </>
                                 ) : (
                                   <>
@@ -958,7 +961,7 @@ export default function ChatWorkspace() {
               <div className="flex flex-wrap gap-1.5 px-1">
                 {attachments.map((att) => (
                   <div key={att.id} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-xs text-slate-700 border border-slate-200">
-                    <FileText className="w-3 h-3 text-[#16a34a]" />
+                    <FileText className="w-3 h-3 text-[#0891b2]" />
                     <span className="font-medium truncate max-w-[120px]">{att.name}</span>
                     <button
                       type="button"
@@ -972,7 +975,7 @@ export default function ChatWorkspace() {
               </div>
             )}
 
-            <form onSubmit={handleSend} className="bg-slate-50 border border-slate-200/90 rounded-2xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 focus-within:border-[#004845] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#004845]/15 transition-all shadow-xs">
+            <form onSubmit={handleSend} className="bg-slate-50 border border-slate-200/90 rounded-2xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 focus-within:border-[#020617] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#020617]/15 transition-all shadow-xs">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -984,7 +987,7 @@ export default function ChatWorkspace() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-slate-500 hover:text-[#004845] hover:bg-slate-200/60 rounded-xl cursor-pointer transition-colors"
+                className="p-2 text-slate-500 hover:text-[#020617] hover:bg-slate-200/60 rounded-xl cursor-pointer transition-colors"
                 title="Attach Files"
               >
                 <Paperclip className="w-4 h-4" />
@@ -993,7 +996,7 @@ export default function ChatWorkspace() {
               <button
                 type="button"
                 onClick={() => setInputMessage(prev => (prev ? prev + ' ' : '') + 'Can we schedule a quick call to review?')}
-                className="p-2 text-slate-500 hover:text-[#004845] hover:bg-slate-200/60 rounded-xl cursor-pointer transition-colors"
+                className="p-2 text-slate-500 hover:text-[#020617] hover:bg-slate-200/60 rounded-xl cursor-pointer transition-colors"
                 title="Quick Prompt Template"
               >
                 <Mic className="w-4 h-4" />
@@ -1006,8 +1009,8 @@ export default function ChatWorkspace() {
                   onClick={() => setShowEmojiPicker(prev => !prev)}
                   className={`p-2 rounded-xl cursor-pointer transition-colors ${
                     showEmojiPicker
-                      ? 'text-[#004845] bg-slate-200/80'
-                      : 'text-slate-500 hover:text-[#004845] hover:bg-slate-200/60'
+                      ? 'text-[#020617] bg-slate-200/80'
+                      : 'text-slate-500 hover:text-[#020617] hover:bg-slate-200/60'
                   }`}
                   title="Insert Emoji"
                 >
@@ -1060,18 +1063,18 @@ export default function ChatWorkspace() {
                 disabled={!inputMessage.trim() && attachments.length === 0}
                 className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   inputMessage.trim() || attachments.length > 0
-                    ? 'bg-[#004845] hover:bg-[#003331] text-white shadow-xs transform active:scale-95'
+                    ? 'bg-[#020617] hover:bg-[#091528] text-white shadow-xs transform active:scale-95'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >
-                <Send className="w-4 h-4 text-[#16a34a]" />
+                <Send className="w-4 h-4 text-[#0891b2]" />
               </button>
             </form>
 
             <div className="hidden sm:flex items-center justify-between px-2 text-[10px] text-slate-400">
               <span>Press <kbd className="px-1 py-0.5 rounded bg-slate-100 font-mono text-slate-600">Enter</kbd> to send</span>
               <span className="flex items-center gap-1">
-                <Lock className="w-2.5 h-2.5 text-[#16a34a]" />
+                <Lock className="w-2.5 h-2.5 text-[#0891b2]" />
                 <span>Protected by OverThink Verified Consultation</span>
               </span>
             </div>

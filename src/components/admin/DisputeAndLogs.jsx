@@ -27,8 +27,8 @@ export default function DisputeAndLogs() {
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
-              <Shield className="w-5 h-5 text-[#16a34a]" />
+            <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
+              <Shield className="w-5 h-5 text-[#0891b2]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -68,7 +68,7 @@ export default function DisputeAndLogs() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search logs by actor, event type, or details..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function DisputeAndLogs() {
                         log.severity === 'warning'
                           ? 'bg-amber-100 text-amber-800'
                           : log.severity === 'success'
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-cyan-100 text-cyan-900'
                           : 'bg-indigo-100 text-indigo-800'
                       }`}
                     >

@@ -26,7 +26,7 @@ export default function CategoriesManager() {
     <div className="space-y-6 w-full pb-16">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-          <FolderKanban className="w-7 h-7 text-[#004845]" />
+          <FolderKanban className="w-7 h-7 text-[#020617]" />
           <span>Categories & Domain Skills Management</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -41,13 +41,13 @@ export default function CategoriesManager() {
             value={newCatName}
             onChange={(e) => setNewCatName(e.target.value)}
             placeholder="Add new thought category (e.g. Health & Biotech, Legal Tech)..."
-            className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+            className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
           />
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs flex-shrink-0"
+            className="px-4 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs flex-shrink-0"
           >
-            <Plus className="w-3.5 h-3.5 text-[#16a34a]" />
+            <Plus className="w-3.5 h-3.5 text-[#0891b2]" />
             <span>Add Category</span>
           </button>
         </form>
@@ -59,7 +59,7 @@ export default function CategoriesManager() {
                 <h4 className="text-xs font-bold text-slate-900">{c.name}</h4>
                 <p className="text-[10px] text-slate-400">{c.count} active submissions</p>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900">
                 {c.status}
               </span>
             </div>

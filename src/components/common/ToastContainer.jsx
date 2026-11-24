@@ -9,24 +9,24 @@ export default function ToastContainer({ toast, onClose }) {
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />;
+        return <CheckCircle2 className="w-5 h-5 text-cyan-500 flex-shrink-0" />;
       case 'warning':
       case 'error':
         return <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />;
       default:
-        return <Info className="w-5 h-5 text-[#16a34a] flex-shrink-0" />;
+        return <Info className="w-5 h-5 text-[#0891b2] flex-shrink-0" />;
     }
   };
 
   const getBorderColor = () => {
     switch (type) {
       case 'success':
-        return 'border-emerald-200 bg-white/95 text-slate-900 shadow-emerald-500/10';
+        return 'border-cyan-200 bg-white/95 text-slate-900 shadow-cyan-500/10';
       case 'warning':
       case 'error':
         return 'border-rose-200 bg-white/95 text-slate-900 shadow-rose-500/10';
       default:
-        return 'border-[#004845]/20 bg-white/95 text-slate-900 shadow-[#004845]/10';
+        return 'border-[#020617]/20 bg-white/95 text-slate-900 shadow-[#020617]/10';
     }
   };
 

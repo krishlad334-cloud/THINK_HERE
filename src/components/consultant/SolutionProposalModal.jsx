@@ -173,7 +173,7 @@ export default function SolutionProposalModal({ thought, onClose }) {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-700 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-cyan-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
               <Send className="w-4 h-4" />
               <span>Deliver Solution to Client</span>

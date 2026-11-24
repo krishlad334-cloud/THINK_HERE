@@ -96,7 +96,7 @@ export default function LandingPage({
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#f8fafc] text-slate-900 font-sans antialiased overflow-x-hidden selection:bg-[#004845]/10 selection:text-[#004845]">
+    <div className="relative min-h-screen w-full bg-[#f8fafc] text-slate-900 font-sans antialiased overflow-x-hidden selection:bg-cyan-500/20 selection:text-cyan-950">
       {/* Fixed Sticky Header */}
       <LandingNavbar
         onNavigateScene={scrollToScene}
@@ -109,9 +109,9 @@ export default function LandingPage({
 
       {/* Hero Atmosphere / Background Lighting Gradients */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 left-1/4 w-[700px] h-[700px] bg-emerald-100/40 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-teal-100/35 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/6 w-[700px] h-[700px] bg-emerald-50/60 rounded-full blur-3xl" />
+        <div className="absolute -top-40 left-1/4 w-[700px] h-[700px] bg-cyan-100/30 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-sky-100/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/6 w-[700px] h-[700px] bg-cyan-50/40 rounded-full blur-3xl" />
       </div>
 
       {/* =================================================================== */}
@@ -188,7 +188,7 @@ export default function LandingPage({
 
           {/* Developed by Krish Lad - Clean Modern Credit */}
           <div className="text-xs text-slate-500 font-medium select-none text-center">
-            Developed by <span className="font-bold text-[#004845]">Krish Lad</span>
+            Developed by <span className="font-bold text-[#020617]">Krish Lad</span>
           </div>
 
           <div className="text-xs text-slate-500 text-center md:text-right space-y-1">

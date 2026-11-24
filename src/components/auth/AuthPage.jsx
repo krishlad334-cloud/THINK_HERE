@@ -15,7 +15,8 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
-  Sparkles,
+  Users,
+  KeyRound,
   RotateCcw,
   Check,
   ChevronDown,
@@ -335,16 +336,16 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh] w-full flex bg-[#fafbfc] text-slate-800 font-sans antialiased selection:bg-[#004845]/10 selection:text-[#004845] overflow-x-hidden">
+    <div className="min-h-screen min-h-[100dvh] w-full flex bg-[#fafbfc] text-slate-800 font-sans antialiased selection:bg-[#020617]/10 selection:text-[#020617] overflow-x-hidden">
       {/* ============================================================= */}
       {/* LEFT COLUMN: BRAND SHOWCASE & SOCIAL PROOF (Desktop Only)    */}
       {/* ============================================================= */}
-      <div className="hidden lg:flex lg:w-[46%] xl:w-[44%] relative flex-col justify-between p-10 xl:p-14 bg-gradient-to-br from-[#002826] via-[#004845] to-[#033633] text-white overflow-hidden select-none flex-shrink-0">
+      <div className="hidden lg:flex lg:w-[46%] xl:w-[44%] relative flex-col justify-between p-10 xl:p-14 bg-gradient-to-br from-[#020617] via-[#020617] to-[#031b2e] text-white overflow-hidden select-none flex-shrink-0">
         {/* Decorative Ambient Orbs & Subtle Grid */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#16a34a]/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 -right-24 w-80 h-80 bg-teal-300/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 left-1/3 w-96 h-96 bg-[#004845]/40 rounded-full blur-3xl" />
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#0891b2]/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-300/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 left-1/3 w-96 h-96 bg-[#020617]/40 rounded-full blur-3xl" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
         </div>
 
@@ -352,13 +353,13 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
         <div className="relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white p-1 border border-white/20 shadow-lg flex items-center justify-center">
-              <img src="/logo.jpg" alt="OverThink" className="w-full h-full object-contain" />
+              <img src="/logo.svg" alt="OverThink" className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="text-2xl font-black tracking-tight text-white flex items-center">
-                Over<span className="text-[#22c55e]">Think</span>
+                Over<span className="text-[#22d3ee]">Think</span>
               </span>
-              <p className="text-[11px] text-emerald-200/80 font-medium">
+              <p className="text-[11px] text-cyan-200/80 font-medium">
                 Every Thought Deserves a Solution
               </p>
             </div>
@@ -367,8 +368,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
 
         {/* Center: Value Proposition & Feature Pillars */}
         <div className="relative z-10 my-auto py-8 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-emerald-300 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#22c55e]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-cyan-300 shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#06b6d4]" />
             <span>24-Hour Verified Consultation Platform</span>
           </div>
 
@@ -376,29 +377,29 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             Turn complex problems into validated roadmaps.
           </h2>
 
-          <p className="text-sm xl:text-base text-emerald-100/75 leading-relaxed max-w-lg">
+          <p className="text-sm xl:text-base text-cyan-100/75 leading-relaxed max-w-lg">
             Connect 1-on-1 in dedicated consultation rooms with vetted industry leaders, or receive structured AI fallback blueprints within 24 hours.
           </p>
 
           {/* Feature Highlights */}
           <div className="space-y-3 pt-2 max-w-md">
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/10 shadow-xs">
-              <div className="p-2 rounded-xl bg-[#16a34a]/20 text-[#22c55e] flex-shrink-0 mt-0.5">
+              <div className="p-2 rounded-xl bg-[#0891b2]/20 text-[#06b6d4] flex-shrink-0 mt-0.5">
                 <Clock className="w-4 h-4" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">24-Hour Fallback Guarantee</h4>
-                <p className="text-[11px] text-emerald-100/70 mt-0.5">Never stay blocked. Intelligent AI synthesizer activates if human specialists are pending.</p>
+                <p className="text-[11px] text-cyan-100/70 mt-0.5">Never stay blocked. Intelligent AI synthesizer activates if human specialists are pending.</p>
               </div>
             </div>
 
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/10 shadow-xs">
-              <div className="p-2 rounded-xl bg-teal-400/20 text-teal-300 flex-shrink-0 mt-0.5">
+              <div className="p-2 rounded-xl bg-cyan-400/20 text-cyan-300 flex-shrink-0 mt-0.5">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">Shielded 1-on-1 Consultation Rooms</h4>
-                <p className="text-[11px] text-emerald-100/70 mt-0.5">Encrypted private chat, diagnostic file attachments, and integrated live video calls.</p>
+                <p className="text-[11px] text-cyan-100/70 mt-0.5">Encrypted private chat, diagnostic file attachments, and integrated live video calls.</p>
               </div>
             </div>
           </div>
@@ -416,7 +417,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
               className="ring-2 ring-white/20"
             />
             <div className="min-w-0">
-              <p className="text-xs italic text-emerald-100/90 leading-snug">
+              <p className="text-xs italic text-cyan-100/90 leading-snug">
                 "Direct connection between clients and vetted domain specialists with zero middleman friction."
               </p>
               <span className="text-[11px] font-bold text-white block mt-1">
@@ -438,10 +439,10 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             <button
               type="button"
               onClick={onBackToLanding}
-              className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#004845] transition-colors py-1 cursor-pointer select-none"
+              className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#020617] transition-colors py-1 cursor-pointer select-none"
               title="Return to the home page"
             >
-              <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-[#004845] group-hover:-translate-x-0.5 transition-transform duration-200 flex-shrink-0" />
+              <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-[#020617] group-hover:-translate-x-0.5 transition-transform duration-200 flex-shrink-0" />
               <span className="whitespace-nowrap">Back to Home</span>
             </button>
           )}
@@ -505,12 +506,12 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
               <div className="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-2xs">
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <Users className="w-3.5 h-3.5 text-amber-500" />
                     <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                       Quick Demo Profiles
                     </span>
                   </div>
-                  <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200/60 font-semibold px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] text-cyan-800 bg-cyan-50 border border-cyan-200/60 font-semibold px-2 py-0.5 rounded-full">
                     1-Click Instant Login
                   </span>
                 </div>
@@ -521,7 +522,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     type="button"
                     disabled={isLoggingIn}
                     onClick={() => handleQuickLogin('alex.morgan@overthink.platform', 'password123')}
-                    className="p-3 rounded-xl bg-white hover:bg-[#e6f2f1]/40 border border-slate-200/80 hover:border-[#16a34a]/50 hover:shadow-sm transition-all text-left flex items-center justify-between group cursor-pointer"
+                    className="p-3 rounded-xl bg-white hover:bg-[#ecfeff]/40 border border-slate-200/80 hover:border-[#0891b2]/50 hover:shadow-sm transition-all text-left flex items-center justify-between group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-1">
                       <UserAvatar
@@ -533,7 +534,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         className="ring-1 ring-slate-200"
                       />
                       <div className="min-w-0">
-                        <span className="text-xs font-bold text-slate-900 group-hover:text-[#004845] truncate block">
+                        <span className="text-xs font-bold text-slate-900 group-hover:text-[#020617] truncate block">
                           Alex Morgan
                         </span>
                         <span className="text-[10px] text-slate-400 truncate block">
@@ -541,7 +542,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         </span>
                       </div>
                     </div>
-                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/70 flex-shrink-0">
+                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200/70 flex-shrink-0">
                       Client
                     </span>
                   </button>
@@ -551,7 +552,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     type="button"
                     disabled={isLoggingIn}
                     onClick={() => handleQuickLogin('elena.vance@overthink.platform', 'password123')}
-                    className="p-3 rounded-xl bg-white hover:bg-[#e6f2f1]/40 border border-slate-200/80 hover:border-[#004845]/50 hover:shadow-sm transition-all text-left flex items-center justify-between group cursor-pointer"
+                    className="p-3 rounded-xl bg-white hover:bg-[#ecfeff]/40 border border-slate-200/80 hover:border-[#020617]/50 hover:shadow-sm transition-all text-left flex items-center justify-between group cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-1">
                       <UserAvatar
@@ -563,7 +564,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         className="ring-1 ring-slate-200"
                       />
                       <div className="min-w-0">
-                        <span className="text-xs font-bold text-slate-900 group-hover:text-[#004845] truncate block">
+                        <span className="text-xs font-bold text-slate-900 group-hover:text-[#020617] truncate block">
                           Dr. Elena Vance
                         </span>
                         <span className="text-[10px] text-slate-400 truncate block">
@@ -571,7 +572,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         </span>
                       </div>
                     </div>
-                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] border border-[#004845]/20 flex-shrink-0">
+                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex-shrink-0">
                       Expert
                     </span>
                   </button>
@@ -607,7 +608,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                               className="w-full p-1.5 px-2.5 rounded-lg hover:bg-slate-50 border border-slate-100 flex items-center justify-between text-left cursor-pointer group"
                             >
                               <div className="truncate min-w-0 pr-2">
-                                <span className="text-xs font-bold text-slate-800 group-hover:text-[#004845] truncate block">
+                                <span className="text-xs font-bold text-slate-800 group-hover:text-[#020617] truncate block">
                                   {u.name}
                                 </span>
                                 <span className="text-[10px] text-slate-400 truncate block">
@@ -615,7 +616,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                                 </span>
                               </div>
                               <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full flex-shrink-0 ${
-                                u.role === 'consultant' ? 'bg-[#e6f2f1] text-[#004845]' : 'bg-emerald-50 text-emerald-800'
+                                u.role === 'consultant' ? 'bg-[#ecfeff] text-[#020617]' : 'bg-cyan-50 text-cyan-800'
                               }`}>
                                 {u.role === 'consultant' ? 'Expert' : 'Client'}
                               </span>
@@ -660,7 +661,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                             quickRegister(loginIdentifier.trim(), loginPassword, 'client');
                             if (onSuccess) onSuccess();
                           }}
-                          className="py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                          className="py-1.5 px-2 bg-[#0891b2] hover:bg-[#0e7490] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <span>+ Create Client</span>
                         </button>
@@ -670,7 +671,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                             quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
                             if (onSuccess) onSuccess();
                           }}
-                          className="py-1.5 px-2 bg-[#004845] hover:bg-[#003836] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                          className="py-1.5 px-2 bg-[#020617] hover:bg-[#082f49] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <span>+ Create Consultant</span>
                         </button>
@@ -697,7 +698,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         if (loginError) setLoginError('');
                       }}
                       placeholder="e.g. name@company.com or 9876543210"
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                       autoFocus
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -719,7 +720,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     <button
                       type="button"
                       onClick={() => setShowForgotModal(true)}
-                      className="text-xs text-[#004845] hover:text-[#003836] font-medium hover:underline transition-colors cursor-pointer"
+                      className="text-xs text-[#020617] hover:text-[#082f49] font-medium hover:underline transition-colors cursor-pointer"
                     >
                       Forgot password?
                     </button>
@@ -734,7 +735,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         if (loginError) setLoginError('');
                       }}
                       placeholder="••••••••••••"
-                      className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                      className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                       <Lock className="w-4 h-4" />
@@ -761,7 +762,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       type="checkbox"
                       checked={loginRememberMe}
                       onChange={(e) => setLoginRememberMe(e.target.checked)}
-                      className="w-4 h-4 text-[#004845] rounded border-slate-300 focus:ring-[#004845] focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 text-[#020617] rounded border-slate-300 focus:ring-[#020617] focus:ring-offset-0 cursor-pointer"
                     />
                     <span className="text-xs text-slate-600 font-medium">
                       Remember this browser session
@@ -773,7 +774,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 <button
                   type="submit"
                   disabled={isLoggingIn}
-                  className="w-full py-3 px-4 bg-[#004845] hover:bg-[#003835] text-white rounded-xl text-sm font-bold shadow-md shadow-[#004845]/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer transform active:scale-98"
+                  className="w-full py-3 px-4 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-sm font-bold shadow-md shadow-[#020617]/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer transform active:scale-98"
                 >
                   {isLoggingIn ? (
                     <>
@@ -783,7 +784,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   ) : (
                     <>
                       <span>Sign In to OverThink</span>
-                      <ArrowRight className="w-4 h-4 text-[#16a34a]" />
+                      <ArrowRight className="w-4 h-4 text-[#0891b2]" />
                     </>
                   )}
                 </button>
@@ -799,7 +800,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     setRegStep(1);
                     setRegError('');
                   }}
-                  className="text-[#004845] font-bold hover:underline cursor-pointer"
+                  className="text-[#020617] font-bold hover:underline cursor-pointer"
                 >
                   Create an account
                 </button>
@@ -818,7 +819,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                     Create Account
                   </h1>
-                  <span className="text-xs font-bold text-[#004845] bg-[#e6f2f1] px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-[#020617] bg-[#ecfeff] px-2.5 py-0.5 rounded-full">
                     Step {regStep} of 4
                   </span>
                 </div>
@@ -831,10 +832,10 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
 
                 {/* Clean 4-segment progress bar */}
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 1 ? 'bg-[#004845]' : 'bg-slate-200'}`} />
-                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 2 ? 'bg-[#004845]' : 'bg-slate-200'}`} />
-                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 3 ? 'bg-[#004845]' : 'bg-slate-200'}`} />
-                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 4 ? 'bg-[#004845]' : 'bg-slate-200'}`} />
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 1 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 2 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 3 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 4 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
                 </div>
               </div>
 
@@ -856,14 +857,14 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       onClick={() => setRegRole('client')}
                       className={`w-full p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 relative cursor-pointer ${
                         regRole === 'client'
-                          ? 'border-[#004845] bg-[#004845]/5 ring-2 ring-[#004845]/20 shadow-xs'
+                          ? 'border-[#020617] bg-[#020617]/5 ring-2 ring-[#020617]/20 shadow-xs'
                           : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
                       }`}
                     >
                       <div
                         className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
                           regRole === 'client'
-                            ? 'bg-[#004845] text-white shadow-xs'
+                            ? 'bg-[#020617] text-white shadow-xs'
                             : 'bg-slate-100 text-slate-600'
                         }`}
                       >
@@ -882,7 +883,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 absolute top-4 right-4 ${
                           regRole === 'client'
-                            ? 'border-[#004845] bg-[#004845] text-white'
+                            ? 'border-[#020617] bg-[#020617] text-white'
                             : 'border-slate-300 bg-white'
                         }`}
                       >
@@ -896,14 +897,14 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       onClick={() => setRegRole('consultant')}
                       className={`w-full p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 relative cursor-pointer ${
                         regRole === 'consultant'
-                          ? 'border-[#004845] bg-[#004845]/5 ring-2 ring-[#004845]/20 shadow-xs'
+                          ? 'border-[#020617] bg-[#020617]/5 ring-2 ring-[#020617]/20 shadow-xs'
                           : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
                       }`}
                     >
                       <div
                         className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
                           regRole === 'consultant'
-                            ? 'bg-[#004845] text-white shadow-xs'
+                            ? 'bg-[#020617] text-white shadow-xs'
                             : 'bg-slate-100 text-slate-600'
                         }`}
                       >
@@ -922,7 +923,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 absolute top-4 right-4 ${
                           regRole === 'consultant'
-                            ? 'border-[#004845] bg-[#004845] text-white'
+                            ? 'border-[#020617] bg-[#020617] text-white'
                             : 'border-slate-300 bg-white'
                         }`}
                       >
@@ -934,10 +935,10 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   <button
                     type="button"
                     onClick={handleStep1Next}
-                    className="w-full mt-3 py-3 px-4 bg-[#004845] hover:bg-[#003835] text-white rounded-xl text-sm font-bold shadow-md shadow-[#004845]/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform active:scale-98"
+                    className="w-full mt-3 py-3 px-4 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-sm font-bold shadow-md shadow-[#020617]/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer transform active:scale-98"
                   >
                     <span>Continue to Personal Details</span>
-                    <ArrowRight className="w-4 h-4 text-[#16a34a]" />
+                    <ArrowRight className="w-4 h-4 text-[#0891b2]" />
                   </button>
                 </div>
               )}
@@ -959,7 +960,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           if (regError) setRegError('');
                         }}
                         placeholder="e.g. John Doe"
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                         autoFocus
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -982,7 +983,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           if (regError) setRegError('');
                         }}
                         placeholder="name@company.com"
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <Mail className="w-4 h-4" />
@@ -1004,7 +1005,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           if (regError) setRegError('');
                         }}
                         placeholder="10-digit mobile number"
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                        className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <Phone className="w-4 h-4" />
@@ -1025,10 +1026,10 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     <button
                       type="button"
                       onClick={handleStep2Next}
-                      className="flex-1 py-3 px-4 bg-[#004845] hover:bg-[#003835] text-white rounded-xl text-sm font-bold shadow-md shadow-[#004845]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 py-3 px-4 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-sm font-bold shadow-md shadow-[#020617]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Continue to Password</span>
-                      <ArrowRight className="w-4 h-4 text-[#16a34a]" />
+                      <ArrowRight className="w-4 h-4 text-[#0891b2]" />
                     </button>
                   </div>
                 </div>
@@ -1051,7 +1052,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           if (regError) setRegError('');
                         }}
                         placeholder="At least 8 characters"
-                        className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                        className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                         autoFocus
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -1086,7 +1087,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           if (regError) setRegError('');
                         }}
                         placeholder="Re-enter your password"
-                        className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all shadow-2xs"
+                        className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all shadow-2xs"
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <Lock className="w-4 h-4" />
@@ -1111,8 +1112,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     <div className="flex items-center gap-1.5 text-xs">
                       {regPassword === regConfirmPassword ? (
                         <>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="text-emerald-700 font-medium">Passwords match</span>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600" />
+                          <span className="text-cyan-700 font-medium">Passwords match</span>
                         </>
                       ) : (
                         <>
@@ -1136,10 +1137,10 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     <button
                       type="button"
                       onClick={handleStep3Next}
-                      className="flex-1 py-3 px-4 bg-[#004845] hover:bg-[#003835] text-white rounded-xl text-sm font-bold shadow-md shadow-[#004845]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 py-3 px-4 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-sm font-bold shadow-md shadow-[#020617]/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Continue to Verification</span>
-                      <ArrowRight className="w-4 h-4 text-[#16a34a]" />
+                      <ArrowRight className="w-4 h-4 text-[#0891b2]" />
                     </button>
                   </div>
                 </div>
@@ -1157,7 +1158,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   {/* Development Testing OTP Banner with 1-click Auto-Fill */}
                   <div className="p-3 bg-amber-50/90 border border-amber-200/80 rounded-xl flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <KeyRound className="w-4 h-4 text-amber-600 flex-shrink-0" />
                       <div className="text-xs truncate">
                         <span className="text-amber-800 font-medium">Simulated Code: </span>
                         <span className="font-mono font-bold text-amber-950 tracking-wider">
@@ -1188,8 +1189,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                         className={`w-12 h-14 text-center text-xl font-bold rounded-xl border transition-all ${
                           digit
-                            ? 'border-[#004845] bg-[#004845]/5 text-[#004845]'
-                            : 'border-slate-200 bg-white text-slate-900 focus:border-[#004845] focus:ring-2 focus:ring-[#004845]/20'
+                            ? 'border-[#020617] bg-[#020617]/5 text-[#020617]'
+                            : 'border-slate-200 bg-white text-slate-900 focus:border-[#020617] focus:ring-2 focus:ring-[#020617]/20'
                         }`}
                         autoFocus={idx === 0}
                       />
@@ -1214,7 +1215,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       type="button"
                       onClick={handleResendOtp}
                       disabled={resendCount >= 3 || (!otpExpired && otpTimer > 60)}
-                      className="text-[#004845] font-semibold hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer"
+                      className="text-[#020617] font-semibold hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer"
                     >
                       Resend Code {resendCount > 0 && `(${3 - resendCount} left)`}
                     </button>
@@ -1234,7 +1235,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       type="button"
                       onClick={handleFinalRegisterSubmit}
                       disabled={isRegistering || otpValues.join('').length < 6}
-                      className="flex-1 py-3 px-4 bg-[#004845] hover:bg-[#003835] text-white rounded-xl text-sm font-bold shadow-md shadow-[#004845]/20 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                      className="flex-1 py-3 px-4 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-sm font-bold shadow-md shadow-[#020617]/20 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
                     >
                       {isRegistering ? (
                         <>
@@ -1244,7 +1245,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       ) : (
                         <>
                           <span>Verify & Complete</span>
-                          <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
+                          <CheckCircle2 className="w-4 h-4 text-[#0891b2]" />
                         </>
                       )}
                     </button>
@@ -1261,7 +1262,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     setMode('login');
                     setLoginError('');
                   }}
-                  className="text-[#004845] font-bold hover:underline cursor-pointer"
+                  className="text-[#020617] font-bold hover:underline cursor-pointer"
                 >
                   Sign In
                 </button>
@@ -1298,7 +1299,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             <button
               type="button"
               onClick={() => setShowForgotModal(false)}
-              className="w-full py-2.5 bg-[#004845] hover:bg-[#003836] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#020617] hover:bg-[#082f49] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
             >
               Understood, Return to Login
             </button>

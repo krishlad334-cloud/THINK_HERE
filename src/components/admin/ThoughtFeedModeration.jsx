@@ -35,8 +35,8 @@ export default function ThoughtFeedModeration() {
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
-              <ListTodo className="w-5 h-5 text-[#16a34a]" />
+            <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
+              <ListTodo className="w-5 h-5 text-[#0891b2]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -95,7 +95,7 @@ export default function ThoughtFeedModeration() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search queue by thought title, client, or category..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
           />
         </div>
       </div>
@@ -132,7 +132,7 @@ export default function ThoughtFeedModeration() {
                         </div>
                         <h4
                           onClick={() => setSelectedThoughtId(t.id)}
-                          className="font-bold text-slate-900 hover:text-[#004845] cursor-pointer line-clamp-1 text-xs"
+                          className="font-bold text-slate-900 hover:text-[#020617] cursor-pointer line-clamp-1 text-xs"
                         >
                           {t.title}
                         </h4>
@@ -191,7 +191,7 @@ export default function ThoughtFeedModeration() {
 
                       <button
                         onClick={() => setSelectedThoughtId(t.id)}
-                        className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-[#004845] text-white font-bold transition-all text-xs"
+                        className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-[#020617] text-white font-bold transition-all text-xs"
                       >
                         Inspect
                       </button>

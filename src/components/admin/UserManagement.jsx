@@ -34,8 +34,8 @@ export default function UserManagement() {
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
-              <Users className="w-5 h-5 text-[#16a34a]" />
+            <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
+              <Users className="w-5 h-5 text-[#0891b2]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -86,7 +86,7 @@ export default function UserManagement() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by consultant name, title, or skills..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
           />
         </div>
       </div>
@@ -108,7 +108,7 @@ export default function UserManagement() {
                 <p className="text-[11px] text-slate-400 mt-0.5">{clientUser.title}</p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-100 text-cyan-900">
               Active Client
             </span>
           </div>
@@ -118,7 +118,7 @@ export default function UserManagement() {
           {filteredConsultants.map((c) => (
             <div
               key={c.id}
-              className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 hover:border-[#004845] transition-all shadow-xs flex flex-col justify-between"
+              className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 hover:border-[#020617] transition-all shadow-xs flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
@@ -130,7 +130,7 @@ export default function UserManagement() {
                         className="w-14 h-14 rounded-2xl object-cover ring-2 ring-slate-100"
                       />
                       {c.isVerified && (
-                        <span className="absolute -bottom-1 -right-1 p-0.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white" title="Verified">
+                        <span className="absolute -bottom-1 -right-1 p-0.5 bg-[#0891b2] rounded-full text-white ring-2 ring-white" title="Verified">
                           <Check className="w-3 h-3" />
                         </span>
                       )}
@@ -139,7 +139,7 @@ export default function UserManagement() {
                       <div className="flex items-center gap-2">
                         <h4 className="text-base font-bold text-slate-900">{c.name}</h4>
                         {c.isVerified ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30">
                             Verified
                           </span>
                         ) : (
@@ -167,7 +167,7 @@ export default function UserManagement() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>SLA Response Speed:</span>
-                    <span className="font-bold text-[#16a34a]">{c.responseTime}</span>
+                    <span className="font-bold text-[#0891b2]">{c.responseTime}</span>
                   </div>
                 </div>
 
@@ -185,7 +185,7 @@ export default function UserManagement() {
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <button
                   onClick={() => setInspectingUser(c)}
-                  className="text-xs font-bold text-[#004845] hover:underline"
+                  className="text-xs font-bold text-[#020617] hover:underline"
                 >
                   Inspect Full Credentials
                 </button>
@@ -201,7 +201,7 @@ export default function UserManagement() {
                   ) : (
                     <button
                       onClick={() => setConsultantVerification(c.id, 'approved')}
-                      className="px-3.5 py-1.5 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white font-bold flex items-center gap-1.5 transition-all shadow-xs"
+                      className="px-3.5 py-1.5 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-bold flex items-center gap-1.5 transition-all shadow-xs"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Approve Credentials</span>
@@ -220,7 +220,7 @@ export default function UserManagement() {
           <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col p-4 sm:p-6 max-h-[90dvh] overflow-y-auto space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Award className="w-5 h-5 text-[#16a34a]" />
+                <Award className="w-5 h-5 text-[#0891b2]" />
                 <span>Consultant Credentials & Verification File</span>
               </h3>
               <button
@@ -261,7 +261,7 @@ export default function UserManagement() {
               <div className="space-y-1 text-xs text-slate-700">
                 {inspectingUser.certifications?.map((cert, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#16a34a]" />
+                    <Check className="w-3.5 h-3.5 text-[#0891b2]" />
                     <span>{cert}</span>
                   </div>
                 ))}
@@ -280,7 +280,7 @@ export default function UserManagement() {
                   setConsultantVerification(inspectingUser.id, 'approved');
                   setInspectingUser(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold"
+                className="px-4 py-2 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white text-xs font-bold"
               >
                 Approve Verified Badge
               </button>

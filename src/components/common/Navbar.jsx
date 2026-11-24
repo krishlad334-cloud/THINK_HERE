@@ -47,7 +47,7 @@ export default function Navbar({ onToggleSidebar, onGoToLanding }) {
                   setActiveTab('my_thoughts');
                 }
               }}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all cursor-text"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all cursor-text"
             />
           </div>
         </div>

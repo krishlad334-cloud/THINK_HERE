@@ -52,9 +52,9 @@ export default function CharacterVisual({
   const glowColors = {
     overthinking: 'from-amber-500/20 via-orange-400/10 to-transparent',
     searching: 'from-blue-600/25 via-indigo-500/15 to-transparent',
-    discovering: 'from-emerald-500/25 via-teal-500/20 to-transparent',
-    connecting: 'from-teal-500/25 via-emerald-500/20 to-transparent',
-    succeeding: 'from-emerald-500/35 via-green-400/25 to-transparent'
+    discovering: 'from-cyan-500/30 via-sky-500/20 to-transparent',
+    connecting: 'from-sky-500/30 via-cyan-500/20 to-transparent',
+    succeeding: 'from-cyan-500/35 via-cyan-400/25 to-transparent'
   };
 
   // Perform seek to target time

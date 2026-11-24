@@ -92,8 +92,8 @@ export default function ConsultantProfileView() {
   return (
     <div className="space-y-6 w-full pb-16">
       {savedSuccess && (
-        <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-800 text-xs font-bold flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
-          <CheckCircle2 className="w-5 h-5 text-[#16a34a] flex-shrink-0" />
+        <div className="p-4 bg-cyan-50 border border-cyan-300 rounded-2xl text-cyan-800 text-xs font-bold flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
+          <CheckCircle2 className="w-5 h-5 text-[#0891b2] flex-shrink-0" />
           <div>
             <p className="font-extrabold text-slate-900">Profile Changes Saved Successfully!</p>
             <p className="text-[11px] text-slate-500 font-medium">Your updated consultant title, rate, location, and bio are now live across OverThink.</p>
@@ -104,7 +104,7 @@ export default function ConsultantProfileView() {
       {/* Header Banner - LinkedIn / Freelancer Style */}
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         {/* Cover graphic */}
-        <div className="h-40 sm:h-48 bg-gradient-to-r from-[#004845] via-[#003835] to-[#0d504c] relative">
+        <div className="h-40 sm:h-48 bg-gradient-to-r from-[#020617] via-[#082f49] to-[#082f49] relative">
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
               Verified Consultant
@@ -124,7 +124,7 @@ export default function ConsultantProfileView() {
                 rounded="3xl"
                 className="ring-4 ring-white shadow-xl"
               />
-              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#16a34a] rounded-full text-white ring-2 ring-white z-10">
+              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#0891b2] rounded-full text-white ring-2 ring-white z-10">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </span>
               <input
@@ -137,10 +137,10 @@ export default function ConsultantProfileView() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute top-1 right-1 p-2 rounded-full bg-[#004845] hover:bg-[#003331] text-white shadow-md cursor-pointer transition-transform hover:scale-110 z-10"
+                className="absolute top-1 right-1 p-2 rounded-full bg-[#020617] hover:bg-[#091528] text-white shadow-md cursor-pointer transition-transform hover:scale-110 z-10"
                 title="Upload Photo (or leave empty for first letter initial)"
               >
-                <Camera className="w-3.5 h-3.5 text-[#16a34a]" />
+                <Camera className="w-3.5 h-3.5 text-[#0891b2]" />
               </button>
             </div>
 
@@ -164,16 +164,16 @@ export default function ConsultantProfileView() {
               <button
                 type="button"
                 onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 {isEditing ? (
                   <>
-                    <Save className="w-4 h-4 text-[#16a34a]" />
+                    <Save className="w-4 h-4 text-[#0891b2]" />
                     <span>Save Profile Changes</span>
                   </>
                 ) : (
                   <>
-                    <Edit2 className="w-4 h-4 text-[#16a34a]" />
+                    <Edit2 className="w-4 h-4 text-[#0891b2]" />
                     <span>Edit Profile Details</span>
                   </>
                 )}
@@ -185,7 +185,7 @@ export default function ConsultantProfileView() {
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-black text-slate-900">{consultantUser.name}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
                 100% Verified
               </span>
             </div>
@@ -234,7 +234,7 @@ export default function ConsultantProfileView() {
                 Avg. Response: {consultantUser.responseTime}
               </span>
               <span className="flex items-center gap-1 font-extrabold text-slate-900">
-                <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                <DollarSign className="w-3.5 h-3.5 text-cyan-600" />
                 ${hourlyRate}/hr
               </span>
             </div>
@@ -271,7 +271,7 @@ export default function ConsultantProfileView() {
               {skills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-[#e6f2f1] text-[#004845] border border-[#004845]/20 flex items-center gap-1.5"
+                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex items-center gap-1.5"
                 >
                   <span>{skill}</span>
                   {isEditing && (
@@ -299,7 +299,7 @@ export default function ConsultantProfileView() {
                 <button
                   type="button"
                   onClick={addSkill}
-                  className="px-3 py-1.5 bg-[#004845] text-white rounded-xl text-xs font-bold"
+                  className="px-3 py-1.5 bg-[#020617] text-white rounded-xl text-xs font-bold"
                 >
                   Add
                 </button>
@@ -312,7 +312,7 @@ export default function ConsultantProfileView() {
       {/* Services & Fixed-Scope Packages */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-[#004845]" />
+          <Briefcase className="w-5 h-5 text-[#020617]" />
           <span>Consultation Services & Offerings</span>
         </h2>
 
@@ -328,7 +328,7 @@ export default function ConsultantProfileView() {
               </div>
               <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
                 <span className="text-base font-extrabold text-slate-900">${srv.price}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#004845] border border-slate-200">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#020617] border border-slate-200">
                   Fixed Scope
                 </span>
               </div>
@@ -342,15 +342,15 @@ export default function ConsultantProfileView() {
         {/* Experience */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-[#004845]" />
+            <Briefcase className="w-5 h-5 text-[#020617]" />
             <span>Work Experience</span>
           </h2>
           <div className="space-y-4">
             {consultantUser.experience?.map((exp) => (
-              <div key={exp.id} className="relative pl-6 pb-4 border-l-2 border-[#004845]/20 last:border-0 last:pb-0">
-                <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-[#004845] ring-4 ring-white" />
+              <div key={exp.id} className="relative pl-6 pb-4 border-l-2 border-[#020617]/20 last:border-0 last:pb-0">
+                <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-[#020617] ring-4 ring-white" />
                 <h4 className="text-xs font-bold text-slate-900">{exp.role}</h4>
-                <p className="text-[11px] font-semibold text-[#004845]">{exp.company} • {exp.period}</p>
+                <p className="text-[11px] font-semibold text-[#020617]">{exp.company} • {exp.period}</p>
                 <p className="text-xs text-slate-600 mt-1">{exp.description}</p>
               </div>
             ))}
@@ -360,7 +360,7 @@ export default function ConsultantProfileView() {
         {/* Education & Certifications */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-[#16a34a]" />
+            <GraduationCap className="w-5 h-5 text-[#0891b2]" />
             <span>Education & Certifications</span>
           </h2>
 
@@ -392,14 +392,14 @@ export default function ConsultantProfileView() {
       {/* Portfolio Showcase */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-          <Award className="w-5 h-5 text-[#004845]" />
+          <Award className="w-5 h-5 text-[#020617]" />
           <span>Featured Portfolio Projects & Case Studies</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {consultantUser.portfolio?.map((port) => (
             <div key={port.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30">
                 {port.tag}
               </span>
               <h4 className="text-sm font-bold text-slate-900">{port.title}</h4>

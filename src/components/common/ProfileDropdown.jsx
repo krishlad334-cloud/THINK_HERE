@@ -93,12 +93,12 @@ export default function ProfileDropdown({ onGoToLanding }) {
             role={role}
             size="sm"
             showOnline={true}
-            className="ring-2 ring-slate-200 group-hover:ring-[#16a34a] transition-all"
+            className="ring-2 ring-slate-200 group-hover:ring-[#0891b2] transition-all"
           />
         </div>
 
         <div className="hidden xl:flex flex-col text-left cursor-pointer">
-          <span className="text-xs font-bold text-slate-900 group-hover:text-[#004845] transition-colors leading-tight flex items-center gap-1">
+          <span className="text-xs font-bold text-slate-900 group-hover:text-[#020617] transition-colors leading-tight flex items-center gap-1">
             {currentUser?.name || 'My Account'}
             <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-700 transition-transform" />
           </span>
@@ -129,13 +129,13 @@ export default function ProfileDropdown({ onGoToLanding }) {
                   <h4 className="text-xs font-bold text-slate-900 truncate">
                     {currentUser?.name}
                   </h4>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#16a34a] flex-shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0891b2] flex-shrink-0" />
                 </div>
                 <p className="text-[11px] text-slate-500 truncate mt-0.5">
                   {currentUser?.email}
                 </p>
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#004845] text-white">
+                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#020617] text-white">
                     <ShieldCheck className="w-2.5 h-2.5" />
                     {isConsultant ? 'Verified Consultant' : 'Client Account'}
                   </span>
@@ -176,7 +176,7 @@ export default function ProfileDropdown({ onGoToLanding }) {
               <div className="grid grid-cols-2 gap-2 pt-1.5">
                 <div className="bg-slate-50 p-2 rounded-lg border border-slate-100 text-center">
                   <span className="text-[10px] text-slate-400 block font-medium">Hourly Rate</span>
-                  <span className="text-xs font-bold text-[#004845]">
+                  <span className="text-xs font-bold text-[#020617]">
                     ${currentUser?.hourlyRate || 150}/hr
                   </span>
                 </div>

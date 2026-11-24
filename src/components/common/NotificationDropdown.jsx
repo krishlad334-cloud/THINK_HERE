@@ -40,9 +40,9 @@ export default function NotificationDropdown() {
     switch (type) {
       case 'consultant_accepted':
       case 'solution_received':
-        return <CheckCircle className="w-4 h-4 text-[#16a34a]" />;
+        return <CheckCircle className="w-4 h-4 text-[#0891b2]" />;
       case 'new_message':
-        return <MessageSquare className="w-4 h-4 text-[#16a34a]" />;
+        return <MessageSquare className="w-4 h-4 text-[#0891b2]" />;
       case 'thought_matched':
         return <Clock className="w-4 h-4 text-amber-600" />;
       default:
@@ -60,7 +60,7 @@ export default function NotificationDropdown() {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-[#16a34a] rounded-full ring-2 ring-white">
+          <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-[#0891b2] rounded-full ring-2 ring-white">
             {unreadCount}
           </span>
         )}
@@ -89,7 +89,7 @@ export default function NotificationDropdown() {
                 <button
                   type="button"
                   onClick={markAllNotificationsRead}
-                  className="text-xs font-semibold text-[#004845] hover:text-[#16a34a] cursor-pointer whitespace-nowrap"
+                  className="text-xs font-semibold text-[#020617] hover:text-[#0891b2] cursor-pointer whitespace-nowrap"
                 >
                   Mark all as read
                 </button>
@@ -117,7 +117,7 @@ export default function NotificationDropdown() {
                   key={notif.id}
                   onClick={() => handleNotificationClick(notif)}
                   className={`p-3.5 flex gap-3 cursor-pointer hover:bg-slate-50 transition-colors ${
-                    !notif.isRead ? 'bg-[#f0fdf4]/60' : ''
+                    !notif.isRead ? 'bg-[#ecfeff]/60' : ''
                   }`}
                 >
                   <div className="p-2 rounded-xl bg-white shadow-xs border border-slate-100 flex-shrink-0 h-fit">
@@ -137,7 +137,7 @@ export default function NotificationDropdown() {
                     </p>
                   </div>
                   {!notif.isRead && (
-                    <span className="w-2 h-2 rounded-full bg-[#16a34a] self-center flex-shrink-0 ml-1" />
+                    <span className="w-2 h-2 rounded-full bg-[#0891b2] self-center flex-shrink-0 ml-1" />
                   )}
                 </div>
               ))

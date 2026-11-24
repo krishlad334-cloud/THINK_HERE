@@ -22,10 +22,10 @@ export default function ConsultantAnalytics() {
   ];
 
   const domainBreakdown = [
-    { name: 'Career & Tech Jobs', percentage: 38, revenue: '$13,110', count: 34, color: 'bg-[#004845]' },
-    { name: 'Cloud & System Architecture', percentage: 32, revenue: '$11,040', count: 28, color: 'bg-[#16a34a]' },
-    { name: 'Startup Strategy & MVP Planning', percentage: 20, revenue: '$6,900', count: 18, color: 'bg-emerald-500' },
-    { name: 'Product Growth & Marketing', percentage: 10, revenue: '$3,450', count: 9, color: 'bg-teal-500' },
+    { name: 'Career & Tech Jobs', percentage: 38, revenue: '$13,110', count: 34, color: 'bg-[#020617]' },
+    { name: 'Cloud & System Architecture', percentage: 32, revenue: '$11,040', count: 28, color: 'bg-[#0891b2]' },
+    { name: 'Startup Strategy & MVP Planning', percentage: 20, revenue: '$6,900', count: 18, color: 'bg-cyan-500' },
+    { name: 'Product Growth & Marketing', percentage: 10, revenue: '$3,450', count: 9, color: 'bg-sky-500' },
   ];
 
   const recentPayouts = [
@@ -41,7 +41,7 @@ export default function ConsultantAnalytics() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <BarChart3 className="w-7 h-7 text-[#004845]" />
+            <BarChart3 className="w-7 h-7 text-[#020617]" />
             <span>Consultant Analytics & Performance</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -50,8 +50,8 @@ export default function ConsultantAnalytics() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 rounded-xl bg-[#f0fdf4] border border-[#16a34a]/30 text-xs font-bold text-[#16a34a] flex items-center gap-1.5 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse" />
+          <span className="px-3 py-1.5 rounded-xl bg-[#ecfeff] border border-[#0891b2]/30 text-xs font-bold text-[#0891b2] flex items-center gap-1.5 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#0891b2] animate-pulse" />
             Live Analytics Feed
           </span>
         </div>
@@ -62,14 +62,14 @@ export default function ConsultantAnalytics() {
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Total Revenue</span>
           <p className="text-3xl font-black text-slate-900 mt-1.5">${(consultantUser.earningsTotal || 34500).toLocaleString()}</p>
-          <span className="text-xs text-[#16a34a] font-bold flex items-center gap-1 mt-2">
+          <span className="text-xs text-[#0891b2] font-bold flex items-center gap-1 mt-2">
             <TrendingUp className="w-3.5 h-3.5" /> +18.4% vs last quarter
           </span>
         </div>
 
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">24h SLA Compliance</span>
-          <p className="text-3xl font-black text-[#004845] mt-1.5">99.8%</p>
+          <p className="text-3xl font-black text-[#020617] mt-1.5">99.8%</p>
           <span className="text-xs text-slate-600 font-semibold mt-2 flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-amber-500" /> Average turnaround: 1.8 hrs
           </span>
@@ -85,9 +85,9 @@ export default function ConsultantAnalytics() {
 
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Repeat Client Rate</span>
-          <p className="text-3xl font-black text-[#16a34a] mt-1.5">42%</p>
+          <p className="text-3xl font-black text-[#0891b2] mt-1.5">42%</p>
           <span className="text-xs text-slate-600 font-semibold mt-2 flex items-center gap-1">
-            <Users className="w-3.5 h-3.5 text-[#004845]" /> Long-term advisory retainers
+            <Users className="w-3.5 h-3.5 text-[#020617]" /> Long-term advisory retainers
           </span>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function ConsultantAnalytics() {
               <h3 className="text-base font-bold text-slate-900">Monthly Earnings Velocity</h3>
               <p className="text-xs text-slate-400 mt-0.5">Verified payouts for delivered thought roadmaps</p>
             </div>
-            <span className="text-xs font-bold text-[#004845] bg-[#e6f2f1] px-3 py-1.5 rounded-full border border-[#004845]/20 self-start sm:self-auto">
+            <span className="text-xs font-bold text-[#020617] bg-[#ecfeff] px-3 py-1.5 rounded-full border border-[#020617]/20 self-start sm:self-auto">
               Average: $5,750 / month
             </span>
           </div>
@@ -118,7 +118,7 @@ export default function ConsultantAnalytics() {
                     </span>
                     <div className="w-full max-w-[48px] bg-slate-100 rounded-t-2xl h-full flex items-end overflow-hidden">
                       <div
-                        className="w-full bg-gradient-to-t from-[#004845] to-[#16a34a] rounded-t-2xl transition-all duration-500 group-hover:opacity-90"
+                        className="w-full bg-gradient-to-t from-[#020617] to-[#0891b2] rounded-t-2xl transition-all duration-500 group-hover:opacity-90"
                         style={{ height: `${heightPct}%` }}
                       />
                     </div>
@@ -196,9 +196,9 @@ export default function ConsultantAnalytics() {
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-slate-500 font-mono">{row.timeToSolve}</td>
-                  <td className="py-3.5 px-4 font-bold text-[#004845] font-mono text-sm">${row.amount}</td>
+                  <td className="py-3.5 px-4 font-bold text-[#020617] font-mono text-sm">${row.amount}</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#f0fdf4] text-[#16a34a] border border-[#16a34a]/30">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30">
                       <CheckCircle className="w-3 h-3" />
                       {row.status}
                     </span>

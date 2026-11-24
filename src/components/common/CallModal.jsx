@@ -47,7 +47,7 @@ export default function CallModal() {
             <div className="min-w-0">
               <h3 className="text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 truncate">
                 <span className="truncate">Call with {activeCall.participantName}</span>
-                <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] bg-[#004845] text-[#16a34a] border border-[#16a34a]/30 flex-shrink-0">
+                <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] bg-[#020617] text-[#0891b2] border border-[#0891b2]/30 flex-shrink-0">
                   Encrypted
                 </span>
               </h3>
@@ -57,7 +57,7 @@ export default function CallModal() {
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#16a34a]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0891b2]" />
               <span>Contact Privacy Shield</span>
             </div>
           </div>
@@ -66,8 +66,8 @@ export default function CallModal() {
         {/* Video / Call stage */}
         <div className="flex-1 relative bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center p-6 overflow-hidden">
           {isSharingScreen ? (
-            <div className="w-full h-full bg-slate-950 rounded-xl border border-[#004845]/40 flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#004845] text-[#16a34a] flex items-center justify-center mb-3">
+            <div className="w-full h-full bg-slate-950 rounded-xl border border-[#020617]/40 flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-[#020617] text-[#0891b2] flex items-center justify-center mb-3">
                 <Monitor className="w-8 h-8 animate-pulse" />
               </div>
               <h4 className="text-white font-semibold text-lg">Screen Sharing Active</h4>
@@ -83,13 +83,13 @@ export default function CallModal() {
                   name={activeCall.participantName}
                   size="2xl"
                   showOnline={true}
-                  className="ring-4 ring-[#004845] shadow-2xl"
+                  className="ring-4 ring-[#020617] shadow-2xl"
                 />
-                <div className="absolute -inset-2 rounded-full border border-[#16a34a]/40 animate-pulse pointer-events-none"></div>
+                <div className="absolute -inset-2 rounded-full border border-[#0891b2]/40 animate-pulse pointer-events-none"></div>
               </div>
               <h2 className="text-white text-xl font-bold">{activeCall.participantName}</h2>
               <p className="text-slate-400 text-sm mt-1 flex items-center gap-1.5">
-                <Video className="w-4 h-4 text-emerald-400" />
+                <Video className="w-4 h-4 text-cyan-400" />
                 Live OverThink Consultation Session
               </p>
 
@@ -99,7 +99,7 @@ export default function CallModal() {
                   <div
                     key={i}
                     style={{ height: `${h}px` }}
-                    className="w-1 bg-[#16a34a] rounded-full animate-pulse"
+                    className="w-1 bg-[#0891b2] rounded-full animate-pulse"
                   />
                 ))}
               </div>
@@ -172,7 +172,7 @@ export default function CallModal() {
               onClick={() => setIsSharingScreen(!isSharingScreen)}
               className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
                 isSharingScreen
-                  ? 'bg-[#004845] text-[#16a34a] shadow-lg'
+                  ? 'bg-[#020617] text-[#0891b2] shadow-lg'
                   : 'bg-slate-800 text-white hover:bg-slate-700'
               }`}
               title={isSharingScreen ? 'Stop Sharing' : 'Share Screen'}

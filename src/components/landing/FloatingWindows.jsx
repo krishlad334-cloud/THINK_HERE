@@ -107,7 +107,7 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
 
               {/* Result 2 */}
               <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-100">
-                <div className="text-[10px] text-emerald-600 flex items-center gap-1">
+                <div className="text-[10px] text-cyan-600 flex items-center gap-1">
                   <span>business-frameworks.io/playbook</span>
                 </div>
                 <h4 className="text-xs font-bold text-slate-800 leading-tight mt-0.5">
@@ -145,7 +145,7 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
               <div className="p-2 rounded-lg bg-rose-50 border border-rose-100 text-[10px] text-rose-800 leading-tight">
                 <strong>User928:</strong> "Never pivot marketing! It's always a product problem. Fire your sales lead."
               </div>
-              <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[10px] text-emerald-800 leading-tight">
+              <div className="p-2 rounded-lg bg-cyan-50 border border-cyan-100 text-[10px] text-cyan-800 leading-tight">
                 <strong>DevGuru:</strong> "Opposite! Product is fine, you just need TikTok influencer ads ASAP."
               </div>
               <div className="text-[9px] text-slate-400 text-center font-medium">
@@ -179,7 +179,7 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
                 <div>
                   <div className="text-xs font-bold text-indigo-950 flex items-center gap-1">
                     <span>Neuromind AI Chat</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
                   </div>
                   <div className="text-[9px] text-indigo-400 font-medium">Model v4.5 • Synthesizing generic answers</div>
                 </div>

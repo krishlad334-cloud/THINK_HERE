@@ -85,10 +85,10 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Mobile Header with OverThink Brand & Close Button (Hidden on Desktop) */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 lg:hidden bg-slate-50/80 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="OverThink" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
+            <img src="/logo.svg" alt="OverThink" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
             <span className="font-black text-sm tracking-tight text-slate-900">
-              <span className="text-[#004845]">Over</span>
-              <span className="text-[#16a34a]">Think</span> Menu
+              <span className="text-[#020617]">Over</span>
+              <span className="text-[#22d3ee]">Think</span> Menu
             </span>
           </div>
           <button
@@ -111,13 +111,13 @@ export default function Sidebar({ isOpen, onClose }) {
                 role={role}
                 size="md"
                 showOnline={true}
-                className="ring-2 ring-[#004845]/20 shadow-xs"
+                className="ring-2 ring-[#020617]/20 shadow-xs"
               />
             </div>
             <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser?.name}</h4>
               <p className="text-[11px] text-slate-500 truncate">{currentUser?.email}</p>
-              <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#004845] text-white">
+              <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#020617] text-white">
                 {role === 'consultant' ? 'Verified Consultant' : 'Client Account'}
               </span>
             </div>
@@ -128,21 +128,21 @@ export default function Sidebar({ isOpen, onClose }) {
           {role === 'client' ? (
             <button
               onClick={handleNewChat}
-              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all transform active:scale-98 cursor-pointer"
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all transform active:scale-98 cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-[#16a34a]" />
+              <Plus className="w-4 h-4 text-[#0891b2]" />
               <span className="font-semibold text-white">New Thought / Chat</span>
             </button>
           ) : (
             <button
               onClick={() => { setActiveTab('browse_thoughts'); if (onClose) onClose(); }}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all transform active:scale-98 cursor-pointer"
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all transform active:scale-98 cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
-                <FileSearch className="w-4 h-4 text-[#16a34a]" />
+                <FileSearch className="w-4 h-4 text-[#0891b2]" />
                 <span className="font-semibold text-white">Client OverThinks</span>
               </div>
-              <span className="text-[10px] bg-[#16a34a] text-white px-2 py-0.5 rounded-full font-black">
+              <span className="text-[10px] bg-[#0891b2] text-white px-2 py-0.5 rounded-full font-black">
                 {openThoughtsCount}
               </span>
             </button>
@@ -162,11 +162,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('my_thoughts'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'my_thoughts' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'my_thoughts' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-[#004845]" />
+                      <CheckCircle2 className="w-4 h-4 text-[#020617]" />
                       <span>All My Thoughts</span>
                     </div>
                     <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
@@ -177,11 +177,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('messages'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                      activeTab === 'messages' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'messages' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <MessageSquare className="w-4 h-4 text-[#004845]" />
+                      <MessageSquare className="w-4 h-4 text-[#020617]" />
                       <span>Consultation Chat & Call</span>
                     </div>
                   </button>
@@ -189,7 +189,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('saved_solutions'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'saved_solutions' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'saved_solutions' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
@@ -204,11 +204,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('jobs'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'jobs' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'jobs' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Briefcase className="w-4 h-4 text-[#004845]" />
+                      <Briefcase className="w-4 h-4 text-[#020617]" />
                       <span>Job & Career Hub</span>
                     </div>
                   </button>
@@ -216,11 +216,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('find_consultants'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'find_consultants' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'find_consultants' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Users className="w-4 h-4 text-[#004845]" />
+                      <Users className="w-4 h-4 text-[#020617]" />
                       <span>Find Consultants</span>
                     </div>
                   </button>
@@ -230,11 +230,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('my_consultations'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'my_consultations' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'my_consultations' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <FolderKanban className="w-4 h-4 text-[#004845]" />
+                      <FolderKanban className="w-4 h-4 text-[#020617]" />
                       <span>My Consultations</span>
                     </div>
                     <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
@@ -245,11 +245,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('messages'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'messages' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'messages' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <MessageSquare className="w-4 h-4 text-[#004845]" />
+                      <MessageSquare className="w-4 h-4 text-[#020617]" />
                       <span>Chat & Call Room</span>
                     </div>
                   </button>
@@ -257,11 +257,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('profile'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'profile' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'profile' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Users className="w-4 h-4 text-[#004845]" />
+                      <Users className="w-4 h-4 text-[#020617]" />
                       <span>Profile & Portfolio</span>
                     </div>
                   </button>
@@ -269,11 +269,11 @@ export default function Sidebar({ isOpen, onClose }) {
                   <button
                     onClick={() => { setActiveTab('analytics'); if (onClose) onClose(); }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      activeTab === 'analytics' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      activeTab === 'analytics' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <BarChart3 className="w-4 h-4 text-[#004845]" />
+                      <BarChart3 className="w-4 h-4 text-[#020617]" />
                       <span>Earnings & Analytics</span>
                     </div>
                   </button>
@@ -303,16 +303,16 @@ export default function Sidebar({ isOpen, onClose }) {
                         onClick={() => handleSelectThought(t.id)}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between group cursor-pointer ${
                           isSelected
-                            ? 'bg-[#e6f2f1] text-[#004845] font-bold shadow-xs'
+                            ? 'bg-[#ecfeff] text-[#020617] font-bold shadow-xs'
                             : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 overflow-hidden flex-1">
-                          <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+                          <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-[#0891b2]' : 'text-slate-400'}`} />
                           <span className="truncate">{t.title}</span>
                         </div>
                         {hasSolution && (
-                          <span className="w-2 h-2 rounded-full bg-[#16a34a] flex-shrink-0 ml-1.5" title="Solution Ready" />
+                          <span className="w-2 h-2 rounded-full bg-[#0891b2] flex-shrink-0 ml-1.5" title="Solution Ready" />
                         )}
                       </button>
                     );
@@ -331,7 +331,7 @@ export default function Sidebar({ isOpen, onClose }) {
               <button
                 onClick={() => { setActiveTab('settings'); if (onClose) onClose(); }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                  activeTab === 'settings' ? 'bg-[#e6f2f1] text-[#004845] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                  activeTab === 'settings' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
                 <div className="flex items-center gap-2.5">

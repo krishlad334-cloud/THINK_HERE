@@ -107,34 +107,34 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
           </div>
 
           {/* Card B: With OverThink Human Guidance */}
-          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-emerald-50/70 to-teal-50/70 border-2 border-emerald-300/80 shadow-[0_8px_30px_rgba(16,185,129,0.1)] ring-1 ring-emerald-500/15 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-emerald-100">
+          <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-cyan-50/70 to-sky-50/70 border-2 border-cyan-300/80 shadow-[0_8px_30px_rgba(6,182,212,0.1)] ring-1 ring-cyan-500/15 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-cyan-100">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-emerald-600 flex items-center justify-center text-white">
+                <div className="w-7 h-7 rounded-xl bg-[#0891b2] flex items-center justify-center text-white">
                   <Users className="w-4 h-4" />
                 </div>
-                <span className="font-bold text-sm text-[#004845]">With OverThink Guidance</span>
+                <span className="font-bold text-sm text-[#020617]">With OverThink Guidance</span>
               </div>
-              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-cyan-900 bg-cyan-100 px-2.5 py-0.5 rounded-full">
                 Verified Clarity
               </span>
             </div>
 
             <ul className="space-y-3 text-xs text-slate-700">
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-[#16a34a] flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#0891b2] flex-shrink-0 mt-0.5" />
                 <span><strong>1 vetted human expert</strong> who reviews your exact situation</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-[#16a34a] flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#0891b2] flex-shrink-0 mt-0.5" />
                 <span><strong>Diagnostic questions</strong> tailored to your product, audience, and goals</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-[#16a34a] flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#0891b2] flex-shrink-0 mt-0.5" />
                 <span><strong>Custom action roadmap</strong> with prioritized steps & milestones</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-[#16a34a] flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#0891b2] flex-shrink-0 mt-0.5" />
                 <span><strong>Direct 1-on-1 accountability:</strong> real answers from someone who did it</span>
               </li>
             </ul>

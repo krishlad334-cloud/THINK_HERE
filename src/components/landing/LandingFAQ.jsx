@@ -36,7 +36,7 @@ export default function LandingFAQ() {
     <section className="w-full max-w-5xl xl:max-w-6xl mx-auto py-14 sm:py-20 px-4 sm:px-8">
       <div className="text-center space-y-3 mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
-          <HelpCircle className="w-3.5 h-3.5 text-[#004845]" />
+          <HelpCircle className="w-3.5 h-3.5 text-[#0891b2]" />
           <span>Frequently Asked Questions</span>
         </div>
 
@@ -57,7 +57,7 @@ export default function LandingFAQ() {
               key={faq.q}
               className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
                 isOpen
-                  ? 'bg-white border-emerald-300/80 shadow-md ring-2 ring-emerald-500/10'
+                  ? 'bg-white border-cyan-300/80 shadow-md ring-2 ring-cyan-500/10'
                   : 'bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
               }`}
             >
@@ -72,7 +72,7 @@ export default function LandingFAQ() {
                 </span>
                 <div
                   className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
-                    isOpen ? 'bg-[#004845] text-white rotate-180' : 'bg-slate-100 text-slate-500'
+                    isOpen ? 'bg-[#0891b2] text-white rotate-180' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   <ChevronDown className="w-4 h-4" />

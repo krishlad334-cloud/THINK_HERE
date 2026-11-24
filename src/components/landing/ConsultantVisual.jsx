@@ -10,7 +10,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
  * - Soft radial feathered perimeter blending
  * - Low-latency seek coordination with fastSeek / currentTime fallback
  * - Interactive 3D cursor tilt & parallax
- * - Ambient glow matching OverThink teal/emerald brand
+ * - Ambient glow matching OverThink Deep Space & Neon Cyan brand
  * - Graceful fallback to photorealistic poster frame
  */
 export default function ConsultantVisual({
@@ -161,7 +161,7 @@ export default function ConsultantVisual({
       {/* Ambient Floor & Backlight Glow */}
       <div
         className={`absolute -inset-6 rounded-full bg-gradient-to-tr ${
-          hasAccepted ? 'from-emerald-500/30 via-teal-500/25' : 'from-teal-600/20 via-blue-500/15'
+          hasAccepted ? 'from-cyan-500/35 via-sky-500/25' : 'from-cyan-600/25 via-blue-500/15'
         } to-transparent blur-3xl transition-all duration-700 pointer-events-none opacity-80 group-hover:opacity-100`}
       />
 

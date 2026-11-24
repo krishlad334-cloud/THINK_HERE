@@ -82,8 +82,8 @@ export default function BrowseClientThoughts() {
         );
       case 'accepted':
         return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-cyan-600" />
             <span>Accepted</span>
           </span>
         );
@@ -96,8 +96,8 @@ export default function BrowseClientThoughts() {
         );
       case 'resolved':
         return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-teal-600" />
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-sky-600" />
             <span>Resolved</span>
           </span>
         );
@@ -132,8 +132,8 @@ export default function BrowseClientThoughts() {
       {/* Top Header */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#e6f2f1] text-[#004845] flex-shrink-0">
-            <FileSearch className="w-5 h-5 text-[#16a34a]" />
+          <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
+            <FileSearch className="w-5 h-5 text-[#0891b2]" />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -169,7 +169,7 @@ export default function BrowseClientThoughts() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by OverThink ID, keyword, client name..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] bg-slate-50/50 focus:bg-white transition-all font-medium"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] bg-slate-50/50 focus:bg-white transition-all font-medium"
             />
           </div>
 
@@ -178,7 +178,7 @@ export default function BrowseClientThoughts() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845] cursor-pointer flex-1 md:flex-initial"
+              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#020617] cursor-pointer flex-1 md:flex-initial"
             >
               <option value="Pending">Available OverThinks (Pending)</option>
               <option value="All">All Submissions</option>
@@ -192,7 +192,7 @@ export default function BrowseClientThoughts() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#004845] cursor-pointer"
+              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#020617] cursor-pointer"
             >
               <option value="latest">Sort: Latest</option>
             </select>
@@ -210,7 +210,7 @@ export default function BrowseClientThoughts() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                   isSelected
-                    ? 'bg-[#004845] text-white shadow-xs'
+                    ? 'bg-[#020617] text-white shadow-xs'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
                 }`}
               >
@@ -247,7 +247,7 @@ export default function BrowseClientThoughts() {
               </p>
               <button
                 onClick={() => { setSelectedCategory('All'); setFilterStatus('All'); setSearchQuery(''); }}
-                className="mt-4 px-4 py-2 rounded-xl bg-[#004845] text-white text-xs font-bold hover:bg-[#003331] cursor-pointer"
+                className="mt-4 px-4 py-2 rounded-xl bg-[#020617] text-white text-xs font-bold hover:bg-[#091528] cursor-pointer"
               >
                 View All Submissions
               </button>
@@ -263,9 +263,9 @@ export default function BrowseClientThoughts() {
                   key={thought.id}
                   className={`bg-white rounded-2xl border transition-all p-5 sm:p-6 hover:shadow-md flex flex-col justify-between gap-4 ${
                     isClaimedByMe
-                      ? 'border-[#16a34a] ring-1 ring-[#16a34a]/20'
+                      ? 'border-[#0891b2] ring-1 ring-[#0891b2]/20'
                       : isPending
-                      ? 'border-slate-200 hover:border-[#004845]'
+                      ? 'border-slate-200 hover:border-[#020617]'
                       : 'border-slate-200 bg-slate-50/40'
                   }`}
                 >
@@ -278,7 +278,7 @@ export default function BrowseClientThoughts() {
                           #{thought.id}
                         </span>
 
-                        <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#e6f2f1] text-[#004845]">
+                        <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#ecfeff] text-[#020617]">
                           {thought.category}
                         </span>
                       </div>
@@ -292,7 +292,7 @@ export default function BrowseClientThoughts() {
                     {/* Problem Title */}
                     <h2
                       onClick={() => setSelectedThoughtId(thought.id)}
-                      className="text-base sm:text-lg font-bold text-slate-900 hover:text-[#004845] cursor-pointer transition-colors leading-snug"
+                      className="text-base sm:text-lg font-bold text-slate-900 hover:text-[#020617] cursor-pointer transition-colors leading-snug"
                     >
                       {thought.title}
                     </h2>
@@ -311,7 +311,7 @@ export default function BrowseClientThoughts() {
                             key={aIdx}
                             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700"
                           >
-                            <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                            <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                             <span className="truncate max-w-[150px] font-medium">{att.name}</span>
                           </div>
                         ))}
@@ -351,16 +351,16 @@ export default function BrowseClientThoughts() {
                       {isPending ? (
                         <button
                           onClick={() => handleAccept(thought)}
-                          className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-md shadow-[#004845]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
+                          className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-md shadow-[#020617]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
                           title="Accept this OverThink and start direct consultation"
                         >
-                          <CheckCircle className="w-3.5 h-3.5 text-[#16a34a]" />
+                          <CheckCircle className="w-3.5 h-3.5 text-[#0891b2]" />
                           <span>Accept OverThink</span>
                         </button>
                       ) : isClaimedByMe ? (
                         <button
                           onClick={() => handleOpenChat(thought)}
-                          className="px-4 py-2 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold shadow-md shadow-[#16a34a]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
+                          className="px-4 py-2 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white text-xs font-bold shadow-md shadow-[#0891b2]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
                           <span>Open Consultation Chat</span>
@@ -394,7 +394,7 @@ export default function BrowseClientThoughts() {
               <div>
                 <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1">
                   {activeUser.name}
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#16a34a]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#0891b2]" />
                 </h4>
                 <p className="text-[10px] text-slate-400">{activeUser.label}</p>
                 <span className="text-xs font-black text-slate-800">${activeUser.hourlyRate || 150}/hr</span>
@@ -408,7 +408,7 @@ export default function BrowseClientThoughts() {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>My Active Consultations:</span>
-                <span className="font-bold text-[#16a34a]">
+                <span className="font-bold text-[#0891b2]">
                   {allThinks.filter(t => (t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id)).length}
                 </span>
               </div>
@@ -417,7 +417,7 @@ export default function BrowseClientThoughts() {
             <div className="pt-2 border-t border-slate-100">
               <button
                 onClick={() => setActiveTab('my_consultations')}
-                className="w-full py-2 px-3 rounded-xl bg-[#e6f2f1] text-[#004845] hover:bg-[#d5eae8] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full py-2 px-3 rounded-xl bg-[#ecfeff] text-[#020617] hover:bg-[#d5eae8] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>My Active Consultations</span>
               </button>

@@ -54,14 +54,14 @@ export default function ThoughtDetailModal() {
             <span className="font-mono text-xs font-extrabold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
               #{thought.id}
             </span>
-            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#e6f2f1] text-[#004845]">
+            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#ecfeff] text-[#020617]">
               {thought.category}
             </span>
             <span className="text-[11px] sm:text-xs text-slate-400">
               Submitted {timeAgo(thought.createdAt)}
             </span>
             <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
-              Status: <span className="capitalize font-extrabold text-[#004845]">{thought.status}</span>
+              Status: <span className="capitalize font-extrabold text-[#020617]">{thought.status}</span>
             </span>
           </div>
 
@@ -72,7 +72,7 @@ export default function ThoughtDetailModal() {
                   acceptThink(thought.id);
                   setSelectedThoughtId(null);
                 }}
-                className="px-3.5 py-1.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
+                className="px-3.5 py-1.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
               >
                 Accept OverThink
               </button>
@@ -81,7 +81,7 @@ export default function ThoughtDetailModal() {
             {thought.assignedConsultantName && (
               <button
                 onClick={handleOpenChat}
-                className="px-3.5 py-1.5 rounded-xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
+                className="px-3.5 py-1.5 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
               >
                 Open Consultation Chat
               </button>
@@ -133,7 +133,7 @@ export default function ThoughtDetailModal() {
               </div>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-[#e6f2f1] border border-[#004845]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-[#ecfeff] border border-[#020617]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <UserAvatar
                   src={thought.assignedConsultantAvatar}
@@ -145,7 +145,7 @@ export default function ThoughtDetailModal() {
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
                     Consultant: {thought.assignedConsultantName}
-                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.2 rounded-full bg-[#16a34a] text-white">
+                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.2 rounded-full bg-[#0891b2] text-white">
                       Accepted
                     </span>
                   </h4>
@@ -158,9 +158,9 @@ export default function ThoughtDetailModal() {
               <button
                 type="button"
                 onClick={handleOpenChat}
-                className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
+                className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
               >
-                <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
+                <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
                 <span>Open Chat Room</span>
               </button>
             </div>
@@ -207,8 +207,8 @@ export default function ThoughtDetailModal() {
                       key={att.id || idx}
                       className="p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3 shadow-xs"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#e6f2f1] text-[#004845] flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-4 h-4 text-[#16a34a]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#ecfeff] text-[#020617] flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-4 h-4 text-[#0891b2]" />
                       </div>
                       <div className="truncate">
                         <span className="text-xs font-bold text-slate-800 truncate block">{att.name}</span>
@@ -233,8 +233,8 @@ export default function ThoughtDetailModal() {
             {thought.assignedConsultantName ? (
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#004845] text-white flex items-center justify-center">
-                    <MessageSquare className="w-4 h-4 text-[#16a34a]" />
+                  <div className="w-9 h-9 rounded-xl bg-[#020617] text-white flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-[#0891b2]" />
                   </div>
                   <div>
                     <h5 className="text-xs font-bold text-slate-900">
@@ -249,9 +249,9 @@ export default function ThoughtDetailModal() {
                 <button
                   type="button"
                   onClick={handleOpenChat}
-                  className="px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
+                  <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
                   <span>Enter Chat Room</span>
                 </button>
               </div>

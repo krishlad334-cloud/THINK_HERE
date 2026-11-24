@@ -140,8 +140,8 @@ export default function NewThoughtModal() {
         {/* Header */}
         <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-[#e6f2f1] text-[#004845] rounded-xl flex-shrink-0">
-              <PlusCircle className="w-5 h-5 text-[#16a34a]" />
+            <div className="p-2 bg-[#ecfeff] text-[#020617] rounded-xl flex-shrink-0">
+              <PlusCircle className="w-5 h-5 text-[#0891b2]" />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900">
@@ -179,7 +179,7 @@ export default function NewThoughtModal() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Looking for a job in the IT industry, but not getting interview calls..."
-              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all font-medium placeholder:text-slate-400"
+              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all font-medium placeholder:text-slate-400"
             />
           </div>
 
@@ -196,7 +196,7 @@ export default function NewThoughtModal() {
                   onClick={() => setCategory(cat)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold text-center transition-all cursor-pointer border ${
                     category === cat
-                      ? 'bg-[#004845] text-white border-[#004845] shadow-xs'
+                      ? 'bg-[#020617] text-white border-[#020617] shadow-xs'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
@@ -219,10 +219,10 @@ export default function NewThoughtModal() {
                 className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                   isRecording
                     ? 'bg-rose-50 text-rose-600 border-rose-300 animate-pulse'
-                    : 'bg-[#e6f2f1] text-[#004845] border-[#004845]/20 hover:bg-[#d5eae8]'
+                    : 'bg-[#ecfeff] text-[#020617] border-[#020617]/20 hover:bg-[#d5eae8]'
                 }`}
               >
-                {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-[#16a34a]" />}
+                {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-[#0891b2]" />}
                 <span>{isRecording ? 'Listening...' : 'Voice Input'}</span>
               </button>
             </div>
@@ -233,7 +233,7 @@ export default function NewThoughtModal() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Provide more background: what you have tried, blockers, target outcome, budget or industry details..."
-              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all placeholder:text-slate-400"
+              className="w-full px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all placeholder:text-slate-400"
             />
           </div>
 
@@ -245,15 +245,15 @@ export default function NewThoughtModal() {
               <select
                 value={urgency}
                 onChange={(e) => setUrgency(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845]"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
               >
                 <option value="Standard">Standard (24h Window)</option>
                 <option value="High (Urgent)">High (Urgent Expedited)</option>
               </select>
             </div>
 
-            <div className="p-2.5 bg-[#f0fdf4] rounded-xl border border-[#16a34a]/20 flex items-center gap-2.5 text-[#004845]">
-              <Clock className="w-4 h-4 text-[#16a34a] flex-shrink-0" />
+            <div className="p-2.5 bg-[#ecfeff] rounded-xl border border-[#0891b2]/20 flex items-center gap-2.5 text-[#020617]">
+              <Clock className="w-4 h-4 text-[#0891b2] flex-shrink-0" />
               <div className="text-[11px] leading-tight">
                 <span className="font-bold">Instant Workflow:</span> Stored in LocalStorage and immediately available in the Consultant Panel.
               </div>
@@ -269,9 +269,9 @@ export default function NewThoughtModal() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs text-[#004845] hover:text-[#16a34a] font-bold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[#020617] hover:text-[#0891b2] font-bold flex items-center gap-1 cursor-pointer"
               >
-                <Paperclip className="w-3.5 h-3.5 text-[#16a34a]" />
+                <Paperclip className="w-3.5 h-3.5 text-[#0891b2]" />
                 <span>Add Files</span>
               </button>
               <input
@@ -287,12 +287,12 @@ export default function NewThoughtModal() {
             {attachments.length === 0 ? (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-[#004845] hover:bg-slate-50 transition-colors"
+                className="border-2 border-dashed border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-[#020617] hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center justify-center gap-3 text-slate-400 mb-1">
-                  <ImageIcon className="w-4 h-4 text-[#16a34a]" />
-                  <Video className="w-4 h-4 text-[#16a34a]" />
-                  <FileText className="w-4 h-4 text-[#16a34a]" />
+                  <ImageIcon className="w-4 h-4 text-[#0891b2]" />
+                  <Video className="w-4 h-4 text-[#0891b2]" />
+                  <FileText className="w-4 h-4 text-[#0891b2]" />
                 </div>
                 <p className="text-[11px] text-slate-500 font-medium">
                   Click to attach resume, architecture diagram, prototype, or specs
@@ -306,7 +306,7 @@ export default function NewThoughtModal() {
                     className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs"
                   >
                     <div className="flex items-center gap-2.5 overflow-hidden">
-                      <FileText className="w-4 h-4 text-[#16a34a] flex-shrink-0" />
+                      <FileText className="w-4 h-4 text-[#0891b2] flex-shrink-0" />
                       <div className="truncate">
                         <span className="font-semibold text-slate-800 truncate block">{att.name}</span>
                         <span className="text-[10px] text-slate-400">{att.size}</span>
@@ -329,10 +329,10 @@ export default function NewThoughtModal() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#004845] hover:bg-[#003331] text-white font-bold text-sm shadow-md shadow-[#004845]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+              className="w-full py-3 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-sm shadow-md shadow-[#020617]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
             >
               <span>Submit OverThink & Send to Consultants</span>
-              <ArrowRight className="w-4 h-4 text-[#16a34a]" />
+              <ArrowRight className="w-4 h-4 text-[#0891b2]" />
             </button>
           </div>
         </form>

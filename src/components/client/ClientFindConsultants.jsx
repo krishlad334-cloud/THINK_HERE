@@ -43,7 +43,7 @@ export default function ClientFindConsultants() {
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-          <ShieldCheck className="w-7 h-7 text-[#004845]" />
+          <ShieldCheck className="w-7 h-7 text-[#020617]" />
           <span>Find Verified Human Consultants</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -60,7 +60,7 @@ export default function ClientFindConsultants() {
               onClick={() => setFilterSkill(skill)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                 filterSkill === skill
-                  ? 'bg-[#004845] text-white shadow-xs'
+                  ? 'bg-[#020617] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -76,7 +76,7 @@ export default function ClientFindConsultants() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search consultants by skill or name..."
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#004845]"
+            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#020617]"
           />
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function ClientFindConsultants() {
         {filtered.map((c) => (
           <div
             key={c.id}
-            className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004845]/40 hover:shadow-lg transition-all flex flex-col justify-between"
+            className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#020617]/40 hover:shadow-lg transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start gap-4">
@@ -100,7 +100,7 @@ export default function ClientFindConsultants() {
                     className="ring-2 ring-slate-100"
                   />
                   {c.isVerified && (
-                    <span className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-[#16a34a] text-white" title="Verified Consultant">
+                    <span className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-[#0891b2] text-white" title="Verified Consultant">
                       <ShieldCheck className="w-3.5 h-3.5" />
                     </span>
                   )}
@@ -118,7 +118,7 @@ export default function ClientFindConsultants() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-[#004845] font-semibold line-clamp-1 mt-0.5">
+                  <p className="text-xs text-[#020617] font-semibold line-clamp-1 mt-0.5">
                     {c.title}
                   </p>
                   <p className="text-[11px] text-slate-400 mt-0.5">{c.location}</p>
@@ -150,9 +150,9 @@ export default function ClientFindConsultants() {
 
               <button
                 onClick={() => handleStartConsultationWith(c)}
-                className="px-3.5 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
               >
-                <MessageSquare className="w-3.5 h-3.5 text-[#16a34a]" />
+                <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
                 <span>Book / Consult</span>
               </button>
             </div>

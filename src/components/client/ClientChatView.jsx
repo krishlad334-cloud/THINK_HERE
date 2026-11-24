@@ -212,8 +212,8 @@ export default function ClientChatView() {
         );
       case 'accepted':
         return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-cyan-600" />
             <span>Accepted</span>
           </span>
         );
@@ -226,8 +226,8 @@ export default function ClientChatView() {
         );
       case 'resolved':
         return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-teal-600" />
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 flex items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5 text-sky-600" />
             <span>Resolved</span>
           </span>
         );
@@ -260,7 +260,7 @@ export default function ClientChatView() {
               #{activeThought.id}
             </span>
 
-            <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#e6f2f1] text-[#004845] flex-shrink-0">
+            <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#ecfeff] text-[#020617] flex-shrink-0">
               {activeThought.category}
             </span>
 
@@ -296,7 +296,7 @@ export default function ClientChatView() {
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors"
               title="Open full consultation chat room"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-[#004845]" />
+              <MessageSquare className="w-3.5 h-3.5 text-[#020617]" />
               <span>Open Chat Room</span>
             </button>
 
@@ -312,10 +312,10 @@ export default function ClientChatView() {
                     e.stopPropagation();
                     setShowCallMenu(prev => !prev);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all cursor-pointer group select-none"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all cursor-pointer group select-none"
                   title="Call Consultant"
                 >
-                  <PhoneCall className="w-3.5 h-3.5 text-[#16a34a]" />
+                  <PhoneCall className="w-3.5 h-3.5 text-[#0891b2]" />
                   <span>Call</span>
                   <ChevronDown className={`w-3 h-3 text-white/70 transition-transform duration-150 ${showCallMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -340,10 +340,10 @@ export default function ClientChatView() {
                           });
                           setShowCallMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#e6f2f1] hover:text-[#004845] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
+                        className="w-full px-3 py-2 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#ecfeff] hover:text-[#020617] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
                       >
-                        <div className="p-1.5 rounded-lg bg-[#e6f2f1] text-[#004845]">
-                          <Video className="w-3.5 h-3.5 text-[#16a34a]" />
+                        <div className="p-1.5 rounded-lg bg-[#ecfeff] text-[#020617]">
+                          <Video className="w-3.5 h-3.5 text-[#0891b2]" />
                         </div>
                         <div>
                           <span className="block font-bold">Live Video Call</span>
@@ -362,10 +362,10 @@ export default function ClientChatView() {
                           });
                           setShowCallMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#e6f2f1] hover:text-[#004845] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
+                        className="w-full px-3 py-2 text-xs font-semibold rounded-xl text-slate-800 hover:bg-[#ecfeff] hover:text-[#020617] flex items-center gap-2.5 transition-colors cursor-pointer text-left"
                       >
                         <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700">
-                          <PhoneCall className="w-3.5 h-3.5 text-[#004845]" />
+                          <PhoneCall className="w-3.5 h-3.5 text-[#020617]" />
                         </div>
                         <div>
                           <span className="block font-bold">Audio Call</span>
@@ -397,7 +397,7 @@ export default function ClientChatView() {
           /* Empty State - Authentic Minimalist ChatGPT Style Landing */
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center max-w-3xl mx-auto space-y-6 pt-6">
             <div className="w-16 h-16 rounded-3xl bg-white border border-slate-200 p-2 shadow-xs flex items-center justify-center">
-              <img src="/logo.jpg" alt="OverThink" className="w-full h-full object-contain" />
+              <img src="/logo.svg" alt="OverThink" className="w-full h-full object-contain" />
             </div>
 
             <div className="space-y-2">
@@ -415,9 +415,9 @@ export default function ClientChatView() {
                 <div
                   key={idx}
                   onClick={() => handleSelectStarter(s.prompt)}
-                  className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:border-[#004845] hover:bg-white hover:shadow-xs cursor-pointer transition-all group"
+                  className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:border-[#020617] hover:bg-white hover:shadow-xs cursor-pointer transition-all group"
                 >
-                  <h4 className="text-xs font-bold text-slate-800 group-hover:text-[#004845] mb-1">
+                  <h4 className="text-xs font-bold text-slate-800 group-hover:text-[#020617] mb-1">
                     {s.label}
                   </h4>
                   <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
@@ -431,10 +431,10 @@ export default function ClientChatView() {
           /* Active Chat Stream */
           <div className="space-y-6 max-w-3xl sm:max-w-4xl mx-auto w-full">
             {/* 1-Click Gateway into Dedicated Consultation Room */}
-            <div className="bg-[#e6f2f1]/90 border border-[#004845]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="bg-[#ecfeff]/90 border border-[#020617]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#004845] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                  <MessageSquare className="w-5 h-5 text-[#16a34a]" />
+                <div className="w-10 h-10 rounded-xl bg-[#020617] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <MessageSquare className="w-5 h-5 text-[#0891b2]" />
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">
@@ -455,10 +455,10 @@ export default function ClientChatView() {
                   }
                   setActiveTab('messages');
                 }}
-                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex-shrink-0"
+                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex-shrink-0"
               >
                 <span>Enter Consultation Chat</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#16a34a]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#0891b2]" />
               </button>
             </div>
 
@@ -491,7 +491,7 @@ export default function ClientChatView() {
                     <div className="flex flex-wrap gap-2 pt-2 mt-2 border-t border-slate-200/60">
                       {activeThought.attachments.map((att, i) => (
                         <span key={i} className="text-xs bg-white px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1 text-slate-700">
-                          <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                          <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                           {att.name}
                         </span>
                       ))}
@@ -526,7 +526,7 @@ export default function ClientChatView() {
                       <span className="font-bold text-slate-700">{msg.senderName}</span>
                       <span>{timeAgo(msg.createdAt)}</span>
                       {isMine && (
-                        <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#16a34a]' : 'text-slate-400'}`} />
+                        <CheckCheck className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#0891b2]' : 'text-slate-400'}`} />
                       )}
                     </div>
 
@@ -534,7 +534,7 @@ export default function ClientChatView() {
                       <div
                         className={`p-3.5 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                           isMine
-                            ? 'bg-[#004845] text-white rounded-tr-none'
+                            ? 'bg-[#020617] text-white rounded-tr-none'
                             : 'bg-white border border-slate-200/90 text-slate-900 rounded-tl-none shadow-xs'
                         }`}
                       >
@@ -550,7 +550,7 @@ export default function ClientChatView() {
                                   isMine ? 'bg-white/10 text-white' : 'bg-slate-100 text-slate-700'
                                 }`}
                               >
-                                <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                                <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                                 <span className="truncate max-w-[140px]">{att.name}</span>
                               </div>
                             ))}
@@ -585,7 +585,7 @@ export default function ClientChatView() {
                             onClick={() => handleCopyText(msg.id, msg.text)}
                             className="w-full px-3 py-1.5 text-left text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                           >
-                            {copiedMsgId === msg.id ? <Check className="w-3.5 h-3.5 text-[#16a34a]" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                            {copiedMsgId === msg.id ? <Check className="w-3.5 h-3.5 text-[#0891b2]" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                             <span>{copiedMsgId === msg.id ? 'Copied!' : 'Copy Text'}</span>
                           </button>
 
@@ -622,7 +622,7 @@ export default function ClientChatView() {
             <div className="flex flex-wrap gap-2 mb-2">
               {attachments.map((att, idx) => (
                 <span key={idx} className="text-xs bg-slate-100 px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-medium text-slate-700">
-                  <FileText className="w-3.5 h-3.5 text-[#16a34a]" />
+                  <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                   {att.name}
                   <button type="button" onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))} className="text-slate-400 hover:text-slate-700 font-bold cursor-pointer">×</button>
                 </span>
@@ -630,7 +630,7 @@ export default function ClientChatView() {
             </div>
           )}
 
-          <div className="relative flex items-center bg-slate-50 rounded-2xl border border-slate-200/90 focus-within:border-[#004845] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#004845]/10 p-1.5 transition-all w-full">
+          <div className="relative flex items-center bg-slate-50 rounded-2xl border border-slate-200/90 focus-within:border-[#020617] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#020617]/10 p-1.5 transition-all w-full">
             <input
               ref={fileInputRef}
               type="file"
@@ -666,7 +666,7 @@ export default function ClientChatView() {
                 onClick={() => setShowEmojiPicker(prev => !prev)}
                 className={`p-2 rounded-xl transition-colors cursor-pointer ${
                   showEmojiPicker
-                    ? 'text-[#004845] bg-slate-200/80'
+                    ? 'text-[#020617] bg-slate-200/80'
                     : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/60'
                 }`}
                 title="Insert Emoji"
@@ -724,7 +724,7 @@ export default function ClientChatView() {
               disabled={!inputVal.trim() && attachments.length === 0}
               className={`p-2.5 rounded-xl transition-all ${
                 inputVal.trim() || attachments.length > 0
-                  ? 'bg-[#16a34a] hover:bg-[#15803d] text-white shadow-md shadow-[#16a34a]/25 cursor-pointer'
+                  ? 'bg-[#0891b2] hover:bg-[#0e7490] text-white shadow-md shadow-[#0891b2]/25 cursor-pointer'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >

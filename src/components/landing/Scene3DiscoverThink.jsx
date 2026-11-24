@@ -48,7 +48,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
       {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mb-8 z-10">
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          Discover <span className="text-[#004845]">THINK</span>. Find The Right <span className="text-[#16a34a]">Perspective</span>.
+          Discover <span className="text-[#020617]">THINK</span>. Find The Right <span className="text-[#0891b2]">Perspective</span>.
         </h2>
 
         <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
@@ -79,7 +79,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
         {/* Right Column: The Real OverThink Submission Interface */}
         <div className="lg:col-span-7">
           <div
-            className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(0,72,69,0.08)] ring-1 ring-black/5 p-5 sm:p-8 space-y-5 transition-all duration-500"
+            className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(8,145,178,0.08)] ring-1 ring-black/5 p-5 sm:p-8 space-y-5 transition-all duration-500"
             style={{
               transform: `translateY(${(1 - Math.min(progress * 1.5, 1)) * 15}px)`,
               opacity: Math.min(progress * 2, 1)
@@ -89,7 +89,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
             <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 gap-2">
               <Logo size="sm" showTagline={false} />
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] sm:text-xs font-semibold whitespace-nowrap">
+                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 text-[10px] sm:text-xs font-semibold whitespace-nowrap">
                   <Shield className="w-3.5 h-3.5" />
                   <span>Confidential & Verified</span>
                 </span>
@@ -122,8 +122,8 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
                       onClick={() => setActiveScenarioId(sc.id)}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-[#004845] text-white shadow-xs scale-102 ring-2 ring-[#004845]/20'
-                          : 'bg-slate-100 hover:bg-emerald-50/80 text-slate-700 hover:text-[#004845]'
+                          ? 'bg-[#0891b2] text-white shadow-xs scale-102 ring-2 ring-[#0891b2]/20'
+                          : 'bg-slate-100 hover:bg-cyan-50/80 text-slate-700 hover:text-[#0891b2]'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -135,16 +135,16 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
             </div>
 
             {/* The Live Typing Problem Input Box */}
-            <div className="relative rounded-2xl bg-slate-50/90 border-2 border-emerald-500/70 p-3.5 sm:p-4 shadow-inner ring-2 ring-emerald-500/10">
+            <div className="relative rounded-2xl bg-slate-50/90 border-2 border-cyan-500/70 p-3.5 sm:p-4 shadow-inner ring-2 ring-cyan-500/10">
               <div className="min-h-[75px] sm:min-h-[90px] font-sans text-xs sm:text-sm md:text-base text-slate-800 leading-relaxed">
                 {currentTyped}
-                <span className="inline-block w-1.5 sm:w-2 h-3.5 sm:h-4 ml-1 bg-[#16a34a] animate-pulse align-middle" />
+                <span className="inline-block w-1.5 sm:w-2 h-3.5 sm:h-4 ml-1 bg-[#0891b2] animate-pulse align-middle" />
               </div>
 
               {/* Problem Submission Status Bar */}
               <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs">
-                <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px] text-cyan-700 font-semibold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
                   <span>Ready for Consultant Review</span>
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium">
@@ -156,7 +156,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2 gap-3 sm:gap-2">
               <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Users className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <Users className="w-4 h-4 text-cyan-600 flex-shrink-0" />
                 <span>Available to vetted human consultants</span>
               </div>
 
@@ -164,8 +164,8 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
                 type="button"
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-white shadow-md transition-all duration-300 cursor-pointer ${
                   isReadyToSend
-                    ? 'bg-[#16a34a] hover:bg-[#15803d] shadow-emerald-600/35 ring-4 ring-emerald-500/25 scale-102'
-                    : 'bg-[#16a34a] hover:bg-[#15803d] shadow-emerald-600/20 hover:scale-[1.02]'
+                    ? 'bg-[#0891b2] hover:bg-[#0e7490] shadow-cyan-600/35 ring-4 ring-cyan-500/25 scale-102'
+                    : 'bg-[#0891b2] hover:bg-[#0e7490] shadow-cyan-600/20 hover:scale-[1.02]'
                 }`}
               >
                 <span>Submit OverThink</span>

@@ -81,8 +81,8 @@ export default function ClientSettings() {
         </div>
 
         {savedSuccess && (
-          <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
-            <CheckCircle className="w-4 h-4 text-[#16a34a]" />
+          <div className="p-3 bg-cyan-50 border border-cyan-300 rounded-xl text-cyan-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+            <CheckCircle className="w-4 h-4 text-[#0891b2]" />
             <span>Profile and privacy settings saved successfully!</span>
           </div>
         )}
@@ -111,17 +111,17 @@ export default function ClientSettings() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 p-2 rounded-full bg-[#004845] hover:bg-[#003331] text-white shadow-md cursor-pointer transition-transform hover:scale-110"
+                className="absolute bottom-0 right-0 p-2 rounded-full bg-[#020617] hover:bg-[#091528] text-white shadow-md cursor-pointer transition-transform hover:scale-110"
                 title="Upload Photo (or leave empty for first letter initial)"
               >
-                <Camera className="w-3.5 h-3.5 text-[#16a34a]" />
+                <Camera className="w-3.5 h-3.5 text-[#0891b2]" />
               </button>
             </div>
 
             <div>
               <h2 className="text-lg font-bold text-slate-900">{clientUser.name}</h2>
               <p className="text-xs text-slate-500 mt-0.5">{clientUser.email}</p>
-              <span className="inline-block mt-2 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#e6f2f1] text-[#004845] border border-[#004845]/20">
+              <span className="inline-block mt-2 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20">
                 Verified Client Account
               </span>
             </div>
@@ -134,22 +134,22 @@ export default function ClientSettings() {
               </div>
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">Solutions</span>
-                <span className="text-base font-black text-[#16a34a]">5</span>
+                <span className="text-base font-black text-[#0891b2]">5</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">SLA</span>
-                <span className="text-base font-black text-[#004845]">24h</span>
+                <span className="text-base font-black text-[#020617]">24h</span>
               </div>
             </div>
 
             {/* Security Badges */}
             <div className="pt-2 text-left space-y-2">
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-                <ShieldCheck className="w-4 h-4 text-[#16a34a]" />
+                <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
                 <span>Contact Masking Active</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-                <Lock className="w-4 h-4 text-[#004845]" />
+                <Lock className="w-4 h-4 text-[#020617]" />
                 <span>End-to-End Chat Encryption</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
@@ -160,9 +160,9 @@ export default function ClientSettings() {
           </div>
 
           {/* Quick Help Box */}
-          <div className="bg-[#f0fdf4] rounded-2xl border border-[#16a34a]/20 p-5 space-y-2">
-            <h4 className="text-xs font-bold text-[#004845] flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#16a34a]" />
+          <div className="bg-[#ecfeff] rounded-2xl border border-[#0891b2]/20 p-5 space-y-2">
+            <h4 className="text-xs font-bold text-[#020617] flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
               OverThink Privacy Guarantee
             </h4>
             <p className="text-[11px] text-slate-600 leading-relaxed">
@@ -177,7 +177,7 @@ export default function ClientSettings() {
           <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-7 space-y-5 shadow-xs">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <User className="w-4 h-4 text-[#004845]" />
+                <User className="w-4 h-4 text-[#020617]" />
                 <span>Personal Profile Information</span>
               </h3>
               <span className="text-xs text-slate-400">Public within OverThink consultations</span>
@@ -190,7 +190,7 @@ export default function ClientSettings() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
 
@@ -200,7 +200,7 @@ export default function ClientSettings() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function ClientSettings() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
 
@@ -222,7 +222,7 @@ export default function ClientSettings() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
             </div>
@@ -233,7 +233,7 @@ export default function ClientSettings() {
                 rows={4}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004845]/20 focus:border-[#004845] transition-all leading-relaxed"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all leading-relaxed"
               />
               <p className="text-[10px] text-slate-400 mt-1">Brief summary displayed to consultants when they review your submitted thoughts.</p>
             </div>
@@ -243,10 +243,10 @@ export default function ClientSettings() {
           <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 space-y-4 shadow-xs">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#16a34a]" />
+                <Shield className="w-4 h-4 text-[#0891b2]" />
                 <span>Contact Privacy & Safeguards (Requirement 10)</span>
               </h3>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200">
                 ENABLED
               </span>
             </div>
@@ -263,7 +263,7 @@ export default function ClientSettings() {
                   type="checkbox"
                   checked={inPlatformMasking}
                   onChange={(e) => setInPlatformMasking(e.target.checked)}
-                  className="w-4 h-4 accent-[#004845] rounded cursor-pointer"
+                  className="w-4 h-4 accent-[#020617] rounded cursor-pointer"
                 />
               </div>
 
@@ -278,7 +278,7 @@ export default function ClientSettings() {
                   type="checkbox"
                   checked={timerAlerts}
                   onChange={(e) => setTimerAlerts(e.target.checked)}
-                  className="w-4 h-4 accent-[#004845] rounded cursor-pointer"
+                  className="w-4 h-4 accent-[#020617] rounded cursor-pointer"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export default function ClientSettings() {
                   type="checkbox"
                   checked={emailNotifications}
                   onChange={(e) => setEmailNotifications(e.target.checked)}
-                  className="w-4 h-4 accent-[#004845] rounded cursor-pointer"
+                  className="w-4 h-4 accent-[#020617] rounded cursor-pointer"
                 />
               </div>
             </div>
@@ -303,9 +303,9 @@ export default function ClientSettings() {
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#004845] hover:bg-[#003331] text-white text-xs font-bold flex items-center gap-2 shadow-sm shadow-[#004845]/25 cursor-pointer transition-all transform active:scale-98"
+              className="px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center gap-2 shadow-sm shadow-[#020617]/25 cursor-pointer transition-all transform active:scale-98"
             >
-              <Save className="w-4 h-4 text-[#16a34a]" />
+              <Save className="w-4 h-4 text-[#0891b2]" />
               <span>Save Settings</span>
             </button>
           </div>
