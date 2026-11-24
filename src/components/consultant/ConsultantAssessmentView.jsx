@@ -314,20 +314,20 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
       {/* =================================================================== */}
       {isStandalone ? (
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-16 px-4 sm:px-8 lg:px-12 w-full flex items-center justify-between gap-4">
-          {/* Logo & Title */}
+          {/* Left: Logo & Subtitle */}
           <div className="flex items-center gap-3 min-w-0">
             <Logo size="sm" showTagline={false} />
             <div className="hidden sm:block h-5 w-px bg-slate-200 mx-0.5" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-900 border border-cyan-200 flex-shrink-0">
-                  Mandatory Exam
-                </span>
-                <span className="hidden md:inline text-xs font-bold text-slate-800 truncate">
-                  Consultant Skills & Qualification
-                </span>
-              </div>
-            </div>
+            <span className="hidden sm:inline text-xs font-bold text-slate-800 truncate">
+              Consultant Skills & Qualification
+            </span>
+          </div>
+
+          {/* Right: Mandatory Exam Tag at the end of the navbar */}
+          <div className="flex items-center flex-shrink-0">
+            <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-cyan-50 text-cyan-900 border border-cyan-200 shadow-2xs">
+              Mandatory Exam
+            </span>
           </div>
         </header>
       ) : (
