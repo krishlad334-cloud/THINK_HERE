@@ -128,7 +128,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
         setLoginError(res.error || 'Authentication failed. Please verify your details.');
         setLoginIsNotFound(!!res.notFound);
       } else if (onSuccess) {
-        onSuccess();
+        onSuccess(res.user, false);
       }
     }, 300);
   };
@@ -146,7 +146,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       if (!res.success) {
         setLoginError(res.error || 'Authentication failed. Please verify your details.');
       } else if (onSuccess) {
-        onSuccess();
+        onSuccess(res.user, false);
       }
     }, 250);
   };
@@ -330,7 +330,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       if (!regRes.success) {
         setRegError(regRes.error || 'Registration failed.');
       } else if (onSuccess) {
-        onSuccess();
+        onSuccess(regRes.user || { role: regRole }, true);
       }
     }, 500);
   };
@@ -659,7 +659,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           type="button"
                           onClick={() => {
                             quickRegister(loginIdentifier.trim(), loginPassword, 'client');
-                            if (onSuccess) onSuccess();
+                            if (onSuccess) onSuccess({ role: 'client' }, false);
                           }}
                           className="py-1.5 px-2 bg-[#0891b2] hover:bg-[#0e7490] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
@@ -669,7 +669,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                           type="button"
                           onClick={() => {
                             quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
-                            if (onSuccess) onSuccess();
+                            if (onSuccess) onSuccess({ role: 'consultant' }, true);
                           }}
                           className="py-1.5 px-2 bg-[#020617] hover:bg-[#082f49] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >

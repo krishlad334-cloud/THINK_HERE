@@ -12,6 +12,7 @@ import {
   FolderKanban,
   BarChart3,
   CheckCircle2,
+  GraduationCap,
   X,
   LogOut
 } from 'lucide-react';
@@ -252,6 +253,27 @@ export default function Sidebar({ isOpen, onClose }) {
                       <MessageSquare className="w-4 h-4 text-[#020617]" />
                       <span>Chat & Call Room</span>
                     </div>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('assessment'); if (onClose) onClose(); }}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                      activeTab === 'assessment' ? 'bg-[#ecfeff] text-[#020617] font-bold' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <GraduationCap className="w-4 h-4 text-[#020617]" />
+                      <span>Skills Assessment</span>
+                    </div>
+                    {currentUser?.assessmentPassed || currentUser?.isVerified ? (
+                      <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full font-bold">
+                        Passed
+                      </span>
+                    ) : (
+                      <span className="text-[10px] bg-cyan-50 text-cyan-800 border border-cyan-200 px-1.5 py-0.5 rounded-full font-bold">
+                        Required
+                      </span>
+                    )}
                   </button>
 
                   <button

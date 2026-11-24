@@ -23,6 +23,7 @@ import BrowseClientThoughts from './components/consultant/BrowseClientThoughts';
 import MyConsultations from './components/consultant/MyConsultations';
 import ConsultantProfileView from './components/consultant/ConsultantProfileView';
 import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
+import ConsultantAssessmentView from './components/consultant/ConsultantAssessmentView';
 
 // Shared Chat & Consultation Room
 import ChatWorkspace from './components/chat/ChatWorkspace';
@@ -31,14 +32,14 @@ function AppContent() {
   const { role, activeTab, setActiveTab, isAuthenticated, currentUser, toast, closeToast } = useApp();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // Default entry flow: ANYONE who opens the website is ALWAYS shown the landing page first!
-  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'auth' | 'app'
+  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'auth' | 'app' | 'consultant_test'
   const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'register'
 
   // Enforce strict role-based route isolation
   React.useEffect(() => {
     if (!isAuthenticated) return;
     if (role === 'client') {
-      const consultantTabs = ['browse_thoughts', 'my_consultations', 'profile', 'analytics', 'completed'];
+      const consultantTabs = ['browse_thoughts', 'my_consultations', 'profile', 'analytics', 'completed', 'assessment'];
       if (consultantTabs.includes(activeTab)) {
         setActiveTab('chat');
       }
@@ -75,12 +76,34 @@ function AppContent() {
       <AuthPage
         initialMode={authInitialMode}
         onBackToLanding={() => setCurrentView('landing')}
-        onSuccess={() => setCurrentView('app')}
+        onSuccess={(userObj, isNewRegistration) => {
+          if (isNewRegistration && (userObj?.role === 'consultant' || role === 'consultant')) {
+            setCurrentView('consultant_test');
+          } else {
+            setCurrentView('app');
+          }
+        }}
       />
     );
   }
 
-  // 3. Fallback: If in 'app' but not authenticated, safely route to landing
+  // 3. CONSULTANT ONBOARDING TEST VIEW: Direct post-registration qualification exam
+  if (currentView === 'consultant_test') {
+    return (
+      <ConsultantAssessmentView
+        onComplete={() => {
+          setCurrentView('app');
+          setActiveTab('browse_thoughts');
+        }}
+        onSkip={() => {
+          setCurrentView('app');
+          setActiveTab('browse_thoughts');
+        }}
+      />
+    );
+  }
+
+  // 4. Fallback: If in 'app' but not authenticated, safely route to landing
   if (!isAuthenticated) {
     return (
       <LandingPage
@@ -156,6 +179,13 @@ function AppContent() {
           return <ConsultantProfileView />;
         case 'analytics':
           return <ConsultantAnalytics />;
+        case 'assessment':
+          return (
+            <ConsultantAssessmentView
+              onComplete={() => setActiveTab('browse_thoughts')}
+              onSkip={() => setActiveTab('browse_thoughts')}
+            />
+          );
         case 'settings':
           return <ClientSettings />;
         default:
