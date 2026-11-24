@@ -91,11 +91,8 @@ function AppContent() {
   if (currentView === 'consultant_test') {
     return (
       <ConsultantAssessmentView
+        isStandalone={true}
         onComplete={() => {
-          setCurrentView('app');
-          setActiveTab('browse_thoughts');
-        }}
-        onSkip={() => {
           setCurrentView('app');
           setActiveTab('browse_thoughts');
         }}
@@ -182,8 +179,8 @@ function AppContent() {
         case 'assessment':
           return (
             <ConsultantAssessmentView
+              isStandalone={false}
               onComplete={() => setActiveTab('browse_thoughts')}
-              onSkip={() => setActiveTab('browse_thoughts')}
             />
           );
         case 'settings':

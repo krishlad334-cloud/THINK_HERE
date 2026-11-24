@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import Logo from '../common/Logo';
 import {
@@ -6,7 +6,6 @@ import {
   XCircle,
   Award,
   ShieldCheck,
-  Clock,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
@@ -18,6 +17,8 @@ import {
   Briefcase,
   GraduationCap
 } from 'lucide-react';
+
+export const PASSING_THRESHOLD = 10; // Exactly 10 right answers out of 15 required to pass into consultant side
 
 export const CONSULTANT_QUESTIONS = [
   {
@@ -232,7 +233,7 @@ export const CONSULTANT_QUESTIONS = [
   }
 ];
 
-export default function ConsultantAssessmentView({ onComplete, onSkip }) {
+export default function ConsultantAssessmentView({ onComplete, isStandalone = true }) {
   const { currentUser, updateUserProfile, showToast } = useApp();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -240,34 +241,9 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutes countdown
-  const [timerActive, setTimerActive] = useState(true);
 
   const totalQuestions = CONSULTANT_QUESTIONS.length;
   const currentQ = CONSULTANT_QUESTIONS[currentIndex];
-
-  // Live timer countdown
-  useEffect(() => {
-    if (!timerActive || isSubmitted) return;
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleSubmitTest();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [timerActive, isSubmitted]);
-
-  // Format seconds into MM:SS
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
 
   const handleSelectOption = (optionId) => {
     if (isSubmitted) return;
@@ -281,7 +257,6 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
 
   const handleSubmitTest = () => {
-    setTimerActive(false);
     let correctCount = 0;
     CONSULTANT_QUESTIONS.forEach(q => {
       if (answers[q.id] === q.correctAnswer) {
@@ -293,14 +268,14 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
     setIsSubmitted(true);
     setShowReviewModal(false);
 
-    const percent = Math.round((correctCount / totalQuestions) * 100);
-    const hasPassed = percent >= 70;
+    const hasPassed = correctCount >= PASSING_THRESHOLD;
 
     if (currentUser?.id) {
       updateUserProfile(currentUser.id, {
         assessmentPassed: hasPassed,
         isVerified: hasPassed,
-        assessmentScore: percent,
+        assessmentScore: `${correctCount}/${totalQuestions}`,
+        assessmentScoreNum: correctCount,
         assessmentCompletedAt: new Date().toISOString()
       });
     }
@@ -308,13 +283,13 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
     if (hasPassed) {
       showToast(
         'Assessment Passed!',
-        `Congratulations! You scored ${correctCount}/${totalQuestions} (${percent}%). Verified Consultant status unlocked!`,
+        `Congratulations! You answered ${correctCount}/${totalQuestions} correctly (Required: 10). Verified Consultant status unlocked!`,
         'success'
       );
     } else {
       showToast(
-        'Assessment Incomplete',
-        `You scored ${correctCount}/${totalQuestions} (${percent}%). 70% is required for verified status. You can retake the test.`,
+        'Qualification Incomplete',
+        `You answered ${correctCount}/${totalQuestions} correctly. At least 10 right answers are required to unlock the Consultant portal.`,
         'error'
       );
     }
@@ -325,129 +300,154 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
     setCurrentIndex(0);
     setIsSubmitted(false);
     setScore(0);
-    setTimeLeft(20 * 60);
-    setTimerActive(true);
   };
 
+  const isPassed = isSubmitted && score >= PASSING_THRESHOLD;
   const passPercentage = Math.round((score / totalQuestions) * 100);
-  const isPassed = isSubmitted && passPercentage >= 70;
 
   return (
-    <div className="min-h-screen min-h-[100dvh] w-full bg-[#f8fafc] text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-cyan-500/20 selection:text-cyan-950">
+    <div className={`w-full text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-cyan-500/20 selection:text-cyan-950 ${
+      isStandalone ? 'min-h-screen min-h-[100dvh] bg-[#f8fafc]' : 'pb-16'
+    }`}>
       {/* =================================================================== */}
-      {/* 1. TOP RESPONSIVE HEADER BAR                                        */}
+      {/* 1. TOP RESPONSIVE HEADER BAR (STANDALONE POST-REGISTRATION MODE)    */}
       {/* =================================================================== */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs py-3 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
-          {/* Logo & Title */}
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <Logo size="sm" showTagline={false} />
-            <div className="hidden sm:block h-6 w-px bg-slate-200" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 border border-cyan-200 flex-shrink-0">
-                  Consultant Exam
-                </span>
-                <span className="hidden md:inline text-xs text-slate-400">•</span>
-                <span className="hidden md:inline text-xs font-semibold text-slate-700 truncate">
-                  Role Qualification & Skills Verification
-                </span>
+      {isStandalone ? (
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs py-3 px-4 sm:px-8 lg:px-12 w-full">
+          <div className="w-full flex items-center justify-between gap-3 sm:gap-6">
+            {/* Logo & Title */}
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <Logo size="sm" showTagline={false} />
+              <div className="hidden sm:block h-6 w-px bg-slate-200" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 border border-cyan-200 flex-shrink-0">
+                    Consultant Exam
+                  </span>
+                  <span className="hidden md:inline text-xs text-slate-400">•</span>
+                  <span className="hidden md:inline text-xs font-semibold text-slate-700 truncate">
+                    Role Qualification & Skills Verification
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Passing criteria requirement & Progress */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              {/* Passing Requirement Badge */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#ecfeff] text-[#020617] border border-[#0891b2]/30">
+                <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
+                <span className="hidden sm:inline">Pass Criteria:</span>
+                <span className="font-extrabold text-[#0891b2]">10 / 15 Right</span>
+              </div>
+
+              {/* Questions Counter Badge */}
+              <div className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                <span className="text-slate-500 font-semibold hidden sm:inline">Answered: </span>
+                <span className="text-[#0891b2] font-black">{answeredCount}</span>
+                <span className="text-slate-400">/{totalQuestions}</span>
               </div>
             </div>
           </div>
 
-          {/* Center / Right: Live Timer & Progress */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-            {/* Live Countdown Timer */}
-            {!isSubmitted && (
-              <div
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
-                  timeLeft < 300
-                    ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
-                    : 'bg-slate-50 text-slate-700 border-slate-200'
-                }`}
-                title="Remaining Exam Time"
-              >
-                <Clock className="w-3.5 h-3.5 text-[#0891b2]" />
-                <span className="font-mono">{formatTime(timeLeft)}</span>
+          {/* Global Progress Line Bar */}
+          <div className="w-full bg-slate-100 h-1.5 mt-2.5 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[#0e7490] via-[#0891b2] to-[#22d3ee] transition-all duration-300"
+              style={{ width: `${isSubmitted ? 100 : progressPercent}%` }}
+            />
+          </div>
+        </header>
+      ) : (
+        /* Top Banner Card for In-App Dashboard Tab */
+        <div className="w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-2 pb-4">
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-[#ecfeff] text-[#020617] flex-shrink-0">
+                <GraduationCap className="w-6 h-6 text-[#0891b2]" />
               </div>
-            )}
-
-            {/* Questions Counter Badge */}
-            <div className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200">
-              <span className="text-[#0891b2] font-black">{answeredCount}</span>
-              <span className="text-slate-400">/{totalQuestions}</span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    Consultant Skills & Qualification Exam
+                  </h1>
+                  {currentUser?.assessmentPassed ? (
+                    <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
+                      Qualified (Passed)
+                    </span>
+                  ) : (
+                    <span className="text-[10px] bg-cyan-50 text-cyan-800 border border-cyan-200 px-2 py-0.5 rounded-full font-bold">
+                      Required (≥10 to pass)
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  15 scenario questions on 24-hour SLA triage, NDA confidentiality, and diagnostic consulting.
+                </p>
+              </div>
             </div>
 
-            {/* Skip / Exit link (if testing) */}
-            {onSkip && !isSubmitted && (
-              <button
-                type="button"
-                onClick={onSkip}
-                className="text-xs text-slate-400 hover:text-slate-700 font-semibold underline transition-colors cursor-pointer"
-              >
-                Skip for now
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              <div className="px-3.5 py-1.5 bg-[#ecfeff] rounded-xl border border-[#0891b2]/30 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-800 block">Pass Criteria</span>
+                <span className="text-sm font-black text-[#020617]">10 / 15 Right</span>
+              </div>
+              <div className="px-3.5 py-1.5 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Progress</span>
+                <span className="text-sm font-black text-slate-900">{answeredCount}/{totalQuestions}</span>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Global Progress Line Bar */}
-        <div className="w-full bg-slate-100 h-1.5 mt-2.5 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-[#0e7490] via-[#0891b2] to-[#22d3ee] transition-all duration-300"
-            style={{ width: `${isSubmitted ? 100 : progressPercent}%` }}
-          />
-        </div>
-      </header>
+      )}
 
       {/* =================================================================== */}
-      {/* 2. MAIN ASSESSMENT CANVAS                                            */}
+      {/* 2. MAIN ASSESSMENT CANVAS - FULL WIDTH MATCHING ALL PAGES           */}
       {/* =================================================================== */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+      <main className="flex-1 w-full max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex flex-col justify-start space-y-6">
         {!isSubmitted ? (
           /* ================================================================= */
           /* QUESTION IN PROGRESS SCREEN                                        */
           /* ================================================================= */
-          <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Question Progress Meta & Quick Nav Pill Strip */}
+          <div className="w-full space-y-5 animate-in fade-in duration-300">
+            {/* Question Progress Meta Strip */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-xl bg-[#020617] text-white text-xs font-black">
-                  Question {currentIndex + 1}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 rounded-xl bg-[#020617] text-white text-xs font-black">
+                  Question {currentIndex + 1} of {totalQuestions}
                 </span>
-                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-xl">
+                <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
                   {currentQ.category}
                 </span>
               </div>
               <div className="text-xs text-slate-500 font-medium">
-                Competency: <strong className="text-slate-800">{currentQ.competency}</strong>
+                Core Competency: <strong className="text-slate-900 font-bold">{currentQ.competency}</strong>
               </div>
             </div>
 
             {/* Question Prompt Card */}
-            <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.04)] space-y-6">
-              <h2 className="text-base sm:text-xl md:text-2xl font-extrabold text-slate-900 leading-snug tracking-tight">
+            <div className="w-full bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-sm space-y-6">
+              <h2 className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-slate-900 leading-snug tracking-tight">
                 {currentQ.question}
               </h2>
 
               {/* 4 Interactive Option Cards */}
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {currentQ.options.map((opt) => {
                   const isSelected = answers[currentQ.id] === opt.id;
                   return (
                     <div
                       key={opt.id}
                       onClick={() => handleSelectOption(opt.id)}
-                      className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3.5 group select-none ${
+                      className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-4 group select-none ${
                         isSelected
-                          ? 'border-[#0891b2] bg-[#ecfeff]/50 shadow-sm ring-2 ring-[#0891b2]/10'
+                          ? 'border-[#0891b2] bg-[#ecfeff]/60 shadow-sm ring-2 ring-[#0891b2]/15'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/70'
                       }`}
                     >
                       {/* Option Letter Indicator */}
                       <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black flex-shrink-0 transition-colors ${
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black flex-shrink-0 transition-colors ${
                           isSelected
                             ? 'bg-[#0891b2] text-white shadow-xs'
                             : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
@@ -457,7 +457,7 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                       </div>
 
                       {/* Option Text */}
-                      <p className={`text-xs sm:text-sm leading-relaxed mt-0.5 sm:mt-1 font-medium ${
+                      <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-1 font-medium ${
                         isSelected ? 'text-slate-950 font-bold' : 'text-slate-700'
                       }`}>
                         {opt.text}
@@ -469,16 +469,21 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
             </div>
 
             {/* Question Quick Jump Bar (1 to 15) */}
-            <div className="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-2xs">
-              <div className="flex items-center justify-between mb-2 px-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  Question Palette
-                </span>
-                <span className="text-[11px] text-slate-400">
-                  {answeredCount} of {totalQuestions} Answered
+            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                    Question Palette
+                  </span>
+                  <span className="text-[11px] font-bold text-[#0891b2] bg-[#ecfeff] px-2 py-0.5 rounded-full border border-[#0891b2]/30">
+                    Must get ≥ 10 right to pass
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-slate-500">
+                  <strong className="text-slate-900">{answeredCount}</strong> of {totalQuestions} Answered
                 </span>
               </div>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 {CONSULTANT_QUESTIONS.map((q, idx) => {
                   const isAnswered = !!answers[q.id];
                   const isCurrent = idx === currentIndex;
@@ -487,7 +492,7 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                       key={q.id}
                       type="button"
                       onClick={() => setCurrentIndex(idx)}
-                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center ${
                         isCurrent
                           ? 'bg-[#020617] text-white ring-2 ring-cyan-400 shadow-xs scale-105'
                           : isAnswered
@@ -504,12 +509,12 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
             </div>
 
             {/* Bottom Actions: Previous, Next & Submit */}
-            <div className="flex items-center justify-between gap-3 pt-2">
+            <div className="w-full flex items-center justify-between gap-4 pt-2">
               <button
                 type="button"
                 disabled={currentIndex === 0}
                 onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                className="px-4 sm:px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Previous</span>
@@ -520,7 +525,7 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                   <button
                     type="button"
                     onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                    className="px-5 sm:px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Next</span>
                     <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
@@ -529,9 +534,9 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                   <button
                     type="button"
                     onClick={() => setShowReviewModal(true)}
-                    className="px-6 sm:px-8 py-2.5 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
+                    className="px-6 sm:px-9 py-2.5 sm:py-3 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
                   >
-                    <span>Complete & Submit Exam</span>
+                    <span>Submit & Finish Exam</span>
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </button>
                 )}
@@ -542,12 +547,12 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
           /* ================================================================= */
           /* RESULTS & SCORECARD SCREEN                                         */
           /* ================================================================= */
-          <div className="space-y-6 animate-in zoom-in-95 duration-400">
+          <div className="w-full space-y-6 animate-in zoom-in-95 duration-400">
             {/* Header Triumph Card */}
-            <div className={`p-6 sm:p-10 rounded-3xl border-2 text-center space-y-4 shadow-xl ${
+            <div className={`p-6 sm:p-10 rounded-3xl border-2 text-center space-y-5 shadow-xl ${
               isPassed
                 ? 'bg-gradient-to-b from-[#ecfeff] to-white border-[#22d3ee]'
-                : 'bg-gradient-to-b from-amber-50 to-white border-amber-300'
+                : 'bg-gradient-to-b from-rose-50 to-white border-rose-300'
             }`}>
               <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center shadow-lg transition-transform animate-bounce">
                 {isPassed ? (
@@ -555,7 +560,7 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                     <ShieldCheck className="w-10 h-10 sm:w-12 sm:h-12" />
                   </div>
                 ) : (
-                  <div className="w-full h-full rounded-3xl bg-amber-500 text-white flex items-center justify-center shadow-amber-500/30">
+                  <div className="w-full h-full rounded-3xl bg-rose-500 text-white flex items-center justify-center shadow-rose-500/30">
                     <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12" />
                   </div>
                 )}
@@ -565,39 +570,39 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 ${
                   isPassed
                     ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                    : 'bg-amber-100 text-amber-900 border border-amber-300'
+                    : 'bg-rose-100 text-rose-900 border border-rose-300'
                 }`}>
                   {isPassed ? 'Official Verified Consultant Qualification' : 'Qualification Threshold Not Met'}
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-                  {isPassed ? 'Congratulations, You Passed!' : 'Assessment Incomplete'}
+                  {isPassed ? 'Congratulations, You Passed!' : 'Exam Incomplete — Minimum 10 Correct Answers Required'}
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-2 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto mt-2 leading-relaxed">
                   {isPassed
-                    ? 'You have proven mastery in OverThink 24-hour consultation standards, ethical confidentiality, and diagnostic problem solving.'
-                    : 'A passing score of 70% (11/15) is required to unlock verified client thought browsing and solution proposals.'}
+                    ? `You scored ${score} of 15 questions correctly (Required: 10/15). You have met the qualification standards and are now authorized to enter the Consultant Workspace!`
+                    : `You scored ${score} of 15 questions correctly. At least 10 correct answers are strictly required to access client briefs and consultations. Please review the answers below and retake the exam.`}
                 </p>
               </div>
 
               {/* Score Display Stat Grid */}
-              <div className="grid grid-cols-3 gap-3 max-w-md mx-auto pt-2">
-                <div className="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0891b2] font-mono">
+              <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-2">
+                <div className="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
+                  <div className={`text-2xl sm:text-3xl font-black font-mono ${isPassed ? 'text-[#0891b2]' : 'text-rose-600'}`}>
                     {score}/{totalQuestions}
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Correct</div>
-                </div>
-                <div className="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
-                  <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
-                    {passPercentage}%
                   </div>
                   <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Your Score</div>
                 </div>
-                <div className="p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
-                  <div className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono">
-                    70%
+                <div className="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
+                  <div className={`text-2xl sm:text-3xl font-black font-mono ${isPassed ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {isPassed ? 'Qualified' : `${PASSING_THRESHOLD - score} Needed`}
                   </div>
-                  <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Required</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">{isPassed ? 'Status' : 'To Pass'}</div>
+                </div>
+                <div className="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
+                  <div className="text-2xl sm:text-3xl font-black text-slate-800 font-mono">
+                    10/15
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Minimum Required</div>
                 </div>
               </div>
 
@@ -607,37 +612,26 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
                   <button
                     type="button"
                     onClick={onComplete}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#020617] hover:bg-[#091528] text-white font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-[#020617]/25 cursor-pointer transition-all transform active:scale-98"
+                    className="w-full sm:w-auto px-10 py-3.5 rounded-2xl bg-[#020617] hover:bg-[#091528] text-white font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-[#020617]/25 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Enter Consultant Workspace</span>
                     <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
                   </button>
                 ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handleRetake}
-                      className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      <span>Retake Assessment</span>
-                    </button>
-                    {onSkip && (
-                      <button
-                        type="button"
-                        onClick={onSkip}
-                        className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs sm:text-sm cursor-pointer"
-                      >
-                        Browse Platform (Unverified)
-                      </button>
-                    )}
-                  </>
+                  <button
+                    type="button"
+                    onClick={handleRetake}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Retake Assessment (Try Again)</span>
+                  </button>
                 )}
               </div>
             </div>
 
             {/* Detailed Question Review List */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 space-y-4 shadow-sm">
+            <div className="w-full bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 space-y-4 shadow-sm">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
                   <GraduationCap className="w-5 h-5 text-[#0891b2]" />
@@ -723,7 +717,7 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95">
             <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-[#0891b2] mx-auto">
-              <CheckCircle2 className="w-6 h-6" />
+              <ShieldCheck className="w-6 h-6" />
             </div>
 
             <div className="text-center space-y-1">
@@ -731,8 +725,11 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
               <p className="text-xs text-slate-500 leading-relaxed">
                 You have answered <strong className="text-slate-900">{answeredCount}</strong> of{' '}
                 <strong className="text-slate-900">{totalQuestions}</strong> questions.
+                <span className="block mt-1 font-bold text-slate-700">
+                  Passing Requirement: At least 10 correct answers.
+                </span>
                 {answeredCount < totalQuestions && (
-                  <span className="text-amber-700 block mt-1 font-semibold">
+                  <span className="text-amber-700 block mt-1.5 font-semibold">
                     ⚠️ You have {totalQuestions - answeredCount} unanswered questions! Unanswered questions will be scored as incorrect.
                   </span>
                 )}
@@ -760,9 +757,11 @@ export default function ConsultantAssessmentView({ onComplete, onSkip }) {
       )}
 
       {/* Footer */}
-      <footer className="py-4 px-6 border-t border-slate-200/80 bg-white text-center text-xs text-slate-400">
-        OverThink Verified Consultant Certification • 24-Hour Human Guidance Standards
-      </footer>
+      {isStandalone && (
+        <footer className="py-4 px-6 border-t border-slate-200/80 bg-white text-center text-xs text-slate-400 w-full">
+          OverThink Verified Consultant Certification • 24-Hour Human Guidance Standards
+        </footer>
+      )}
     </div>
   );
 }
