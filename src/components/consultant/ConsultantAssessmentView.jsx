@@ -329,23 +329,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               </div>
             </div>
           </div>
-
-          {/* Right: Passing criteria requirement & Progress */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            {/* Passing Requirement Badge */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#ecfeff] text-[#020617] border border-[#0891b2]/30 shadow-2xs">
-              <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
-              <span className="hidden sm:inline text-slate-600 font-semibold">Requirement:</span>
-              <span className="font-extrabold text-[#0891b2]">10 / 15 Right</span>
-            </div>
-
-            {/* Questions Counter Badge */}
-            <div className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1">
-              <span className="text-slate-500 font-medium hidden sm:inline">Answered:</span>
-              <span className="text-[#0891b2] font-black">{answeredCount}</span>
-              <span className="text-slate-400">/{totalQuestions}</span>
-            </div>
-          </div>
         </header>
       ) : (
         /* Top Banner Card for In-App Dashboard Tab */
