@@ -349,14 +349,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               </div>
             </div>
           </div>
-
-          {/* Global Progress Line Bar */}
-          <div className="w-full bg-slate-100 h-1.5 mt-2.5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-[#0e7490] via-[#0891b2] to-[#22d3ee] transition-all duration-300"
-              style={{ width: `${isSubmitted ? 100 : progressPercent}%` }}
-            />
-          </div>
         </header>
       ) : (
         /* Top Banner Card for In-App Dashboard Tab */
