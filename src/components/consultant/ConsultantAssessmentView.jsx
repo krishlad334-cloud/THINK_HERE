@@ -457,90 +457,46 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               </div>
             </div>
 
-            {/* Question Quick Jump Bar (1 to 15) */}
-            <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-3.5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
-                    Question Navigator
-                  </span>
-                  <span className="text-[11px] font-bold text-[#0891b2] bg-[#ecfeff] px-2.5 py-0.5 rounded-full border border-[#0891b2]/30">
-                    Must get ≥ 10 right to pass
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-slate-500">
-                    <strong className="text-slate-900">{answeredCount}</strong> of {totalQuestions} Answered
-                  </span>
-                  <span className="text-xs font-black text-[#0891b2] bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200/70">
-                    {progressPercent}% Complete
-                  </span>
-                </div>
-              </div>
-
-              {/* Progress Line Bar inside Navigator */}
-              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#0891b2] via-[#06b6d4] to-[#22d3ee] rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-
-              {/* Full-width Responsive 15-Column Question Grid */}
-              <div className="grid grid-cols-5 sm:grid-cols-8 lg:[grid-template-columns:repeat(15,minmax(0,1fr))] gap-2 w-full pt-1">
-                {CONSULTANT_QUESTIONS.map((q, idx) => {
-                  const isAnswered = !!answers[q.id];
-                  const isCurrent = idx === currentIndex;
-                  return (
-                    <button
-                      key={q.id}
-                      type="button"
-                      onClick={() => setCurrentIndex(idx)}
-                      className={`w-full h-11 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                        isCurrent
-                          ? 'bg-[#020617] text-white ring-2 ring-[#0891b2] shadow-md scale-105 font-black z-10'
-                          : isAnswered
-                          ? 'bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/40 font-black hover:bg-cyan-100'
-                          : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-                      }`}
-                      title={`Question ${idx + 1}: ${q.category}`}
-                    >
-                      <span className="leading-none">{idx + 1}</span>
-                      <span className={`w-1.5 h-1.5 rounded-full ${
-                        isCurrent
-                          ? 'bg-[#22d3ee]'
-                          : isAnswered
-                          ? 'bg-[#0891b2]'
-                          : 'bg-slate-300'
-                      }`} />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom Actions: Previous, Next & Submit */}
-            <div className="w-full flex items-center justify-between gap-4 pt-1">
+            {/* Simple, Clean Pagination Controls */}
+            <div className="w-full bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Previous Button */}
               <button
                 type="button"
                 disabled={currentIndex === 0}
                 onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                className="px-6 py-3 rounded-2xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-all shadow-2xs active:scale-98"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-2xs active:scale-98"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Previous Question</span>
+                <span>Previous</span>
               </button>
 
-              <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-500">
-                <span>Question <strong className="text-slate-900 font-black">{currentIndex + 1}</strong> of {totalQuestions}</span>
+              {/* Simple Center Question Counter & Slim Progress */}
+              <div className="flex flex-col items-center gap-1.5 text-center">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-500">Question</span>
+                  <span className="px-2.5 py-0.5 rounded-lg bg-[#020617] text-white text-xs font-black">
+                    {currentIndex + 1}
+                  </span>
+                  <span className="text-xs font-bold text-slate-400">of {totalQuestions}</span>
+                </div>
+                <div className="w-40 sm:w-56 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#0891b2] to-[#22d3ee] rounded-full transition-all duration-300"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {answeredCount} of {totalQuestions} Answered • Pass requires 10+ right
+                </span>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-3">
+              {/* Next / Submit Button */}
+              <div className="w-full sm:w-auto">
                 {currentIndex < totalQuestions - 1 ? (
                   <button
                     type="button"
                     onClick={() => setCurrentIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-                    className="px-8 py-3 rounded-2xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#0f172a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-[#020617]/15 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Next Question</span>
                     <ArrowRight className="w-4 h-4 text-[#22d3ee]" />
@@ -549,7 +505,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   <button
                     type="button"
                     onClick={() => setShowReviewModal(true)}
-                    className="px-8 py-3 rounded-2xl bg-gradient-to-r from-[#0891b2] to-[#0e7490] hover:from-[#0e7490] hover:to-[#155e75] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
+                    className="w-full sm:w-auto px-7 py-2.5 rounded-xl bg-[#0891b2] hover:bg-[#0e7490] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer transition-all transform active:scale-98"
                   >
                     <span>Submit & Finish Exam</span>
                     <CheckCircle2 className="w-4 h-4 text-white" />
