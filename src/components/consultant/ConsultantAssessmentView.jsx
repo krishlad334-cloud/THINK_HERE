@@ -580,12 +580,12 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
 
             {/* Detailed Question Review List */}
             <div className="w-full bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 space-y-4 shadow-sm">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-[#0891b2]" />
-                  <span>Exam Question Breakdown & Explanations</span>
+              <div className="flex flex-col gap-2 pb-3 border-b border-slate-100 sm:flex-row sm:items-center sm:justify-between">
+                <h3 className="min-w-0 text-base font-extrabold text-slate-900 tracking-tight flex items-start gap-2 sm:items-center">
+                  <GraduationCap className="w-5 h-5 text-[#0891b2] flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <span className="min-w-0">Exam Question Breakdown & Explanations</span>
                 </h3>
-                <span className="text-xs text-slate-400 font-semibold">
+                <span className="text-xs text-slate-400 font-semibold sm:flex-shrink-0 sm:text-right">
                   Review all {totalQuestions} questions
                 </span>
               </div>
