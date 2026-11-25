@@ -3,6 +3,17 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+if (typeof window !== 'undefined') {
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
+  window.addEventListener(
+    'pageshow',
+    () => window.requestAnimationFrame(() => window.scrollTo(0, 0)),
+    { once: true },
+  );
+}
+
 // Force browser tab and credential managers to refresh the Option 2 favicon
 if (typeof document !== 'undefined') {
   const updateFavicon = () => {

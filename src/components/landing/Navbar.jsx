@@ -136,7 +136,7 @@ export default function Navbar({
               className="inline-flex items-center gap-1.5 rounded-xl border border-[#4C4585]/60 bg-[#15122B]/70 px-3 py-2 sm:border-transparent sm:bg-transparent sm:px-3.5 text-xs sm:text-sm font-semibold text-[#F5F3FF] sm:text-[#A9A4C8] transition hover:border-[#5EEAD4]/60 hover:bg-[#15122B]/70 hover:text-[#F5F3FF]"
             >
               <User className="h-3.5 w-3.5 text-[#5EEAD4] sm:text-current" />
-              <span>Sign In</span>
+              <span className="whitespace-nowrap">Sign In</span>
             </button>
           )}
 

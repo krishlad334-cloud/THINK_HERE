@@ -32,7 +32,7 @@ const FRAGMENT_SHADER = /* glsl */ `
     vec4 colB = texture2D(uTexB, vUv);
     vec4 col = mix(colA, colB, uMix);
 
-    if (col.a < 0.04) discard;
+    if (col.a < 0.004) discard;
 
     gl_FragColor = vec4(col.rgb, col.a);
     #include <colorspace_fragment>
@@ -129,7 +129,7 @@ export default function RealHuman3D({
   useEffect(() => {
     let cancelled = false;
     const loader = new THREE.TextureLoader();
-    const order = ['stressed', 'searching', 'typing', 'choosing', 'relieved'];
+    const order = ['stressed', 'searching', 'typing', 'choosing', 'refining', 'relieved'];
     const createdTextures = [];
 
     order.forEach((key) => {

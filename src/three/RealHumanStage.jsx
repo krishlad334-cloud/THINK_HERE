@@ -45,7 +45,7 @@ function LocalFallback({ reducedMotion = false }) {
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
       <div
-        className="relative w-72 sm:w-88 lg:w-[390px] transition-transform duration-200"
+        className="relative w-64 sm:w-80 lg:w-[370px] transition-transform duration-200"
         style={{
           transform: `perspective(950px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
         }}
@@ -74,10 +74,14 @@ export default function RealHumanStage({
 }) {
   return (
     <div className="relative h-[310px] w-full sm:h-[400px] lg:h-[460px] xl:h-[520px]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-10 bottom-2 z-20 h-16 rounded-full bg-gradient-to-t from-[#0A0816] via-[#0A0816]/70 to-transparent blur-md"
+      />
       <LocalFallback reducedMotion={reducedMotion} />
       <StageErrorBoundary fallback={<LocalFallback reducedMotion={reducedMotion} />}>
         <Canvas
-          camera={{ position: [0, 0, 4.8], fov: 42, near: 0.1, far: 25 }}
+          camera={{ position: [0, 0, 5.75], fov: 42, near: 0.1, far: 25 }}
           dpr={isMobile ? [1, 1.25] : [1, 1.75]}
           gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }}
           style={{ width: '100%', height: '100%', pointerEvents: 'none' }}

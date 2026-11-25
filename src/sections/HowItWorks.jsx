@@ -7,6 +7,7 @@ import {
   Search,
   Sparkles,
   Users,
+  MessageSquare,
   Lightbulb,
   ArrowLeft,
   ArrowRight,
@@ -62,15 +63,27 @@ const STORY_STEPS = [
   },
   {
     num: '05',
+    emotion: 'Refinement',
+    accent: '#A855F7',
+    icon: MessageSquare,
+    title: '1-on-1 Follow-Up & Plan Refinement',
+    desc: 'Ask follow-up questions, challenge assumptions, and tailor every detail inside your private 1-on-1 room until the plan fits your exact constraints.',
+    dialogue: [
+      { who: 'You', text: '“What if our budget caps at $5k/mo?”' },
+      { who: 'Specialist', text: '“Switch to the 2-tier launch first—cuts burn by 60% while keeping trial conversion high.”' },
+    ],
+  },
+  {
+    num: '06',
     emotion: 'Success & Relief',
     accent: '#FACC15',
     icon: Lightbulb,
     title: 'Clear 24h Solution & Confident Action',
-    desc: 'Within 24 hours you have a step-by-step action plan, execute with confidence, solve the problem, and move forward relieved.',
+    desc: 'Within 24 hours you have a step-by-step action plan saved in your workspace—execute with confidence, solve the problem, and move forward relieved.',
     checklist: [
       'Root bottleneck diagnosed clearly',
       'Prioritized 14-day action roadmap',
-      'Direct follow-up support included',
+      'Saved in your workspace for anytime review',
     ],
   },
 ];
@@ -124,7 +137,7 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
       stRef.current = ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=300%',
+        end: '+=340%',
         pin: true,
         scrub: 0.75,
         anticipatePin: 1,
@@ -244,7 +257,7 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
                     Step {current.num} · {current.emotion}
                   </span>
                   <span className="font-display text-xs font-bold text-[#A9A4C8]">
-                    {current.num} / 05
+                    {current.num} / {String(STORY_STEPS.length).padStart(2, '0')}
                   </span>
                 </div>
 
@@ -304,6 +317,26 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
                       <Cpu className="h-4 w-4" />
                       <span>AI Solution</span>
                     </button>
+                  </div>
+                )}
+
+                {current.dialogue && (
+                  <div className="space-y-2.5 pt-1">
+                    {current.dialogue.map((msg) => (
+                      <div
+                        key={msg.who}
+                        className={`rounded-2xl border px-3.5 py-2.5 text-xs sm:text-sm ${
+                          msg.who === 'You'
+                            ? 'border-[#4C4585]/60 bg-[#0A0816]/80 text-[#F5F3FF]'
+                            : 'border-[#A855F7]/45 bg-[#A855F7]/12 text-[#F5F3FF]'
+                        }`}
+                      >
+                        <span className="mr-2 font-semibold text-[#5EEAD4]">
+                          {msg.who}:
+                        </span>
+                        <span>{msg.text}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
 
