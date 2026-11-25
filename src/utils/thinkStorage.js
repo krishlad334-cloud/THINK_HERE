@@ -70,7 +70,44 @@ export const DEMO_USERS = [
     hourlyRate: 150,
     rating: 4.98,
     reviewsCount: 142,
+    responseTime: '< 2 hours',
+    completedConsultations: 89,
+    earningsTotal: 34500,
     location: 'Seattle, WA (Remote)',
+    skills: ['System Architecture', 'AWS / Cloud Native', 'PostgreSQL Tuning', 'Go-To-Market', 'Product Strategy', 'Microservices', 'Engineering Leadership'],
+    services: [
+      { id: 'srv-1', title: 'Deep Architectural Review & Bottleneck Audit', price: 300, duration: '90 min Video + Detailed Report' },
+      { id: 'srv-2', title: 'Tech Stack & Cloud Scalability Strategy', price: 180, duration: '60 min Consultation' },
+      { id: 'srv-3', title: 'Monthly Fractional CTO & Advisory Retainer', price: 2500, duration: '4 Weekly Sprints' }
+    ],
+    experience: [
+      { id: 'exp-1', company: 'Global Cloud Systems', role: 'Chief Technical Advisor', period: '2023 - Present', description: 'Advising high-growth fintechs and SaaS startups on distributed scale.' },
+      { id: 'exp-2', company: 'Stripe Engineering', role: 'Staff Systems Engineer', period: '2019 - 2023', description: 'Led data pipeline reliability and multi-region failover protocols.' },
+      { id: 'exp-3', company: 'Amazon Web Services', role: 'Senior Solutions Architect', period: '2015 - 2019', description: 'Consulted Fortune 500 enterprises transitioning to cloud microservices.' }
+    ],
+    education: [
+      { id: 'edu-1', school: 'Stanford University', degree: 'Ph.D. in Computer Systems', year: '2015' },
+      { id: 'edu-2', school: 'UC Berkeley', degree: 'B.S. in Electrical Engineering & Computer Sciences', year: '2010' }
+    ],
+    certifications: [
+      'AWS Certified Solutions Architect – Professional',
+      'Google Cloud Certified Fellow',
+      'Certified Scrum Professional & Agile Mentor'
+    ],
+    portfolio: [
+      {
+        id: 'port-1',
+        title: 'Fintech High-Frequency Ledger Scaling',
+        description: 'Reduced sub-50ms latency across 12M daily transactions via distributed caching and partitioning.',
+        tag: 'Fintech / Systems'
+      },
+      {
+        id: 'port-2',
+        title: 'B2B HealthTech HIPAA Cloud Migration',
+        description: 'Complete architecture redesign ensuring zero downtime and 100% HIPAA compliance.',
+        tag: 'Cloud & Security'
+      }
+    ],
     createdAt: '2026-01-10T08:00:00.000Z'
   },
   {
@@ -91,7 +128,31 @@ export const DEMO_USERS = [
     hourlyRate: 110,
     rating: 4.95,
     reviewsCount: 218,
+    responseTime: '< 1 hour',
+    completedConsultations: 164,
+    earningsTotal: 42000,
     location: 'Austin, TX',
+    skills: ['Career Transition', 'Resume ATS Overhaul', 'Executive Compensation', 'FAANG Interview Prep', 'LinkedIn Brand Optimization'],
+    services: [
+      { id: 'srv-m1', title: 'Complete Resume & LinkedIn Profile Transformation', price: 220, duration: 'Full Rewrite + 45m Call' },
+      { id: 'srv-m2', title: 'Mock Technical & Behavioral Interview Intensive', price: 150, duration: '60 min High-Stakes Simulation' }
+    ],
+    experience: [
+      { id: 'exp-m1', company: 'Meta', role: 'Lead Technical Talent Partner', period: '2020 - 2024', description: 'Scaled senior and staff engineering hiring across core infra teams.' },
+      { id: 'exp-m2', company: 'Uber', role: 'Senior Talent Acquisition', period: '2017 - 2020', description: 'Built technical recruiting playbooks for distributed backend teams.' }
+    ],
+    education: [
+      { id: 'edu-m1', school: 'University of Texas at Austin', degree: 'B.A. in Organizational Psychology', year: '2014' }
+    ],
+    certifications: ['SHRM Senior Certified Professional', 'Certified Career Management Coach'],
+    portfolio: [
+      {
+        id: 'port-m1',
+        title: 'Senior Developer to Engineering Director Roadmap',
+        description: 'Structured 90-day portfolio, interview narrative, and compensation negotiation strategy.',
+        tag: 'Career Success'
+      }
+    ],
     createdAt: '2026-01-12T09:00:00.000Z'
   }
 ];
@@ -154,14 +215,28 @@ export function initializeThinkStorage() {
         updated = true;
       } else {
         const current = userMap.get(demo.id);
-        // Force canonical demo email and ensure password & verification
-        if (current.email !== demo.email || !current.mobile || !current.password || current.isVerified === undefined) {
+        const missingDemoFields =
+          current.email !== demo.email ||
+          !current.mobile ||
+          !current.password ||
+          current.isVerified === undefined ||
+          (demo.role === 'consultant' && (!current.skills || !current.services || !current.responseTime));
+        // Force canonical demo email and backfill rich demo profile metadata if absent
+        if (missingDemoFields) {
           userMap.set(demo.id, {
+            ...demo,
             ...current,
             email: demo.email,
             mobile: current.mobile || demo.mobile,
             password: current.password || demo.password,
-            isVerified: true
+            isVerified: true,
+            responseTime: current.responseTime || demo.responseTime,
+            skills: current.skills?.length ? current.skills : demo.skills,
+            services: current.services?.length ? current.services : demo.services,
+            experience: current.experience?.length ? current.experience : demo.experience,
+            education: current.education?.length ? current.education : demo.education,
+            certifications: current.certifications?.length ? current.certifications : demo.certifications,
+            portfolio: current.portfolio?.length ? current.portfolio : demo.portfolio
           });
           updated = true;
         }
@@ -372,18 +447,19 @@ export function acceptThink(thinkId, consultantUser) {
     throw new Error('OverThink not found.');
   }
 
-  // Prevent duplicate acceptance
-  if (think.status !== 'pending' && think.consultantId) {
-    throw new Error(`This OverThink has already been accepted by ${think.assignedConsultantName || 'another consultant'}.`);
-  }
-
-  // Check if conversation already exists
+  const consultant = consultantUser || getActiveUser();
   const existingConv = getConversationByThinkId(thinkId);
-  if (existingConv) {
+
+  // If this consultant already accepted or a conversation already exists for them, open it
+  if (existingConv && (!think.consultantId || think.consultantId === consultant.id)) {
     return { think, conversation: existingConv, alreadyAccepted: true };
   }
 
-  const consultant = consultantUser || getActiveUser();
+  // Prevent duplicate acceptance by another consultant
+  if (think.status !== 'pending' && think.status !== 'pending_human' && think.consultantId && think.consultantId !== consultant.id) {
+    throw new Error(`This OverThink has already been accepted by ${think.assignedConsultantName || 'another consultant'}.`);
+  }
+
   const conversationId = `conversation_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
   // 1. Update Think in storage
@@ -394,6 +470,12 @@ export function acceptThink(thinkId, consultantUser) {
     assignedConsultantName: consultant.name,
     assignedConsultantAvatar: consultant.profileImage || consultant.avatar
   });
+
+  // Carry over any client follow-up notes sent before consultant acceptance
+  const carriedMessages = (think.pendingMessages || []).map(m => ({
+    ...m,
+    conversationId
+  }));
 
   // 2. Create conversation object
   const newConversation = {
@@ -409,6 +491,7 @@ export function acceptThink(thinkId, consultantUser) {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     messages: [
+      ...carriedMessages,
       {
         id: `msg_${Date.now()}`,
         conversationId,
@@ -522,9 +605,36 @@ export function sendMessage(conversationId, senderUser, text, attachments = []) 
   return newMessage;
 }
 
+export function addPendingThinkMessage(thinkId, senderUser, text, attachments = []) {
+  if (!text?.trim() && (!attachments || attachments.length === 0)) return null;
+  const think = getThinkById(thinkId);
+  if (!think) return null;
+
+  const sender = senderUser || getActiveUser();
+  const msg = {
+    id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    conversationId: null,
+    thoughtId: thinkId,
+    senderId: sender.id,
+    senderName: sender.name,
+    senderAvatar: sender.profileImage || sender.avatar,
+    senderRole: sender.role,
+    text: (text || '').trim(),
+    attachments: attachments || [],
+    createdAt: new Date().toISOString(),
+    isRead: true
+  };
+
+  updateThink(thinkId, {
+    pendingMessages: [...(think.pendingMessages || []), msg]
+  });
+
+  return msg;
+}
+
 export function markMessagesAsRead(conversationId, readerId) {
   const conv = getConversationById(conversationId);
-  if (!conv || !conv.messages) return;
+  if (!conv || !conv.messages) return false;
 
   let hasUnread = false;
   const updatedMessages = conv.messages.map(m => {
@@ -538,6 +648,7 @@ export function markMessagesAsRead(conversationId, readerId) {
   if (hasUnread) {
     updateConversation(conversationId, { messages: updatedMessages });
   }
+  return hasUnread;
 }
 
 export function deleteMessage(messageId) {
@@ -555,6 +666,23 @@ export function deleteMessage(messageId) {
   });
   if (found) {
     safeSetItem(STORAGE_KEYS.CONVERSATIONS, updated);
+    return true;
+  }
+
+  const thinks = getThinks();
+  let foundInThink = false;
+  const updatedThinks = thinks.map(t => {
+    if ((t.pendingMessages || []).some(m => m.id === messageId)) {
+      foundInThink = true;
+      return {
+        ...t,
+        pendingMessages: t.pendingMessages.filter(m => m.id !== messageId)
+      };
+    }
+    return t;
+  });
+  if (foundInThink) {
+    safeSetItem(STORAGE_KEYS.THINKS, updatedThinks);
     return true;
   }
   return false;
@@ -575,6 +703,20 @@ export function clearChatMessages(targetId) {
   });
   if (found) {
     safeSetItem(STORAGE_KEYS.CONVERSATIONS, updated);
+    return true;
+  }
+
+  const thinks = getThinks();
+  let foundInThink = false;
+  const updatedThinks = thinks.map(t => {
+    if (t.id === targetId && (t.pendingMessages || []).length > 0) {
+      foundInThink = true;
+      return { ...t, pendingMessages: [] };
+    }
+    return t;
+  });
+  if (foundInThink) {
+    safeSetItem(STORAGE_KEYS.THINKS, updatedThinks);
     return true;
   }
   return false;

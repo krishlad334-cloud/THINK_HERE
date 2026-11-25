@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from './UserAvatar';
 import {
   User,
@@ -25,37 +25,28 @@ export default function ProfileDropdown({ onGoToLanding }) {
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const hoverTimerRef = useRef(null);
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click or Escape key
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsOpen(false);
       }
     }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
   }, [isOpen]);
-
-  // Desktop hover handlers
-  const handleMouseEnter = () => {
-    if (window.innerWidth >= 1024) {
-      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
-      setIsOpen(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (window.innerWidth >= 1024) {
-      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = setTimeout(() => {
-        setIsOpen(false);
-      }, 250);
-    }
-  };
 
   const handleTriggerClick = () => {
     setIsOpen((prev) => !prev);
@@ -72,17 +63,22 @@ export default function ProfileDropdown({ onGoToLanding }) {
   };
 
   const isConsultant = role === 'consultant' || currentUser?.role === 'consultant';
+  const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
+  const roleBadgeLabel = isConsultant
+    ? (isConsultantVerified ? 'Verified Consultant' : 'Verification Pending')
+    : 'Client Account';
 
   return (
     <div
       className="relative"
       ref={dropdownRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {/* Profile Trigger Button */}
-      <div
+      <button
+        type="button"
         onClick={handleTriggerClick}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
         className="flex items-center gap-2.5 pl-2 border-l border-slate-200 cursor-pointer group select-none py-1 hover:opacity-90 transition-opacity"
         title="Account & Profile Menu"
       >
@@ -100,17 +96,20 @@ export default function ProfileDropdown({ onGoToLanding }) {
         <div className="hidden xl:flex flex-col text-left cursor-pointer">
           <span className="text-xs font-bold text-slate-900 group-hover:text-[#020617] transition-colors leading-tight flex items-center gap-1">
             {currentUser?.name || 'My Account'}
-            <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-slate-700 transition-transform" />
+            <ChevronDown className={`w-3 h-3 text-slate-400 group-hover:text-slate-700 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </span>
           <span className="text-[10px] text-slate-500 font-medium">
-            {isConsultant ? 'Verified Consultant' : 'Client Account'}
+            {roleBadgeLabel}
           </span>
         </div>
-      </div>
+      </button>
 
       {/* Floating Dropdown Menu - Displays strictly the logged-in user's details */}
       {isOpen && (
-        <div className="hidden lg:block absolute right-0 mt-2 w-76 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div
+          role="menu"
+          className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 max-w-sm ml-auto bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50"
+        >
           {/* User Profile Card Header */}
           <div className="px-4 py-3.5 border-b border-slate-100 bg-slate-50/70">
             <div className="flex items-start gap-3">
@@ -137,7 +136,7 @@ export default function ProfileDropdown({ onGoToLanding }) {
                 <div className="mt-1.5 flex items-center gap-1.5">
                   <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#020617] text-white">
                     <ShieldCheck className="w-2.5 h-2.5" />
-                    {isConsultant ? 'Verified Consultant' : 'Client Account'}
+                    {roleBadgeLabel}
                   </span>
                 </div>
               </div>

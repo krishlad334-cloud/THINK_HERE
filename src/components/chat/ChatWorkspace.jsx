@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import { timeAgo } from '../../utils/formatters';
 import {
@@ -20,7 +20,8 @@ import {
   Lock,
   ArrowLeft,
   CheckCircle,
-  Smile
+  Smile,
+  Trash2
 } from 'lucide-react';
 
 function isOnlyEmojis(text) {
@@ -41,6 +42,7 @@ export default function ChatWorkspace() {
     thinks,
     thoughts,
     sendChatMessage,
+    deleteMessage,
     updateThinkStatus,
     activeUser,
     activeConversationId,
@@ -96,6 +98,7 @@ export default function ChatWorkspace() {
   const fileInputRef = useRef(null);
   const emojiPickerRef = useRef(null);
   const moreMenuRef = useRef(null);
+  const statusMenuRef = useRef(null);
 
   const EMOJI_LIST = ['👍', '👋', '😊', '💡', '🚀', '✅', '🙏', '🔥', '👏', '🎉', '❤️', '🤔', '🎯', '🤝', '💼', '📈', '⭐', '💯', '✨', '🙌', '👌', '⚡', '📝', '💬'];
 
@@ -124,19 +127,23 @@ export default function ChatWorkspace() {
   }, [activeConvId, markConversationRead]);
 
   // Scroll to bottom on messages update
+  const messageCount = currentConversation?.messages?.length || 0;
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentConversation?.messages?.length]);
+    if (messageCount >= 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messageCount]);
 
-  // Close message popup when clicking outside
+  // Close popups when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(e.target)) {
         setShowMoreMenu(false);
       }
+      if (statusMenuRef.current && !statusMenuRef.current.contains(e.target)) {
+        setShowStatusMenu(false);
+      }
       setActiveMsgMenuId(null);
-      setShowCallMenu(false);
-      setShowStatusMenu(false);
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
@@ -153,7 +160,7 @@ export default function ChatWorkspace() {
   };
 
   const handleCopyText = (msgId, text) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard?.writeText(text).catch(() => {});
     setCopiedMsgId(msgId);
     setTimeout(() => {
       setCopiedMsgId(null);
@@ -173,7 +180,6 @@ export default function ChatWorkspace() {
       participantAvatar,
       callType
     });
-    setShowCallMenu(false);
   };
 
   const handleStatusChange = (newStatus) => {
@@ -317,7 +323,12 @@ export default function ChatWorkspace() {
 
         {/* Room Items List */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100/80 p-2 space-y-1">
-          {filteredConversations.map((conv) => {
+          {filteredConversations.length === 0 ? (
+            <div className="p-6 text-center text-xs text-slate-400">
+              No conversations match "{searchQuery}".
+            </div>
+          ) : (
+            filteredConversations.map((conv) => {
             const isSelected = conv.id === activeConvId;
             const think = allThinks.find(t => t.id === conv.thinkId);
             const contactName = isClientRole ? conv.consultantName : conv.clientName;
@@ -396,7 +407,8 @@ export default function ChatWorkspace() {
                 </div>
               </div>
             );
-          })}
+          })
+          )}
         </div>
       </div>
 
@@ -487,7 +499,7 @@ export default function ChatWorkspace() {
             </button>
 
             {/* Status Dropdown Pill Button (No "Status:" prefix, clean status badge) */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden md:block" ref={statusMenuRef}>
               {(() => {
                 const config = {
                   pending: { label: 'Pending', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', dot: 'bg-amber-500 animate-pulse' },
@@ -503,6 +515,8 @@ export default function ChatWorkspace() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      setShowMoreMenu(false);
+                      setActiveMsgMenuId(null);
                       setShowStatusMenu(prev => !prev);
                     }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:opacity-90 ${config.bg} ${config.text} ${config.border}`}
@@ -573,6 +587,8 @@ export default function ChatWorkspace() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  setShowStatusMenu(false);
+                  setActiveMsgMenuId(null);
                   setShowMoreMenu(prev => !prev);
                 }}
                 className="p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center"
@@ -655,7 +671,7 @@ export default function ChatWorkspace() {
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText(`#${currentConversation.thinkId}`);
+                        navigator.clipboard?.writeText(`#${currentConversation.thinkId}`).catch(() => {});
                         setCopiedThinkId(true);
                         setTimeout(() => {
                           setCopiedThinkId(false);
@@ -678,7 +694,7 @@ export default function ChatWorkspace() {
         </div>
 
         {/* Collapsible Original Think Details Context Drawer */}
-        {(showContextDrawer || !activeThought?.description) && activeThought && (
+        {showContextDrawer && activeThought && (
           <div className="bg-white border-b border-slate-200 p-4 sm:p-5 animate-in slide-in-from-top-2 duration-150 space-y-3 shadow-xs">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -938,6 +954,17 @@ export default function ChatWorkspace() {
                                     <span>Copy Text</span>
                                   </>
                                 )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  deleteMessage(msg.id);
+                                  setActiveMsgMenuId(null);
+                                }}
+                                className="w-full px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
                               </button>
                             </div>
                           )}

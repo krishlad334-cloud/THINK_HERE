@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import {
   ShieldCheck,
@@ -89,6 +89,8 @@ export default function ConsultantProfileView() {
     setSkills(prev => prev.filter(item => item !== s));
   };
 
+  const isVerified = Boolean(consultantUser?.isVerified || consultantUser?.assessmentPassed);
+
   return (
     <div className="space-y-6 w-full pb-16">
       {savedSuccess && (
@@ -107,7 +109,7 @@ export default function ConsultantProfileView() {
         <div className="h-40 sm:h-48 bg-gradient-to-r from-[#020617] via-[#082f49] to-[#082f49] relative">
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
-              Verified Consultant
+              {isVerified ? 'Verified Consultant' : 'Verification Pending'}
             </span>
           </div>
         </div>
@@ -185,8 +187,12 @@ export default function ConsultantProfileView() {
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-black text-slate-900">{consultantUser.name}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
-                100% Verified
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+                isVerified
+                  ? 'bg-cyan-50 text-cyan-700 border-cyan-200'
+                  : 'bg-amber-50 text-amber-800 border-amber-200'
+              }`}>
+                {isVerified ? '100% Verified' : 'Exam Pending'}
               </span>
             </div>
 
@@ -216,22 +222,22 @@ export default function ConsultantProfileView() {
               </div>
             ) : (
               <p className="text-sm font-semibold text-slate-700 max-w-3xl leading-snug">
-                {headline}
+                {headline || 'Verified OverThink Domain Specialist'}
               </p>
             )}
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
               <span className="flex items-center gap-1 font-bold text-slate-800">
                 <Star className="w-4 h-4 text-amber-500 fill-current" />
-                {consultantUser.rating} ({consultantUser.reviewsCount} reviews)
+                {consultantUser.rating || '5.0'} ({consultantUser.reviewsCount || 0} reviews)
               </span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                {consultantUser.location}
+                {consultantUser.location || location || 'Remote'}
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
-                Avg. Response: {consultantUser.responseTime}
+                Avg. Response: {consultantUser.responseTime || '< 2 hours'}
               </span>
               <span className="flex items-center gap-1 font-extrabold text-slate-900">
                 <DollarSign className="w-3.5 h-3.5 text-cyan-600" />
@@ -254,7 +260,7 @@ export default function ConsultantProfileView() {
               />
             ) : (
               <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-4xl">
-                {bio}
+                {bio || 'No bio added yet. Click "Edit Profile Details" to describe your domain expertise and consulting focus.'}
               </p>
             )}
           </div>
@@ -267,25 +273,31 @@ export default function ConsultantProfileView() {
               </h2>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {skills.map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1 rounded-xl text-xs font-semibold bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex items-center gap-1.5"
-                >
-                  <span>{skill}</span>
-                  {isEditing && (
-                    <button
-                      type="button"
-                      onClick={() => removeSkill(skill)}
-                      className="text-slate-400 hover:text-rose-600 font-bold"
-                    >
-                      ×
-                    </button>
-                  )}
-                </span>
-              ))}
-            </div>
+            {skills.length === 0 && !isEditing ? (
+              <p className="text-xs text-slate-400 italic">
+                No skills listed yet. Click "Edit Profile Details" to add your areas of expertise.
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1 rounded-xl text-xs font-semibold bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex items-center gap-1.5"
+                  >
+                    <span>{skill}</span>
+                    {isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => removeSkill(skill)}
+                        className="text-slate-400 hover:text-rose-600 font-bold"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {isEditing && (
               <div className="flex items-center gap-2 mt-3 max-w-sm">
@@ -316,25 +328,31 @@ export default function ConsultantProfileView() {
           <span>Consultation Services & Offerings</span>
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {consultantUser.services?.map((srv) => (
-            <div
-              key={srv.id}
-              className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between"
-            >
-              <div>
-                <h4 className="text-sm font-bold text-slate-900 leading-snug">{srv.title}</h4>
-                <p className="text-xs text-slate-500 mt-1">{srv.duration}</p>
+        {consultantUser.services?.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {consultantUser.services.map((srv) => (
+              <div
+                key={srv.id}
+                className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between"
+              >
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 leading-snug">{srv.title}</h4>
+                  <p className="text-xs text-slate-500 mt-1">{srv.duration}</p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-base font-extrabold text-slate-900">${srv.price}</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#020617] border border-slate-200">
+                    Fixed Scope
+                  </span>
+                </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
-                <span className="text-base font-extrabold text-slate-900">${srv.price}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#020617] border border-slate-200">
-                  Fixed Scope
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-400 italic">
+            Standard 1-on-1 OverThink consultation rate: ${hourlyRate}/hr.
+          </p>
+        )}
       </div>
 
       {/* Work Experience & Education (LinkedIn Style) */}
@@ -345,16 +363,20 @@ export default function ConsultantProfileView() {
             <Briefcase className="w-5 h-5 text-[#020617]" />
             <span>Work Experience</span>
           </h2>
-          <div className="space-y-4">
-            {consultantUser.experience?.map((exp) => (
-              <div key={exp.id} className="relative pl-6 pb-4 border-l-2 border-[#020617]/20 last:border-0 last:pb-0">
-                <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-[#020617] ring-4 ring-white" />
-                <h4 className="text-xs font-bold text-slate-900">{exp.role}</h4>
-                <p className="text-[11px] font-semibold text-[#020617]">{exp.company} • {exp.period}</p>
-                <p className="text-xs text-slate-600 mt-1">{exp.description}</p>
-              </div>
-            ))}
-          </div>
+          {consultantUser.experience?.length > 0 ? (
+            <div className="space-y-4">
+              {consultantUser.experience.map((exp) => (
+                <div key={exp.id} className="relative pl-6 pb-4 border-l-2 border-[#020617]/20 last:border-0 last:pb-0">
+                  <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-[#020617] ring-4 ring-white" />
+                  <h4 className="text-xs font-bold text-slate-900">{exp.role}</h4>
+                  <p className="text-[11px] font-semibold text-[#020617]">{exp.company} • {exp.period}</p>
+                  <p className="text-xs text-slate-600 mt-1">{exp.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 italic">No work experience entries added yet.</p>
+          )}
         </div>
 
         {/* Education & Certifications */}
@@ -364,27 +386,37 @@ export default function ConsultantProfileView() {
             <span>Education & Certifications</span>
           </h2>
 
-          <div className="space-y-3">
-            {consultantUser.education?.map((edu) => (
-              <div key={edu.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <h4 className="text-xs font-bold text-slate-900">{edu.school}</h4>
-                <p className="text-xs text-slate-600">{edu.degree} ({edu.year})</p>
-              </div>
-            ))}
-          </div>
+          {consultantUser.education?.length > 0 ? (
+            <div className="space-y-3">
+              {consultantUser.education.map((edu) => (
+                <div key={edu.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-900">{edu.school}</h4>
+                  <p className="text-xs text-slate-600">{edu.degree} ({edu.year})</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 italic">No education history added yet.</p>
+          )}
 
           <div className="pt-2">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               Verified Certifications
             </h3>
-            <div className="space-y-1.5">
-              {consultantUser.certifications?.map((cert, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
-                  <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>{cert}</span>
-                </div>
-              ))}
-            </div>
+            {consultantUser.certifications?.length > 0 ? (
+              <div className="space-y-1.5">
+                {consultantUser.certifications.map((cert, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
+                    <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                    <span>{cert}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 italic">
+                {isVerified ? 'OverThink Verified Consultant Certification' : 'Complete the Skills Assessment to earn your Verified badge.'}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -396,17 +428,21 @@ export default function ConsultantProfileView() {
           <span>Featured Portfolio Projects & Case Studies</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {consultantUser.portfolio?.map((port) => (
-            <div key={port.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30">
-                {port.tag}
-              </span>
-              <h4 className="text-sm font-bold text-slate-900">{port.title}</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">{port.description}</p>
-            </div>
-          ))}
-        </div>
+        {consultantUser.portfolio?.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {consultantUser.portfolio.map((port) => (
+              <div key={port.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ecfeff] text-[#0891b2] border border-[#0891b2]/30">
+                  {port.tag}
+                </span>
+                <h4 className="text-sm font-bold text-slate-900">{port.title}</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">{port.description}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-400 italic">No portfolio case studies published yet.</p>
+        )}
       </div>
     </div>
   );

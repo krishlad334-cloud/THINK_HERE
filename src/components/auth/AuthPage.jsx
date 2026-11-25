@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import { getUsers } from '../../utils/thinkStorage';
 import Logo from '../common/Logo';
 import UserAvatar from '../common/UserAvatar';
@@ -658,8 +658,12 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         <button
                           type="button"
                           onClick={() => {
-                            quickRegister(loginIdentifier.trim(), loginPassword, 'client');
-                            if (onSuccess) onSuccess({ role: 'client' }, false);
+                            const res = quickRegister(loginIdentifier.trim(), loginPassword, 'client');
+                            if (res?.success) {
+                              if (onSuccess) onSuccess(res.user || { role: 'client' }, false);
+                            } else {
+                              setLoginError(res?.error || 'Unable to create client account.');
+                            }
                           }}
                           className="py-1.5 px-2 bg-[#0891b2] hover:bg-[#0e7490] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
@@ -668,8 +672,12 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                         <button
                           type="button"
                           onClick={() => {
-                            quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
-                            if (onSuccess) onSuccess({ role: 'consultant' }, true);
+                            const res = quickRegister(loginIdentifier.trim(), loginPassword, 'consultant');
+                            if (res?.success) {
+                              if (onSuccess) onSuccess(res.user || { role: 'consultant' }, true);
+                            } else {
+                              setLoginError(res?.error || 'Unable to create consultant account.');
+                            }
                           }}
                           className="py-1.5 px-2 bg-[#020617] hover:bg-[#082f49] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >

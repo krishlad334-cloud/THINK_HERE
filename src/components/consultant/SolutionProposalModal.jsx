@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import { X, Plus, Trash2, Send, FileText } from 'lucide-react';
 
 export default function SolutionProposalModal({ thought, onClose }) {

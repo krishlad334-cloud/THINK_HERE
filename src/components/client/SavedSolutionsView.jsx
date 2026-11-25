@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import { Bookmark, ArrowRight, Printer } from 'lucide-react';
 

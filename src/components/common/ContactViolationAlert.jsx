@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import { ShieldAlert, X } from 'lucide-react';
 
 export default function ContactViolationAlert() {

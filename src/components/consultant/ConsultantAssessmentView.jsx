@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import Logo from '../common/Logo';
 import {
   CheckCircle2,
@@ -297,6 +297,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
   };
 
   const isPassed = isSubmitted && score >= PASSING_THRESHOLD;
+  const CanvasTag = isStandalone ? 'main' : 'div';
 
   return (
     <div className={`w-full text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-cyan-500/20 selection:text-cyan-950 ${
@@ -369,7 +370,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
       {/* =================================================================== */}
       {/* 2. MAIN ASSESSMENT CANVAS - VERTICALLY CENTERED & BALANCED          */}
       {/* =================================================================== */}
-      <main className="flex-1 w-full max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 flex flex-col justify-center">
+      <CanvasTag className="flex-1 w-full max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 flex flex-col justify-center">
         {!isSubmitted ? (
           /* ================================================================= */
           /* QUESTION IN PROGRESS SCREEN: SINGLE UNIFIED SEAMLESS CARD         */
@@ -656,7 +657,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
             </div>
           </div>
         )}
-      </main>
+      </CanvasTag>
 
       {/* =================================================================== */}
       {/* 3. CONFIRMATION MODAL BEFORE FINAL SUBMISSION                        */}

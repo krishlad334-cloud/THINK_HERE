@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from './UserAvatar';
 import {
   Plus,
@@ -79,8 +79,8 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Main Sidebar - Full height drawer on mobile, static flush on desktop */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-white border-r border-slate-200/90 flex flex-col h-full h-[100dvh] transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:h-full lg:w-72 flex-shrink-0 shadow-2xl lg:shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-white border-r border-slate-200/90 flex flex-col transition-transform duration-200 ease-out lg:static lg:z-auto lg:h-full lg:w-72 flex-shrink-0 shadow-2xl lg:shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
+          isOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none lg:pointer-events-auto lg:translate-x-0'
         }`}
       >
         {/* Mobile Header with OverThink Brand & Close Button (Hidden on Desktop) */}
@@ -119,7 +119,9 @@ export default function Sidebar({ isOpen, onClose }) {
               <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser?.name}</h4>
               <p className="text-[11px] text-slate-500 truncate">{currentUser?.email}</p>
               <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#020617] text-white">
-                {role === 'consultant' ? 'Verified Consultant' : 'Client Account'}
+                {role === 'consultant'
+                  ? (currentUser?.assessmentPassed || currentUser?.isVerified ? 'Verified Consultant' : 'Verification Pending')
+                  : 'Client Account'}
               </span>
             </div>
           </div>
@@ -399,7 +401,9 @@ export default function Sidebar({ isOpen, onClose }) {
                   {currentUser?.name}
                 </span>
                 <span className="text-[10px] text-slate-400 block truncate">
-                  {role === 'consultant' ? 'Verified Consultant' : 'Client Account'}
+                  {role === 'consultant'
+                    ? (currentUser?.assessmentPassed || currentUser?.isVerified ? 'Verified Consultant' : 'Verification Pending')
+                    : 'Client Account'}
                 </span>
               </div>
             </div>

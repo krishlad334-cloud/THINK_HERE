@@ -99,7 +99,7 @@ export default function CharacterVisual({
     }
   }, [progress, scrub, applySeek]);
 
-  // Handle video source changes and initial playback policy
+  // Handle initial playback policy
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -117,7 +117,7 @@ export default function CharacterVisual({
         });
       }
     }
-  }, [currentVideo, scrub]);
+  }, [scrub]);
 
   // Periodic safety heartbeat to release any stalled seeks
   useEffect(() => {

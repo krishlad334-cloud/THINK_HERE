@@ -51,7 +51,7 @@ export default function LandingPage({
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0A0816] font-sans text-[#F5F3FF] antialiased selection:bg-[#A855F7]/30 selection:text-[#F5F3FF]">
+    <div className="relative min-h-screen w-full overflow-x-clip bg-[#0A0816] font-sans text-[#F5F3FF] antialiased selection:bg-[#A855F7]/30 selection:text-[#F5F3FF]">
       {!skipLoader && (
         <Loader reducedMotion={reducedMotion} onComplete={() => setReady(true)} />
       )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import {
   BarChart3,
   TrendingUp,
@@ -106,23 +106,23 @@ export default function ConsultantAnalytics() {
             </span>
           </div>
 
-          <div className="pt-6 pb-2">
+          <div className="pt-4 pb-2">
             <div className="flex items-end justify-between gap-3 sm:gap-6 h-56">
               {monthlyData.map((d, i) => {
                 const maxEarnings = 8000;
-                const heightPct = Math.round((d.earnings / maxEarnings) * 100);
+                const heightPct = Math.max(8, Math.round((d.earnings / maxEarnings) * 100));
                 return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-2.5 group">
-                    <span className="text-[11px] font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div key={i} className="flex-1 h-full flex flex-col items-center gap-2 group">
+                    <span className="text-[11px] font-bold text-slate-600 opacity-75 sm:opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                       ${d.earnings.toLocaleString()}
                     </span>
-                    <div className="w-full max-w-[48px] bg-slate-100 rounded-t-2xl h-full flex items-end overflow-hidden">
+                    <div className="relative flex-1 w-full max-w-[48px] bg-slate-100 rounded-t-2xl overflow-hidden">
                       <div
-                        className="w-full bg-gradient-to-t from-[#020617] to-[#0891b2] rounded-t-2xl transition-all duration-500 group-hover:opacity-90"
+                        className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#020617] to-[#0891b2] rounded-t-2xl transition-all duration-500 group-hover:opacity-90"
                         style={{ height: `${heightPct}%` }}
                       />
                     </div>
-                    <span className="text-xs font-bold text-slate-800">{d.month}</span>
+                    <span className="text-xs font-bold text-slate-800 flex-shrink-0">{d.month}</span>
                   </div>
                 );
               })}

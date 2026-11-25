@@ -210,6 +210,7 @@ export function registerUser(userData) {
 
   // 3. Create user record
   const id = `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+  const isConsultant = userData.role === 'consultant';
   const newUser = {
     id,
     name: userData.name.trim(),
@@ -217,14 +218,22 @@ export function registerUser(userData) {
     mobile: cleanMobile,
     password: userData.password,
     role: userData.role,
-    isVerified: true,
-    title: userData.title || (userData.role === 'consultant' ? 'Professional Consultant' : 'Client Member'),
-    hourlyRate: userData.hourlyRate ? Number(userData.hourlyRate) : (userData.role === 'consultant' ? 120 : undefined),
+    isVerified: !isConsultant,
+    assessmentPassed: isConsultant ? false : undefined,
+    title: userData.title || (isConsultant ? 'Consultant Candidate' : 'Client Member'),
+    hourlyRate: userData.hourlyRate ? Number(userData.hourlyRate) : (isConsultant ? 120 : undefined),
+    responseTime: isConsultant ? '< 2 hours' : undefined,
+    location: userData.location || 'Remote',
     bio: userData.bio || '',
     skills: userData.skills || [],
+    services: isConsultant ? (userData.services || []) : undefined,
+    experience: isConsultant ? (userData.experience || []) : undefined,
+    education: isConsultant ? (userData.education || []) : undefined,
+    certifications: isConsultant ? (userData.certifications || []) : undefined,
+    portfolio: isConsultant ? (userData.portfolio || []) : undefined,
     avatar: userData.avatar || userData.profileImage || null,
     profileImage: userData.profileImage || userData.avatar || null,
-    label: userData.role === 'consultant' ? 'Consultant' : 'Client',
+    label: isConsultant ? 'Consultant' : 'Client',
     createdAt: new Date().toISOString()
   };
 

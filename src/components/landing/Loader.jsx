@@ -32,7 +32,6 @@ export default function Loader({ onComplete, reducedMotion = false, duration = 8
         clearInterval(timer);
         setTimeout(() => {
           setVisible(false);
-          onCompleteRef.current?.();
         }, 120);
       }
     }, 25);
@@ -43,7 +42,7 @@ export default function Loader({ onComplete, reducedMotion = false, duration = 8
   }, [reducedMotion, duration]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => onCompleteRef.current?.()}>
       {visible && (
         <motion.div
           initial={{ opacity: 1 }}

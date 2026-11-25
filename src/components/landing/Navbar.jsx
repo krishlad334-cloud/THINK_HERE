@@ -42,12 +42,12 @@ export default function Navbar({
       }
       lastY.current = y;
 
-      // Track active section in viewport for subtle underline indicator
-      const viewMid = y + window.innerHeight * 0.38;
+      // Track active section in viewport using viewport coordinates (works inside GSAP pin-spacers)
+      const thresholdY = window.innerHeight * 0.42;
       let current = '';
       for (const item of NAV_LINKS) {
         const el = document.querySelector(item.target);
-        if (el && el.offsetTop <= viewMid) {
+        if (el && el.getBoundingClientRect().top <= thresholdY) {
           current = item.target;
         }
       }

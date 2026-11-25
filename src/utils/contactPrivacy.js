@@ -6,8 +6,9 @@
 
 // Patterns to detect phone numbers, emails, social handles
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
+const EMAIL_TEST_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
 const PHONE_REGEX = /(\+?\d{1,4}[-.\s]?)?(\(?\d{2,4}\)?[-.\s]?)?\d{3,4}[-.\s]?\d{3,4}/g;
-const SOCIAL_REGEX = /(whatsapp|telegram|insta|instagram|skype|call me at|reach me on|dm me at|my number is|ping me on|phone)/gi;
+const SOCIAL_TEST_REGEX = /(whatsapp|telegram|insta|instagram|skype|call me at|reach me on|dm me at|my number is|ping me on|phone)/i;
 
 export function inspectMessageForPrivacy(text) {
   if (!text || typeof text !== 'string') {
@@ -18,12 +19,12 @@ export function inspectMessageForPrivacy(text) {
   let containsViolation = false;
 
   // Check email
-  if (EMAIL_REGEX.test(text)) {
+  if (EMAIL_TEST_REGEX.test(text)) {
     violations.push('Direct Email Address');
     containsViolation = true;
   }
 
-  // Check phone number (look for at least 7-10 consecutive or hyphenated digits)
+  // Check phone number (look for at least 8 digits)
   const phoneMatches = text.match(PHONE_REGEX);
   if (phoneMatches) {
     // Filter out simple small numbers like "10 days" or "step 1"
@@ -35,7 +36,7 @@ export function inspectMessageForPrivacy(text) {
   }
 
   // Check off-platform keywords with digits or links
-  if (SOCIAL_REGEX.test(text) && /\d/.test(text)) {
+  if (SOCIAL_TEST_REGEX.test(text) && /\d/.test(text)) {
     violations.push('External Contact Sharing Intent');
     containsViolation = true;
   }

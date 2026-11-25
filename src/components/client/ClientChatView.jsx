@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import { TOPIC_SUGGESTIONS } from '../../data/mockSeedData';
 import { timeAgo } from '../../utils/formatters';
@@ -39,7 +39,6 @@ export default function ClientChatView() {
     submitThink,
     activeChatThoughtId,
     setActiveChatThoughtId,
-    openChatWithThought,
     setSelectedThoughtId,
     setActiveConversationId,
     setActiveTab,
@@ -57,7 +56,6 @@ export default function ClientChatView() {
   const [showCallMenu, setShowCallMenu] = useState(false);
   const [copiedMsgId, setCopiedMsgId] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const callMenuTimerRef = useRef(null);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const emojiPickerRef = useRef(null);
@@ -84,26 +82,16 @@ export default function ClientChatView() {
   // Active thought determination
   const activeThought = allThinks.find(t => t.id === activeChatThoughtId) || null;
 
-  // Find linked shared conversation messages
+  // Find linked shared conversation messages (or pre-acceptance pending notes)
   const currentConversation = conversations.find(c => c.thinkId === activeThought?.id || c.id === activeThought?.id);
   const thoughtMessages = currentConversation
     ? (currentConversation.messages || [])
-    : messages.filter(m => m.thoughtId === activeThought?.id || m.conversationId === activeThought?.id);
-
-  const handleCallMouseEnter = () => {
-    if (callMenuTimerRef.current) clearTimeout(callMenuTimerRef.current);
-    setShowCallMenu(true);
-  };
-
-  const handleCallMouseLeave = () => {
-    if (callMenuTimerRef.current) clearTimeout(callMenuTimerRef.current);
-    callMenuTimerRef.current = setTimeout(() => {
-      setShowCallMenu(false);
-    }, 280);
-  };
+    : (activeThought?.pendingMessages?.length
+        ? activeThought.pendingMessages
+        : messages.filter(m => m.thoughtId === activeThought?.id || m.conversationId === activeThought?.id));
 
   const handleCopyText = (msgId, text) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard?.writeText(text).catch(() => {});
     setCopiedMsgId(msgId);
     setTimeout(() => {
       setCopiedMsgId(null);
@@ -123,9 +111,13 @@ export default function ClientChatView() {
     }
   }, [activeMsgMenuId, showCallMenu]);
 
+  const thoughtMsgCount = thoughtMessages.length;
+  const activeThoughtIdKey = activeThought?.id || null;
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [thoughtMessages.length, activeThought?.id]);
+    if (thoughtMsgCount >= 0 || activeThoughtIdKey) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [thoughtMsgCount, activeThoughtIdKey]);
 
   // Voice speech-to-text
   const toggleVoice = () => {
@@ -175,21 +167,17 @@ export default function ClientChatView() {
     if (!inputVal.trim() && attachments.length === 0) return;
 
     if (!activeThought) {
-      // Create new Think with pending status
-      const created = submitThink({
+      // Create new Think with pending status and stay in workspace view
+      submitThink({
         title: inputVal.trim(),
         description: inputVal.trim(),
-        category: 'General Consultation',
+        category: null,
         attachments
       });
       setInputVal('');
       setAttachments([]);
-
-      if (created) {
-        openChatWithThought(created.id);
-      }
     } else {
-      // Send chat message in existing conversation
+      // Send chat message in existing conversation or pending note
       sendMessage(activeThought.id, inputVal.trim(), attachments);
       setInputVal('');
       setAttachments([]);
@@ -282,30 +270,26 @@ export default function ClientChatView() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Open in dedicated 1-on-1 Consultation room button */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveChatThoughtId(activeThought.id);
-                setSelectedThoughtId(null);
-                if (currentConversation) {
+            {/* Open in dedicated 1-on-1 Consultation room button when accepted */}
+            {currentConversation && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveChatThoughtId(activeThought.id);
+                  setSelectedThoughtId(null);
                   setActiveConversationId(currentConversation.id);
-                }
-                setActiveTab('messages');
-              }}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors"
-              title="Open full consultation chat room"
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-[#020617]" />
-              <span>Open Chat Room</span>
-            </button>
+                  setActiveTab('messages');
+                }}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors"
+                title="Open full consultation chat room"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-[#020617]" />
+                <span>Open Chat Room</span>
+              </button>
+            )}
 
             {assignedConsName && (
-              <div
-                className="relative"
-                onMouseEnter={handleCallMouseEnter}
-                onMouseLeave={handleCallMouseLeave}
-              >
+              <div className="relative">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -323,8 +307,6 @@ export default function ClientChatView() {
                 {/* Call Dropdown */}
                 {showCallMenu && (
                   <div
-                    onMouseEnter={handleCallMouseEnter}
-                    onMouseLeave={handleCallMouseLeave}
                     onClick={(e) => e.stopPropagation()}
                     className="absolute right-0 top-full pt-1 z-50 w-48 animate-in fade-in zoom-in-95 duration-100"
                   >
@@ -430,37 +412,61 @@ export default function ClientChatView() {
         ) : (
           /* Active Chat Stream */
           <div className="space-y-6 max-w-3xl sm:max-w-4xl mx-auto w-full">
-            {/* 1-Click Gateway into Dedicated Consultation Room */}
-            <div className="bg-[#ecfeff]/90 border border-[#020617]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#020617] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                  <MessageSquare className="w-5 h-5 text-[#0891b2]" />
+            {/* Status / Consultation Room Banner */}
+            {currentConversation ? (
+              <div className="bg-[#ecfeff]/90 border border-[#020617]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#020617] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                    <MessageSquare className="w-5 h-5 text-[#0891b2]" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">
+                      1-on-1 Consultation Room Ready
+                    </h4>
+                    <p className="text-xs text-slate-600">
+                      Direct messaging, file sharing & live video calling with {assignedConsName || 'your verified consultant'}.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">
-                    1-on-1 Consultation Room Ready
-                  </h4>
-                  <p className="text-xs text-slate-600">
-                    Direct messaging, file sharing & live video calling with {assignedConsName || 'your verified consultant'}.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveChatThoughtId(activeThought.id);
-                  setSelectedThoughtId(null);
-                  if (currentConversation) {
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveChatThoughtId(activeThought.id);
+                    setSelectedThoughtId(null);
                     setActiveConversationId(currentConversation.id);
-                  }
-                  setActiveTab('messages');
-                }}
-                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex-shrink-0"
-              >
-                <span>Enter Consultation Chat</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#0891b2]" />
-              </button>
-            </div>
+                    setActiveTab('messages');
+                  }}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex-shrink-0"
+                >
+                  <span>Enter Consultation Chat</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#0891b2]" />
+                </button>
+              </div>
+            ) : (
+              <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-amber-950">
+                      Awaiting Verified Consultant Acceptance
+                    </h4>
+                    <p className="text-xs text-amber-800">
+                      Your OverThink is live in the Consultant Feed. You can add extra context below while waiting—or track all thoughts in All My Thoughts.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('my_thoughts')}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-amber-100/60 border border-amber-300 text-amber-950 text-xs font-bold shadow-xs transition-all cursor-pointer flex-shrink-0"
+                >
+                  <span>View My Thoughts</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
 
             {/* Original Problem Card as the First Message */}
             <div className="flex gap-4 items-start">

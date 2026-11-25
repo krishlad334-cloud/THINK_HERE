@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import { Bell, Clock, MessageSquare, CheckCircle, X } from 'lucide-react';
 import { timeAgo } from '../../utils/formatters';
 

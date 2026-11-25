@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider } from './context/AppContext';
+import { useApp } from './context/useApp';
 import Navbar from './components/common/Navbar';
 import Sidebar from './components/common/Sidebar';
 import NewThoughtModal from './components/client/NewThoughtModal';
@@ -40,8 +41,15 @@ function AppContent() {
   const [transitionKey, setTransitionKey] = useState(0);
   const [isPageLoading, setIsPageLoading] = useState(false);
 
+  const isConsultantUncertified =
+    isAuthenticated &&
+    role === 'consultant' &&
+    !currentUser?.assessmentPassed &&
+    !currentUser?.isVerified;
+
   const navigateView = (nextView, authMode) => {
     if (authMode) setAuthInitialMode(authMode);
+    setIsSidebarOpen(false);
     if (!reducedMotion) {
       setTransitionKey((k) => k + 1);
       setIsPageLoading(true);
@@ -51,6 +59,11 @@ function AppContent() {
       window.scrollTo(0, 0);
     }
   };
+
+  const effectiveView =
+    !isAuthenticated && (currentView === 'app' || currentView === 'consultant_test')
+      ? 'landing'
+      : (currentView === 'app' && isConsultantUncertified ? 'consultant_test' : currentView);
 
   // Enforce strict role-based route isolation
   React.useEffect(() => {
@@ -145,13 +158,13 @@ function AppContent() {
 
   const renderShell = () => {
     // 1. DEFAULT ENTRY VIEW: If user is on 'landing' (shown to everyone opening the site link)
-    if (currentView === 'landing') {
+    if (effectiveView === 'landing') {
       return (
         <LandingPage
           isAuthenticated={isAuthenticated}
           currentUser={currentUser}
           skipLoader={transitionKey > 0}
-          onGoToApp={() => navigateView('app')}
+          onGoToApp={() => navigateView(isConsultantUncertified ? 'consultant_test' : 'app')}
           onSignIn={() => navigateView('auth', 'login')}
           onStartThink={() => navigateView('auth', 'register')}
         />
@@ -159,13 +172,17 @@ function AppContent() {
     }
 
     // 2. AUTHENTICATION VIEW: Sign In or Register Screen
-    if (currentView === 'auth') {
+    if (effectiveView === 'auth') {
       return (
         <AuthPage
           initialMode={authInitialMode}
           onBackToLanding={() => navigateView('landing')}
           onSuccess={(userObj, isNewRegistration) => {
-            if (isNewRegistration && (userObj?.role === 'consultant' || role === 'consultant')) {
+            const nextRole = userObj?.role || role;
+            const needsTest =
+              nextRole === 'consultant' &&
+              (isNewRegistration || (!userObj?.assessmentPassed && !userObj?.isVerified));
+            if (needsTest) {
               navigateView('consultant_test');
             } else {
               navigateView('app');
@@ -176,7 +193,7 @@ function AppContent() {
     }
 
     // 3. CONSULTANT ONBOARDING TEST VIEW: Direct post-registration qualification exam
-    if (currentView === 'consultant_test') {
+    if (effectiveView === 'consultant_test') {
       return (
         <ConsultantAssessmentView
           isStandalone={true}

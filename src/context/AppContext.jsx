@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { AppContext } from './useApp';
 import {
   initializeThinkStorage,
   getUsers,
@@ -10,6 +11,7 @@ import {
   acceptThink as storageAcceptThink,
   getConversations,
   sendMessage as storageSendMessage,
+  addPendingThinkMessage as storageAddPendingThinkMessage,
   deleteMessage as storageDeleteMessage,
   clearChatMessages as storageClearChatMessages,
   markMessagesAsRead as storageMarkMessagesRead,
@@ -39,8 +41,7 @@ import {
   INITIAL_AUDIT_LOGS
 } from '../data/mockSeedData';
 import { analyzeThought } from '../utils/aiEngine';
-
-const AppContext = createContext(null);
+import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
 
 export function AppProvider({ children }) {
   // 1. Initialize LocalStorage on initial load
@@ -82,14 +83,24 @@ export function AppProvider({ children }) {
 
   // UI Toast state
   const [toast, setToast] = useState(null);
+  const toastTimerRef = useRef(null);
   const showToast = useCallback((title, message, type = 'success') => {
-    setToast({ title, message, type, id: Date.now() });
-    setTimeout(() => {
-      setToast(prev => (prev?.id ? null : prev));
+    const id = Date.now() + Math.random();
+    setToast({ title, message, type, id });
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => {
+      setToast(prev => (prev?.id === id ? null : prev));
     }, 4000);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
   const closeToast = useCallback(() => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast(null);
   }, []);
 
@@ -277,36 +288,34 @@ export function AppProvider({ children }) {
   // SHARED CHAT & MESSAGING
   // -------------------------------------------------------------
   const sendChatMessage = (targetId, text, attachments = []) => {
-    if (!text && (!attachments || attachments.length === 0)) return null;
+    const rawText = (text || '').trim();
+    if (!rawText && (!attachments || attachments.length === 0)) return null;
 
-    // targetId can be a conversationId or thoughtId
-    let conv = conversations.find(c => c.id === targetId || c.thinkId === targetId);
-
-    if (!conv) {
-      // If no conversation exists yet for this thought (e.g. client is typing in thought workspace before human acceptance)
-      const think = thinks.find(t => t.id === targetId);
-      if (think && think.status === 'pending') {
-        // AI / initial diagnostic simulation
-        const msg = {
-          id: `msg_${Date.now()}`,
-          conversationId: null,
-          thoughtId: targetId,
-          senderId: activeUser.id,
-          senderName: activeUser.name,
-          senderAvatar: activeUser.profileImage || activeUser.avatar,
-          senderRole: activeUser.role,
-          text: text.trim(),
-          attachments,
-          createdAt: new Date().toISOString(),
-          isRead: true
-        };
-        reloadFromStorage();
-        return msg;
+    let finalText = rawText;
+    if (rawText) {
+      const privacy = inspectMessageForPrivacy(rawText);
+      if (privacy.isViolation) {
+        finalText = privacy.cleanText;
+        setPrivacyAlert({
+          message: privacy.warningMessage,
+          violations: privacy.violations
+        });
       }
     }
 
+    // targetId can be a conversationId or thoughtId
+    const conv = conversations.find(c => c.id === targetId || c.thinkId === targetId);
+
     if (conv) {
-      const msg = storageSendMessage(conv.id, activeUser, text, attachments);
+      const msg = storageSendMessage(conv.id, activeUser, finalText, attachments);
+      reloadFromStorage();
+      return msg;
+    }
+
+    // If no conversation exists yet for this thought, persist follow-up notes on the pending think
+    const think = thinks.find(t => t.id === targetId);
+    if (think && (think.status === 'pending' || think.status === 'pending_human')) {
+      const msg = storageAddPendingThinkMessage(targetId, activeUser, finalText, attachments);
       reloadFromStorage();
       return msg;
     }
@@ -378,23 +387,29 @@ export function AppProvider({ children }) {
     showToast('Verification Updated', `Consultant credentials ${isApproved ? 'approved' : 'revoked'}.`, 'info');
   };
 
-  const markConversationRead = (conversationId) => {
-    storageMarkMessagesRead(conversationId, activeUser.id);
-    reloadFromStorage();
-  };
+  const activeUserId = activeUser?.id;
+  const activeUserRole = activeUser?.role;
+
+  const markConversationRead = useCallback((conversationId) => {
+    if (!conversationId || !activeUserId) return;
+    const changed = storageMarkMessagesRead(conversationId, activeUserId);
+    if (changed) {
+      reloadFromStorage();
+    }
+  }, [activeUserId, reloadFromStorage]);
 
   // -------------------------------------------------------------
   // NOTIFICATIONS
   // -------------------------------------------------------------
-  const markNotificationRead = (notifId) => {
+  const markNotificationRead = useCallback((notifId) => {
     storageMarkNotifRead(notifId);
     reloadFromStorage();
-  };
+  }, [reloadFromStorage]);
 
-  const markAllNotificationsRead = () => {
-    storageMarkAllNotifsRead(activeUser.id, activeUser.role);
+  const markAllNotificationsRead = useCallback(() => {
+    storageMarkAllNotifsRead(activeUserId, activeUserRole);
     reloadFromStorage();
-  };
+  }, [activeUserId, activeUserRole, reloadFromStorage]);
 
   // -------------------------------------------------------------
   // RESET DEMO DATA
@@ -446,23 +461,26 @@ export function AppProvider({ children }) {
   // Derive flat messages list for legacy components
   const allMessages = conversations.flatMap(c => c.messages || []);
 
-  const openChatWithThought = (thoughtId) => {
+  const openChatWithThought = useCallback((thoughtId) => {
     setActiveChatThoughtId(thoughtId);
     setSelectedThoughtId(null);
     const conv = conversations.find(c => c.thinkId === thoughtId);
     if (conv) {
       setActiveConversationId(conv.id);
+      setActiveTab('messages');
+    } else {
+      setActiveConversationId(null);
+      setActiveTab('chat');
     }
-    setActiveTab('messages');
-  };
+  }, [conversations]);
 
-  const startNewChat = () => {
+  const startNewChat = useCallback(() => {
     setActiveChatThoughtId(null);
     setSelectedThoughtId(null);
     setActiveConversationId(null);
     setActiveTab('chat');
     setIsNewThoughtModalOpen(false);
-  };
+  }, []);
 
   const toggleSaveThought = (thoughtId) => {
     const target = thinks.find(t => t.id === thoughtId);
@@ -488,6 +506,9 @@ export function AppProvider({ children }) {
   const logoutUser = () => {
     authLogoutUser();
     setIsAuthenticated(false);
+    setActiveChatThoughtId(null);
+    setActiveConversationId(null);
+    setSelectedThoughtId(null);
     setActiveUserState(DEMO_USERS[0]);
     showToast('Logged Out', 'You have been signed out successfully.', 'info');
   };
@@ -574,8 +595,8 @@ export function AppProvider({ children }) {
     return res;
   };
 
-  const quickRegister = (identifier, password, role = 'client') => {
-    const res = authQuickRegisterUser(identifier, password, role);
+  const quickRegister = (identifier, password, userRole = 'client') => {
+    const res = authQuickRegisterUser(identifier, password, userRole);
     if (res.success) {
       setIsAuthenticated(true);
       setActiveUserState(res.user);
@@ -680,13 +701,4 @@ export function AppProvider({ children }) {
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-}
-
-export function useApp() {
-  const context = useContext(AppContext);
-  if (!context) {
-    console.warn('useApp must be used within an AppProvider');
-    return {};
-  }
-  return context;
 }

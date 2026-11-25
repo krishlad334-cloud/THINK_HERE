@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import { User, Briefcase } from 'lucide-react';
 
 export default function RoleSwitcher() {

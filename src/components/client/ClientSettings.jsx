@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import {
   User,
@@ -13,32 +13,32 @@ import {
 } from 'lucide-react';
 
 export default function ClientSettings() {
-  const { clientUser, setClientUser } = useApp();
+  const { currentUser, updateUserProfile, thoughts, role } = useApp();
 
   const fileInputRef = useRef(null);
-  const [name, setName] = useState(clientUser.name || 'Alex Morgan');
-  const [email, setEmail] = useState(clientUser.email || 'alex.morgan@overthink.platform');
-  const [bio, setBio] = useState(clientUser.bio || 'Passionate about building scalable digital products and exploring modern AI solutions. Always looking for expert consultation.');
-  const [location, setLocation] = useState(clientUser.location || 'San Francisco, CA');
-  const [title, setTitle] = useState(clientUser.title || 'Startup Founder & Tech Innovator');
-  const [avatar, setAvatar] = useState(clientUser.avatar || clientUser.profileImage || '');
+  const [name, setName] = useState(currentUser?.name || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [bio, setBio] = useState(currentUser?.bio || '');
+  const [location, setLocation] = useState(currentUser?.location || '');
+  const [title, setTitle] = useState(currentUser?.title || '');
+  const [avatar, setAvatar] = useState(currentUser?.avatar || currentUser?.profileImage || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [inPlatformMasking, setInPlatformMasking] = useState(true);
   const [timerAlerts, setTimerAlerts] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
 
-  const prevUserIdRef = useRef(clientUser?.id);
+  const prevUserIdRef = useRef(currentUser?.id);
   useEffect(() => {
-    if (clientUser && clientUser.id !== prevUserIdRef.current) {
-      prevUserIdRef.current = clientUser.id;
-      setName(clientUser.name || 'Alex Morgan');
-      setEmail(clientUser.email || 'alex.morgan@overthink.platform');
-      setBio(clientUser.bio || '');
-      setLocation(clientUser.location || 'San Francisco, CA');
-      setTitle(clientUser.title || 'Startup Founder & Tech Innovator');
-      setAvatar(clientUser.avatar || clientUser.profileImage || '');
+    if (currentUser && currentUser.id !== prevUserIdRef.current) {
+      prevUserIdRef.current = currentUser.id;
+      setName(currentUser.name || '');
+      setEmail(currentUser.email || '');
+      setBio(currentUser.bio || '');
+      setLocation(currentUser.location || '');
+      setTitle(currentUser.title || '');
+      setAvatar(currentUser.avatar || currentUser.profileImage || '');
     }
-  }, [clientUser]);
+  }, [currentUser]);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
@@ -53,19 +53,38 @@ export default function ClientSettings() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    setClientUser(prev => ({
-      ...prev,
-      name,
-      email,
-      bio,
-      location,
-      title,
-      avatar,
-      profileImage: avatar
-    }));
+    if (currentUser?.id && updateUserProfile) {
+      updateUserProfile(currentUser.id, {
+        name: name.trim() || currentUser.name,
+        email: email.trim() || currentUser.email,
+        bio,
+        location,
+        title,
+        avatar,
+        profileImage: avatar
+      });
+    }
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
+
+  const userThoughts = (thoughts || []).filter((t) => {
+    if (!currentUser) return false;
+    if (role === 'consultant') {
+      return t.consultantId === currentUser.id || t.assignedConsultantId === currentUser.id;
+    }
+    return (
+      t.clientId === currentUser.id ||
+      (currentUser.id === 'client_001' && t.clientId === 'user-client-1')
+    );
+  });
+  const solutionsCount = userThoughts.filter(
+    t => t.status === 'resolved' || t.solution || (t.solutions && t.solutions.length > 0)
+  ).length;
+  const accountBadge =
+    role === 'consultant'
+      ? (currentUser?.assessmentPassed || currentUser?.isVerified ? 'Verified Consultant' : 'Verification Pending')
+      : 'Verified Client Account';
 
   return (
     <div className="space-y-6 w-full pb-16">
@@ -95,9 +114,9 @@ export default function ClientSettings() {
           <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-5 text-center">
             <div className="relative inline-block mx-auto">
               <UserAvatar
-                src={avatar || clientUser.avatar || clientUser.profileImage}
-                name={name || clientUser.name}
-                role="client"
+                src={avatar || currentUser?.avatar || currentUser?.profileImage}
+                name={name || currentUser?.name}
+                role={role}
                 size="2xl"
                 className="ring-4 ring-slate-100 shadow-md mx-auto"
               />
@@ -119,10 +138,10 @@ export default function ClientSettings() {
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900">{clientUser.name}</h2>
-              <p className="text-xs text-slate-500 mt-0.5">{clientUser.email}</p>
+              <h2 className="text-lg font-bold text-slate-900">{currentUser?.name}</h2>
+              <p className="text-xs text-slate-500 mt-0.5">{currentUser?.email}</p>
               <span className="inline-block mt-2 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20">
-                Verified Client Account
+                {accountBadge}
               </span>
             </div>
 
@@ -130,11 +149,11 @@ export default function ClientSettings() {
             <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-100">
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">Thoughts</span>
-                <span className="text-base font-black text-slate-900">4</span>
+                <span className="text-base font-black text-slate-900">{userThoughts.length}</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">Solutions</span>
-                <span className="text-base font-black text-[#0891b2]">5</span>
+                <span className="text-base font-black text-[#0891b2]">{solutionsCount}</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">SLA</span>

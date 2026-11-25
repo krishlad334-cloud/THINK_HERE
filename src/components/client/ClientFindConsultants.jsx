@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import {
   Star,
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function ClientFindConsultants() {
-  const { consultants, setActiveTab, setSelectedThoughtId, thoughts } = useApp();
+  const { consultants, openChatWithThought, setIsNewThoughtModalOpen, showToast, thoughts } = useApp();
   const [filterSkill, setFilterSkill] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -28,13 +28,18 @@ export default function ClientFindConsultants() {
   });
 
   const handleStartConsultationWith = (consultant) => {
-    // If there is an existing thought, link to it; otherwise go to messages or open new thought
-    const matchingThought = thoughts.find(t => t.assignedConsultantId === consultant.id);
+    const matchingThought = (thoughts || []).find(
+      t => t.assignedConsultantId === consultant.id || t.assignedConsultantName === consultant.name
+    );
     if (matchingThought) {
-      setSelectedThoughtId(matchingThought.id);
-      setActiveTab('messages');
+      openChatWithThought(matchingThought.id);
     } else {
-      setActiveTab('messages');
+      setIsNewThoughtModalOpen(true);
+      showToast?.(
+        'Submit an OverThink',
+        `Describe your challenge to connect with specialists like ${consultant.name}.`,
+        'info'
+      );
     }
   };
 
