@@ -9,6 +9,8 @@ import ContactViolationAlert from './components/common/ContactViolationAlert';
 import ToastContainer from './components/common/ToastContainer';
 import AuthPage from './components/auth/AuthPage';
 import LandingPage from './components/landing/LandingPage';
+import Loader from './components/landing/Loader';
+import { useReducedMotion } from './hooks/useReducedMotion';
 
 // Client Views
 import ClientChatView from './components/client/ClientChatView';
@@ -25,21 +27,30 @@ import ConsultantProfileView from './components/consultant/ConsultantProfileView
 import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
 import ConsultantAssessmentView from './components/consultant/ConsultantAssessmentView';
 
-// Admin Views
-import AdminDashboard from './components/admin/AdminDashboard';
-import UserManagement from './components/admin/UserManagement';
-import DisputeAndLogs from './components/admin/DisputeAndLogs';
-import ThoughtFeedModeration from './components/admin/ThoughtFeedModeration';
-
 // Shared Chat & Consultation Room
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
   const { role, activeTab, setActiveTab, isAuthenticated, currentUser, toast, closeToast } = useApp();
+  const reducedMotion = useReducedMotion();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // Default entry flow: ANYONE who opens the website is ALWAYS shown the landing page first!
   const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'auth' | 'app' | 'consultant_test'
   const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'register'
+  const [transitionKey, setTransitionKey] = useState(0);
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
+  const navigateView = (nextView, authMode) => {
+    if (authMode) setAuthInitialMode(authMode);
+    if (!reducedMotion) {
+      setTransitionKey((k) => k + 1);
+      setIsPageLoading(true);
+    }
+    setCurrentView(nextView);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  };
 
   // Enforce strict role-based route isolation
   React.useEffect(() => {
@@ -57,83 +68,13 @@ function AppContent() {
     }
   }, [role, activeTab, isAuthenticated, setActiveTab]);
 
-  // 1. DEFAULT ENTRY VIEW: If user is on 'landing' (shown to everyone opening the site link)
-  if (currentView === 'landing') {
-    return (
-      <LandingPage
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onGoToApp={() => setCurrentView('app')}
-        onSignIn={() => {
-          setAuthInitialMode('login');
-          setCurrentView('auth');
-        }}
-        onStartThink={() => {
-          setAuthInitialMode('register');
-          setCurrentView('auth');
-        }}
-      />
-    );
-  }
-
-  // 2. AUTHENTICATION VIEW: Sign In or Register Screen
-  if (currentView === 'auth') {
-    return (
-      <AuthPage
-        initialMode={authInitialMode}
-        onBackToLanding={() => setCurrentView('landing')}
-        onSuccess={(userObj, isNewRegistration) => {
-          if (isNewRegistration && (userObj?.role === 'consultant' || role === 'consultant')) {
-            setCurrentView('consultant_test');
-          } else {
-            setCurrentView('app');
-          }
-        }}
-      />
-    );
-  }
-
-  // 3. CONSULTANT ONBOARDING TEST VIEW: Direct post-registration qualification exam
-  if (currentView === 'consultant_test') {
-    return (
-      <ConsultantAssessmentView
-        isStandalone={true}
-        onComplete={() => {
-          setCurrentView('app');
-          setActiveTab('browse_thoughts');
-        }}
-      />
-    );
-  }
-
-  // 4. Fallback: If in 'app' but not authenticated, safely route to landing
-  if (!isAuthenticated) {
-    return (
-      <LandingPage
-        isAuthenticated={false}
-        currentUser={null}
-        onGoToApp={() => {
-          setAuthInitialMode('login');
-          setCurrentView('auth');
-        }}
-        onSignIn={() => {
-          setAuthInitialMode('login');
-          setCurrentView('auth');
-        }}
-        onStartThink={() => {
-          setAuthInitialMode('register');
-          setCurrentView('auth');
-        }}
-      />
-    );
-  }
-
   // Router dispatcher
   const renderCurrentView = () => {
     if (activeTab === 'landing') {
       return (
         <div className="w-full h-full overflow-y-auto">
           <LandingPage
+            skipLoader={true}
             onSignIn={() => setActiveTab(role === 'consultant' ? 'browse_thoughts' : 'chat')}
             onStartThink={() => setActiveTab('chat')}
           />
@@ -202,41 +143,115 @@ function AppContent() {
   // Full-bleed responsive layout for dedicated 1-on-1 chat room
   const isEdgeToEdge = activeTab === 'messages';
 
-  return (
-    <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
-      {/* Top Header - 100% full viewport width */}
-      <Navbar
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        onGoToLanding={() => setCurrentView('landing')}
-      />
+  const renderShell = () => {
+    // 1. DEFAULT ENTRY VIEW: If user is on 'landing' (shown to everyone opening the site link)
+    if (currentView === 'landing') {
+      return (
+        <LandingPage
+          isAuthenticated={isAuthenticated}
+          currentUser={currentUser}
+          skipLoader={transitionKey > 0}
+          onGoToApp={() => navigateView('app')}
+          onSignIn={() => navigateView('auth', 'login')}
+          onStartThink={() => navigateView('auth', 'register')}
+        />
+      );
+    }
 
-      {/* Main Container - 100% full width, edge-to-edge */}
-      <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">
-        {/* Left Sidebar - Fixed drawer on mobile, flush left on desktop */}
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
+    // 2. AUTHENTICATION VIEW: Sign In or Register Screen
+    if (currentView === 'auth') {
+      return (
+        <AuthPage
+          initialMode={authInitialMode}
+          onBackToLanding={() => navigateView('landing')}
+          onSuccess={(userObj, isNewRegistration) => {
+            if (isNewRegistration && (userObj?.role === 'consultant' || role === 'consultant')) {
+              navigateView('consultant_test');
+            } else {
+              navigateView('app');
+            }
+          }}
+        />
+      );
+    }
+
+    // 3. CONSULTANT ONBOARDING TEST VIEW: Direct post-registration qualification exam
+    if (currentView === 'consultant_test') {
+      return (
+        <ConsultantAssessmentView
+          isStandalone={true}
+          onComplete={() => {
+            setActiveTab('browse_thoughts');
+            navigateView('app');
+          }}
+        />
+      );
+    }
+
+    // 4. Fallback: If in 'app' but not authenticated, safely route to landing
+    if (!isAuthenticated) {
+      return (
+        <LandingPage
+          isAuthenticated={false}
+          currentUser={null}
+          skipLoader={transitionKey > 0}
+          onGoToApp={() => navigateView('auth', 'login')}
+          onSignIn={() => navigateView('auth', 'login')}
+          onStartThink={() => navigateView('auth', 'register')}
+        />
+      );
+    }
+
+    return (
+      <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
+        {/* Top Header - 100% full viewport width */}
+        <Navbar
+          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          onGoToLanding={() => navigateView('landing')}
         />
 
-        {/* Viewport Content Area - Fills 100% remaining width */}
-        <main
-          className={`flex-1 min-w-0 h-full flex flex-col ${
-            isEdgeToEdge
-              ? 'p-0 bg-white overflow-hidden'
-              : 'p-3.5 sm:p-6 lg:p-8 bg-slate-50/60 overflow-y-auto overflow-x-hidden'
-          }`}
-        >
-          {renderCurrentView()}
-        </main>
-      </div>
+        {/* Main Container - 100% full width, edge-to-edge */}
+        <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">
+          {/* Left Sidebar - Fixed drawer on mobile, flush left on desktop */}
+          <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+          />
 
-      {/* Global Interactive Overlays */}
-      <ToastContainer toast={toast} onClose={closeToast} />
-      <NewThoughtModal />
-      <ThoughtDetailModal />
-      <CallModal />
-      <ContactViolationAlert />
-    </div>
+          {/* Viewport Content Area - Fills 100% remaining width */}
+          <main
+            className={`flex-1 min-w-0 h-full flex flex-col ${
+              isEdgeToEdge
+                ? 'p-0 bg-white overflow-hidden'
+                : 'p-3.5 sm:p-6 lg:p-8 bg-slate-50/60 overflow-y-auto overflow-x-hidden'
+            }`}
+          >
+            {renderCurrentView()}
+          </main>
+        </div>
+
+        {/* Global Interactive Overlays */}
+        <ToastContainer toast={toast} onClose={closeToast} />
+        <NewThoughtModal />
+        <ThoughtDetailModal />
+        <CallModal />
+        <ContactViolationAlert />
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {isPageLoading && (
+        <Loader
+          key={transitionKey}
+          duration={460}
+          reducedMotion={reducedMotion}
+          onComplete={() => setIsPageLoading(false)}
+        />
+      )}
+      {renderShell()}
+    </>
   );
 }
 

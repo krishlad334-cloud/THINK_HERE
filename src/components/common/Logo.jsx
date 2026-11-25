@@ -44,7 +44,7 @@ export function LogoIcon({ className = 'w-full h-full' }) {
   );
 }
 
-export default function Logo({ size = 'md', showTagline = false, showText = true, className = '' }) {
+export default function Logo({ size = 'md', showTagline = false, showText = true, dark = false, className = '' }) {
   const iconSizes = {
     xs: 'w-6 h-6',
     sm: 'w-7 h-7',
@@ -67,7 +67,7 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
   return (
     <div className={`flex items-center gap-2.5 select-none ${className}`}>
       {/* Option 2: Dual Glacial Cyan Brain-Bulb Vector Icon */}
-      <div className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-white p-1 border border-slate-200/60 shadow-xs flex items-center justify-center ${iconClass} group`}>
+      <div className={`relative flex-shrink-0 rounded-xl overflow-hidden bg-white p-1.5 border border-slate-200/80 shadow-[0_2px_12px_rgba(255,255,255,0.14)] flex items-center justify-center ${iconClass} group`}>
         <LogoIcon className="w-full h-full object-contain transform transition-transform group-hover:scale-105" />
       </div>
 
@@ -76,7 +76,7 @@ export default function Logo({ size = 'md', showTagline = false, showText = true
         <div className="flex flex-col justify-center leading-none">
           <div className="flex items-baseline gap-1.5">
             <span className={`font-black tracking-tight ${textClass}`}>
-              <span className="text-[#020617]">Over</span>
+              <span className={dark ? 'text-white' : 'text-[#020617]'}>Over</span>
               <span className="text-[#22d3ee]">Think</span>
             </span>
           </div>

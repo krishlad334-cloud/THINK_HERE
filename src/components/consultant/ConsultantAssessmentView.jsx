@@ -12,9 +12,9 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-export const PASSING_THRESHOLD = 10; // Exactly 10 right answers out of 15 required to pass into consultant side
+const PASSING_THRESHOLD = 10; // Exactly 10 right answers out of 15 required to pass into consultant side
 
-export const CONSULTANT_QUESTIONS = [
+const CONSULTANT_QUESTIONS = [
   {
     id: 1,
     category: 'Problem Diagnosis & SLA',
