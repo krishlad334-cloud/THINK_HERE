@@ -58,9 +58,6 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
         <FloatingWindows progress={progress} layer="front" />
       </div>
 
-      {/* =================================================================== */}
-      {/* BEFORE VS. AFTER: AI SEARCH ALONE VS. OVERTHINK HUMAN GUIDANCE      */}
-      {/* =================================================================== */}
       <div className="w-full max-w-5xl mx-auto mt-10 sm:mt-14 z-20">
         <div className="text-center mb-6">
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">

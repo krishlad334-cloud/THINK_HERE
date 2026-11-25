@@ -164,9 +164,6 @@ export function AppProvider({ children }) {
     }
   }, [activeUser]);
 
-  // -------------------------------------------------------------
-  // DEMO USER SWITCHING (Client, Consultant 1, Consultant 2)
-  // -------------------------------------------------------------
   const switchDemoUser = (userId) => {
     const targetUser = DEMO_USERS.find(u => u.id === userId) || getUserById(userId);
     if (!targetUser) return;
@@ -201,9 +198,6 @@ export function AppProvider({ children }) {
     }
   };
 
-  // -------------------------------------------------------------
-  // 1. CLIENT PANEL: SUBMIT OVERTHINK
-  // -------------------------------------------------------------
   const submitThink = ({ title, description = '', category = 'General Consultation', attachments = [], urgency = 'Standard' }) => {
     if (!title || !title.trim()) {
       showToast('Validation Error', 'Please enter a title for your OverThink.', 'error');
@@ -237,9 +231,6 @@ export function AppProvider({ children }) {
   // Legacy alias
   const submitThought = (params) => submitThink(params);
 
-  // -------------------------------------------------------------
-  // 2. CONSULTANT PANEL: ACCEPT OVERTHINK
-  // -------------------------------------------------------------
   const acceptThink = (thinkId) => {
     try {
       const { think, conversation, alreadyAccepted } = storageAcceptThink(thinkId, activeUser);
@@ -270,10 +261,6 @@ export function AppProvider({ children }) {
   // Legacy alias
   const claimThought = (thoughtId) => acceptThink(thoughtId);
 
-  // -------------------------------------------------------------
-  // 3 & 4. OVERTHINK STATUS MANAGEMENT
-  // (Pending, Accepted, In Progress, Resolved, Closed)
-  // -------------------------------------------------------------
   const updateThinkStatus = (thinkId, newStatus) => {
     const updated = storageUpdateThink(thinkId, { status: newStatus });
     reloadFromStorage();
@@ -284,9 +271,6 @@ export function AppProvider({ children }) {
     return updated;
   };
 
-  // -------------------------------------------------------------
-  // SHARED CHAT & MESSAGING
-  // -------------------------------------------------------------
   const sendChatMessage = (targetId, text, attachments = []) => {
     const rawText = (text || '').trim();
     if (!rawText && (!attachments || attachments.length === 0)) return null;
@@ -398,9 +382,6 @@ export function AppProvider({ children }) {
     }
   }, [activeUserId, reloadFromStorage]);
 
-  // -------------------------------------------------------------
-  // NOTIFICATIONS
-  // -------------------------------------------------------------
   const markNotificationRead = useCallback((notifId) => {
     storageMarkNotifRead(notifId);
     reloadFromStorage();
@@ -411,9 +392,6 @@ export function AppProvider({ children }) {
     reloadFromStorage();
   }, [activeUserId, activeUserRole, reloadFromStorage]);
 
-  // -------------------------------------------------------------
-  // RESET DEMO DATA
-  // -------------------------------------------------------------
   const resetAllData = () => {
     storageResetDemoData();
     reloadFromStorage();

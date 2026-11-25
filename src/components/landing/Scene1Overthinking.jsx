@@ -40,9 +40,6 @@ export default function Scene1Overthinking({
 
   return (
     <div className="relative w-full min-h-[640px] lg:min-h-[720px] flex flex-col justify-center py-10 lg:py-16">
-      {/* =================================================================== */}
-      {/* MAIN 2-COLUMN EXPANSIVE HERO GRID                                   */}
-      {/* =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
         {/* LEFT COLUMN: HERO NARRATIVE & ACTION CTAS */}
         <div className="lg:col-span-7 space-y-5 lg:space-y-6 text-left">
@@ -183,10 +180,6 @@ export default function Scene1Overthinking({
         </div>
       </div>
 
-      {/* =================================================================== */}
-      {/* BOTTOM FULL-WIDTH DOMAIN & SPECIALIZATION PILL STRIP                */}
-      {/* Matches the TimePe bottom category strip                            */}
-      {/* =================================================================== */}
       <div className="w-full mt-10 lg:mt-14 pt-6 border-t border-slate-200/70">
         <div className="flex items-center justify-between gap-2.5 overflow-x-auto pb-2 scrollbar-none text-slate-700 text-xs font-semibold">
           {categories.map((cat) => {

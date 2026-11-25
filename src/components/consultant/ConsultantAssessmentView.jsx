@@ -303,9 +303,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
     <div className={`w-full text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-cyan-500/20 selection:text-cyan-950 ${
       isStandalone ? 'min-h-screen min-h-[100dvh] bg-[#f8fafc]' : 'pb-16'
     }`}>
-      {/* =================================================================== */}
-      {/* 1. TOP RESPONSIVE HEADER BAR (STANDALONE POST-REGISTRATION MODE)    */}
-      {/* =================================================================== */}
       {isStandalone ? (
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-16 px-4 sm:px-8 lg:px-12 w-full flex items-center justify-between gap-4">
           {/* Left: Logo & Subtitle */}
@@ -367,14 +364,8 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* 2. MAIN ASSESSMENT CANVAS - VERTICALLY CENTERED & BALANCED          */}
-      {/* =================================================================== */}
       <CanvasTag className="flex-1 w-full max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 flex flex-col justify-center">
         {!isSubmitted ? (
-          /* ================================================================= */
-          /* QUESTION IN PROGRESS SCREEN: SINGLE UNIFIED SEAMLESS CARD         */
-          /* ================================================================= */
           <div className="w-full my-auto animate-in fade-in duration-300">
             <div className="w-full bg-white rounded-3xl border border-slate-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
               {/* Card Top Animated Progress Bar */}
@@ -493,9 +484,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
             </div>
           </div>
         ) : (
-          /* ================================================================= */
-          /* RESULTS & SCORECARD SCREEN                                         */
-          /* ================================================================= */
           <div className="w-full space-y-6 animate-in zoom-in-95 duration-400">
             {/* Header Triumph Card */}
             <div className={`p-6 sm:p-10 rounded-3xl border-2 text-center space-y-5 shadow-xl ${
@@ -659,9 +647,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
         )}
       </CanvasTag>
 
-      {/* =================================================================== */}
-      {/* 3. CONFIRMATION MODAL BEFORE FINAL SUBMISSION                        */}
-      {/* =================================================================== */}
       {showReviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95">

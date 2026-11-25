@@ -56,9 +56,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
       className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-visible"
       style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
     >
-      {/* =================================================================== */}
-      {/* BACKGROUND LAYER: WINDOW 1 & WINDOW 3 (Behind the human)           */}
-      {/* =================================================================== */}
       {renderBack && (
         <>
           {/* WINDOW 1: SEARCH ENGINE SERP (Top-Left Layer) */}
@@ -156,9 +153,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
         </>
       )}
 
-      {/* =================================================================== */}
-      {/* FOREGROUND LAYER: WINDOW 2, WINDOW 4, THOUGHT BUBBLE (In front)    */}
-      {/* =================================================================== */}
       {renderFront && (
         <>
           {/* WINDOW 2: AI CHAT ASSISTANT (Top-Right Layer) */}

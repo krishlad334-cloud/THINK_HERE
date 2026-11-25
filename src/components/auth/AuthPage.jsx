@@ -38,9 +38,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   // Primary mode: 'login' | 'register'
   const [mode, setMode] = useState(initialMode);
 
-  // =========================================================================
-  // LOGIN FORM STATE
-  // =========================================================================
   const [loginIdentifier, setLoginIdentifier] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginShowPassword, setLoginShowPassword] = useState(false);
@@ -51,9 +48,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [showOtherAccounts, setShowOtherAccounts] = useState(false);
 
-  // =========================================================================
-  // REGISTRATION FORM STATE (4 Steps)
-  // =========================================================================
   const [regStep, setRegStep] = useState(1);
   const [regRole, setRegRole] = useState('client'); // 'client' | 'consultant'
   const [regName, setRegName] = useState('');
@@ -102,10 +96,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // =========================================================================
-  // LOGIN SUBMIT HANDLER
-  // Strictly Email/Mobile + Password -> Automatic Role Identification -> ZERO OTP
-  // =========================================================================
   const handleLoginSubmit = (e) => {
     if (e) e.preventDefault();
     setLoginError('');
@@ -150,10 +140,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       }
     }, 250);
   };
-
-  // =========================================================================
-  // REGISTRATION STEP HANDLERS
-  // =========================================================================
 
   // Step 1 -> Step 2
   const handleStep1Next = () => {
@@ -337,9 +323,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
 
   return (
     <div className="min-h-screen min-h-[100dvh] w-full flex bg-[#fafbfc] text-slate-800 font-sans antialiased selection:bg-[#020617]/10 selection:text-[#020617] overflow-x-hidden">
-      {/* ============================================================= */}
-      {/* LEFT COLUMN: BRAND SHOWCASE & SOCIAL PROOF (Desktop Only)    */}
-      {/* ============================================================= */}
       <div className="hidden lg:flex lg:w-[46%] xl:w-[44%] relative flex-col justify-between p-10 xl:p-14 bg-gradient-to-br from-[#020617] via-[#020617] to-[#031b2e] text-white overflow-hidden select-none flex-shrink-0">
         {/* Decorative Ambient Orbs & Subtle Grid */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -428,9 +411,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
         </div>
       </div>
 
-      {/* ============================================================= */}
-      {/* RIGHT COLUMN: AUTHENTICATION FORM CANVAS                      */}
-      {/* ============================================================= */}
       <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 lg:p-12 xl:p-16 overflow-y-auto overflow-x-hidden max-w-full">
         {/* Top Navbar / Header: Clean back link + mobile brand logo */}
         <div className="flex items-center justify-between w-full max-w-lg mx-auto mb-6 flex-shrink-0">
@@ -487,9 +467,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
               Create Account
             </button>
           </div>
-          {/* ============================================================= */}
-          {/* VIEW: LOGIN                                                  */}
-          {/* ============================================================= */}
           {mode === 'login' && (
             <div className="space-y-6">
               {/* Header */}
@@ -816,9 +793,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             </div>
           )}
 
-          {/* ============================================================= */}
-          {/* VIEW: REGISTRATION (4 Distinct Steps)                        */}
-          {/* ============================================================= */}
           {mode === 'register' && (
             <div className="space-y-6">
               {/* Header with Step Text & Progress Bar */}

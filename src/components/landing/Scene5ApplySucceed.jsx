@@ -205,9 +205,6 @@ export default function Scene5ApplySucceed({
         </div>
       </div>
 
-      {/* =================================================================== */}
-      {/* FINAL HERO CALL TO ACTION (Connects directly to Registration)       */}
-      {/* =================================================================== */}
       <div className="w-full max-w-5xl xl:max-w-6xl mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#020617] via-[#082f49] to-[#031b2e] p-6 sm:p-10 lg:p-14 text-white shadow-2xl text-center relative overflow-hidden border border-cyan-900/30">
         {/* Subtle decorative glow */}
         <div className="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />

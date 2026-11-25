@@ -295,10 +295,6 @@ export function clearAuthSession() {
   }
 }
 
-// -------------------------------------------------------------
-// USER MANAGEMENT
-// -------------------------------------------------------------
-
 export function getUsers() {
   return safeGetItem(STORAGE_KEYS.USERS, DEMO_USERS);
 }
@@ -336,10 +332,6 @@ export function updateUser(userId, updates) {
   safeSetItem(STORAGE_KEYS.USERS, updated);
   return updatedUser;
 }
-
-// -------------------------------------------------------------
-// THINKS MANAGEMENT
-// -------------------------------------------------------------
 
 export function getThinks() {
   return safeGetItem(STORAGE_KEYS.THINKS, []);
@@ -418,10 +410,6 @@ export function deleteThink(thinkId) {
   const updated = currentThinks.filter(t => t.id !== thinkId);
   safeSetItem(STORAGE_KEYS.THINKS, updated);
 }
-
-// -------------------------------------------------------------
-// CONVERSATIONS MANAGEMENT
-// -------------------------------------------------------------
 
 export function getConversations() {
   return safeGetItem(STORAGE_KEYS.CONVERSATIONS, []);
@@ -538,10 +526,6 @@ export function updateConversation(conversationId, updates) {
   safeSetItem(STORAGE_KEYS.CONVERSATIONS, updated);
   return updatedConv;
 }
-
-// -------------------------------------------------------------
-// MESSAGES MANAGEMENT
-// -------------------------------------------------------------
 
 export function getMessages(conversationId) {
   const conv = getConversationById(conversationId);
@@ -722,10 +706,6 @@ export function clearChatMessages(targetId) {
   return false;
 }
 
-// -------------------------------------------------------------
-// NOTIFICATIONS MANAGEMENT
-// -------------------------------------------------------------
-
 export function getNotifications(userId, role) {
   const notifs = safeGetItem(STORAGE_KEYS.NOTIFICATIONS, []);
   if (!userId && !role) return notifs;
@@ -771,10 +751,6 @@ export function markAllNotificationsRead(userId, role) {
   });
   safeSetItem(STORAGE_KEYS.NOTIFICATIONS, updated);
 }
-
-// -------------------------------------------------------------
-// RESET / CLEAR DEMO DATA
-// -------------------------------------------------------------
 
 export function clearDemoData() {
   safeSetItem(STORAGE_KEYS.THINKS, []);
