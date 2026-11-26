@@ -13,7 +13,6 @@ import LandingPage from './components/landing/LandingPage';
 import Loader from './components/landing/Loader';
 import { useReducedMotion } from './hooks/useReducedMotion';
 
-// Client Views
 import ClientChatView from './components/client/ClientChatView';
 import MyThoughtsView from './components/client/MyThoughtsView';
 import SavedSolutionsView from './components/client/SavedSolutionsView';
@@ -21,23 +20,20 @@ import ClientJobHub from './components/client/ClientJobHub';
 import ClientFindConsultants from './components/client/ClientFindConsultants';
 import ClientSettings from './components/client/ClientSettings';
 
-// Consultant Views
 import BrowseClientThoughts from './components/consultant/BrowseClientThoughts';
 import MyConsultations from './components/consultant/MyConsultations';
 import ConsultantProfileView from './components/consultant/ConsultantProfileView';
 import ConsultantAnalytics from './components/consultant/ConsultantAnalytics';
 import ConsultantAssessmentView from './components/consultant/ConsultantAssessmentView';
 
-// Shared Chat & Consultation Room
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
   const { role, activeTab, setActiveTab, isAuthenticated, currentUser, toast, closeToast } = useApp();
   const reducedMotion = useReducedMotion();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // Default entry flow: ANYONE who opens the website is ALWAYS shown the landing page first!
-  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'auth' | 'app' | 'consultant_test'
-  const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'register'
+  const [currentView, setCurrentView] = useState('landing');
+  const [authInitialMode, setAuthInitialMode] = useState('login');
   const [transitionKey, setTransitionKey] = useState(0);
   const [isPageLoading, setIsPageLoading] = useState(false);
 
@@ -65,7 +61,6 @@ function AppContent() {
       ? 'landing'
       : (currentView === 'app' && isConsultantUncertified ? 'consultant_test' : currentView);
 
-  // Enforce strict role-based route isolation
   React.useEffect(() => {
     if (!isAuthenticated) return;
     if (role === 'client') {
@@ -81,7 +76,6 @@ function AppContent() {
     }
   }, [role, activeTab, isAuthenticated, setActiveTab]);
 
-  // Router dispatcher
   const renderCurrentView = () => {
     if (activeTab === 'landing') {
       return (
@@ -124,7 +118,6 @@ function AppContent() {
       }
     }
 
-    // Consultant Panel
     if (role === 'consultant') {
       switch (activeTab) {
         case 'browse_thoughts':
@@ -153,11 +146,9 @@ function AppContent() {
     return <ClientChatView />;
   };
 
-  // Full-bleed responsive layout for dedicated 1-on-1 chat room
   const isEdgeToEdge = activeTab === 'messages';
 
   const renderShell = () => {
-    // 1. DEFAULT ENTRY VIEW: If user is on 'landing' (shown to everyone opening the site link)
     if (effectiveView === 'landing') {
       return (
         <LandingPage
@@ -171,7 +162,6 @@ function AppContent() {
       );
     }
 
-    // 2. AUTHENTICATION VIEW: Sign In or Register Screen
     if (effectiveView === 'auth') {
       return (
         <AuthPage
@@ -192,7 +182,6 @@ function AppContent() {
       );
     }
 
-    // 3. CONSULTANT ONBOARDING TEST VIEW: Direct post-registration qualification exam
     if (effectiveView === 'consultant_test') {
       return (
         <ConsultantAssessmentView
@@ -205,7 +194,6 @@ function AppContent() {
       );
     }
 
-    // 4. Fallback: If in 'app' but not authenticated, safely route to landing
     if (!isAuthenticated) {
       return (
         <LandingPage
@@ -221,21 +209,17 @@ function AppContent() {
 
     return (
       <div className="h-screen h-[100dvh] w-full bg-[#f8fafc] flex flex-col font-sans text-slate-900 antialiased overflow-hidden">
-        {/* Top Header - 100% full viewport width */}
         <Navbar
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           onGoToLanding={() => navigateView('landing')}
         />
 
-        {/* Main Container - 100% full width, edge-to-edge */}
         <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">
-          {/* Left Sidebar - Fixed drawer on mobile, flush left on desktop */}
           <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
           />
 
-          {/* Viewport Content Area - Fills 100% remaining width */}
           <main
             className={`flex-1 min-w-0 h-full flex flex-col ${
               isEdgeToEdge
@@ -247,7 +231,6 @@ function AppContent() {
           </main>
         </div>
 
-        {/* Global Interactive Overlays */}
         <ToastContainer toast={toast} onClose={closeToast} />
         <NewThoughtModal />
         <ThoughtDetailModal />

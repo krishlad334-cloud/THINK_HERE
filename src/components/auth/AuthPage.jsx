@@ -35,7 +35,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     showToast
   } = useApp();
 
-  // Primary mode: 'login' | 'register'
   const [mode, setMode] = useState(initialMode);
 
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -49,7 +48,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   const [showOtherAccounts, setShowOtherAccounts] = useState(false);
 
   const [regStep, setRegStep] = useState(1);
-  const [regRole, setRegRole] = useState('client'); // 'client' | 'consultant'
+  const [regRole, setRegRole] = useState('client');
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regMobile, setRegMobile] = useState('');
@@ -58,7 +57,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   const [regShowPassword, setRegShowPassword] = useState(false);
   const [regShowConfirmPassword, setRegShowConfirmPassword] = useState(false);
 
-  // OTP State for Step 4
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [simulatedOtp, setSimulatedOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(120);
@@ -67,10 +65,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   const [regError, setRegError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
 
-  // Refs for 6-digit OTP inputs
   const otpInputRefs = useRef([]);
 
-  // Timer countdown effect for OTP verification
   useEffect(() => {
     let interval = null;
     if (mode === 'register' && regStep === 4 && otpTimer > 0 && !otpExpired) {
@@ -89,7 +85,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     };
   }, [mode, regStep, otpTimer, otpExpired]);
 
-  // Format seconds into MM:SS
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -123,7 +118,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     }, 300);
   };
 
-  // Quick Demo Instant Login Handler
   const handleQuickLogin = (identifier, password = 'password123') => {
     setLoginIdentifier(identifier);
     setLoginPassword(password);
@@ -141,7 +135,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     }, 250);
   };
 
-  // Step 1 -> Step 2
   const handleStep1Next = () => {
     setRegError('');
     if (!regRole) {
@@ -151,7 +144,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     setRegStep(2);
   };
 
-  // Step 2 -> Step 3: Validate Personal Info & Uniqueness
   const handleStep2Next = () => {
     setRegError('');
     const cleanName = regName.trim();
@@ -181,7 +173,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       return;
     }
 
-    // Check duplicate in think_users
     const existingUsers = getUsers();
     const emailExists = existingUsers.some(
       (u) => u.email && u.email.toLowerCase() === cleanEmail.toLowerCase()
@@ -201,7 +192,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     setRegStep(3);
   };
 
-  // Step 3 -> Step 4: Validate Passwords & Trigger Simulated OTP
   const handleStep3Next = () => {
     setRegError('');
     if (!regPassword) {
@@ -217,7 +207,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       return;
     }
 
-    // Generate simulated 6-digit OTP for this user
     const otpData = generateOTP(regEmail);
     if (otpData) {
       setSimulatedOtp(otpData.otp);
@@ -229,7 +218,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     setRegStep(4);
   };
 
-  // Handle individual digit typing in 6-box OTP input
   const handleOtpChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
 
@@ -238,20 +226,17 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     setOtpValues(newValues);
     if (regError) setRegError('');
 
-    // Auto-focus next box
     if (value && index < 5 && otpInputRefs.current[index + 1]) {
       otpInputRefs.current[index + 1].focus();
     }
   };
 
-  // Handle Backspace navigation across OTP boxes
   const handleOtpKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !otpValues[index] && index > 0 && otpInputRefs.current[index - 1]) {
       otpInputRefs.current[index - 1].focus();
     }
   };
 
-  // Auto-fill simulated OTP for easy testing
   const handleAutoFillSimulatedOtp = () => {
     if (!simulatedOtp || simulatedOtp.length !== 6) return;
     const digits = simulatedOtp.split('');
@@ -262,7 +247,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     if (regError) setRegError('');
   };
 
-  // Handle Resend OTP
   const handleResendOtp = () => {
     setRegError('');
     const res = resendOTP(regEmail);
@@ -278,7 +262,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
     showToast('Code Resent', `New simulated OTP: ${res.otp}`, 'info');
   };
 
-  // Final Registration Submission after OTP check
   const handleFinalRegisterSubmit = (e) => {
     e.preventDefault();
     setRegError('');
@@ -294,14 +277,12 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       return;
     }
 
-    // Verify OTP against thinkAuth
     const verifyRes = verifyRegistrationOTP(regEmail, enteredOtp);
     if (!verifyRes.success) {
       setRegError(verifyRes.error || 'Invalid verification code.');
       return;
     }
 
-    // Complete registration
     setIsRegistering(true);
     setTimeout(() => {
       const regRes = register({
@@ -324,7 +305,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
   return (
     <div className="min-h-screen min-h-[100dvh] w-full flex bg-[#fafbfc] text-slate-800 font-sans antialiased selection:bg-[#020617]/10 selection:text-[#020617] overflow-x-hidden">
       <div className="hidden lg:flex lg:w-[46%] xl:w-[44%] relative flex-col justify-between p-10 xl:p-14 bg-gradient-to-br from-[#020617] via-[#020617] to-[#031b2e] text-white overflow-hidden select-none flex-shrink-0">
-        {/* Decorative Ambient Orbs & Subtle Grid */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#0891b2]/20 rounded-full blur-3xl" />
           <div className="absolute top-1/2 -right-24 w-80 h-80 bg-cyan-300/10 rounded-full blur-3xl" />
@@ -332,7 +312,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]" />
         </div>
 
-        {/* Top: Brand Header */}
         <div className="relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-white p-1 border border-white/20 shadow-lg flex items-center justify-center">
@@ -349,7 +328,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
           </div>
         </div>
 
-        {/* Center: Value Proposition & Feature Pillars */}
         <div className="relative z-10 my-auto py-8 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-cyan-300 shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5 text-[#06b6d4]" />
@@ -364,7 +342,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             Connect 1-on-1 in dedicated consultation rooms with vetted industry leaders, or receive structured AI fallback blueprints within 24 hours.
           </p>
 
-          {/* Feature Highlights */}
           <div className="space-y-3 pt-2 max-w-md">
             <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/10 shadow-xs">
               <div className="p-2 rounded-xl bg-[#0891b2]/20 text-[#06b6d4] flex-shrink-0 mt-0.5">
@@ -388,7 +365,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
           </div>
         </div>
 
-        {/* Bottom: Vetted Expert Social Proof */}
         <div className="relative z-10 pt-4 border-t border-white/10">
           <div className="flex items-center gap-3">
             <UserAvatar
@@ -412,9 +388,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
       </div>
 
       <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 lg:p-12 xl:p-16 overflow-y-auto overflow-x-hidden max-w-full">
-        {/* Top Navbar / Header: Clean back link + mobile brand logo */}
         <div className="flex items-center justify-between w-full max-w-lg mx-auto mb-6 flex-shrink-0">
-          {/* Back to Home / Landing Page button */}
           {onBackToLanding && (
             <button
               type="button"
@@ -427,15 +401,12 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
             </button>
           )}
 
-          {/* Mobile-only logo */}
           <div className="lg:hidden ml-auto">
             <Logo size="xs" showTagline={false} />
           </div>
         </div>
 
-        {/* Center Container: Main Form */}
         <div className="w-full max-w-lg mx-auto my-auto py-2">
-          {/* Mode Switcher Tabs: Responsive segmented control */}
           <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200/80 mb-6 select-none">
             <button
               type="button"
@@ -469,7 +440,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
           </div>
           {mode === 'login' && (
             <div className="space-y-6">
-              {/* Header */}
               <div>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   Welcome Back
@@ -479,7 +449,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </p>
               </div>
 
-              {/* 1-Click Fast Demo Login Profiles */}
               <div className="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-2xs">
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-1.5">
@@ -494,7 +463,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {/* Alex Morgan - Client */}
                   <button
                     type="button"
                     disabled={isLoggingIn}
@@ -524,7 +492,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </span>
                   </button>
 
-                  {/* Dr. Elena Vance - Consultant */}
                   <button
                     type="button"
                     disabled={isLoggingIn}
@@ -555,7 +522,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   </button>
                 </div>
 
-                {/* More test accounts dropdown */}
                 {(() => {
                   const users = getUsers();
                   const additionalUsers = users.filter(u =>
@@ -606,7 +572,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 })()}
               </div>
 
-              {/* Divider */}
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200/80" />
@@ -618,7 +583,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               </div>
 
-              {/* Inline Error Message */}
               {loginError && (
                 <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200/80 text-red-700 text-xs font-medium space-y-2 animate-fadeIn">
                   <div className="flex items-start gap-2.5">
@@ -666,9 +630,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* Form */}
               <form onSubmit={handleLoginSubmit} className="space-y-4">
-                {/* Email / Mobile Input */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Email Address or Mobile Number
@@ -696,7 +658,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   </div>
                 </div>
 
-                {/* Password Input */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-semibold text-slate-700">
@@ -740,7 +701,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   </div>
                 </div>
 
-                {/* Remember Me */}
                 <div className="flex items-center">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
@@ -755,7 +715,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   </label>
                 </div>
 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={isLoggingIn}
@@ -775,7 +734,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </button>
               </form>
 
-              {/* Bottom Switch Link */}
               <div className="text-center text-xs text-slate-500 pt-2">
                 Don't have an account?{' '}
                 <button
@@ -795,7 +753,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
 
           {mode === 'register' && (
             <div className="space-y-6">
-              {/* Header with Step Text & Progress Bar */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -812,7 +769,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                   {regStep === 4 && 'Enter the simulated OTP to verify your account.'}
                 </p>
 
-                {/* Clean 4-segment progress bar */}
                 <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 1 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
                   <div className={`h-1.5 rounded-full transition-all duration-300 ${regStep >= 2 ? 'bg-[#020617]' : 'bg-slate-200'}`} />
@@ -821,7 +777,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               </div>
 
-              {/* Inline Error Message */}
               {regError && (
                 <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200/80 text-red-700 text-xs font-medium flex items-start gap-2.5 animate-fadeIn">
                   <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
@@ -829,11 +784,9 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* STEP 1 – Select Account Type */}
               {regStep === 1 && (
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    {/* Client Option Card */}
                     <button
                       type="button"
                       onClick={() => setRegRole('client')}
@@ -873,7 +826,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                       </div>
                     </button>
 
-                    {/* Consultant Option Card */}
                     <button
                       type="button"
                       onClick={() => setRegRole('consultant')}
@@ -925,10 +877,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* STEP 2 – Personal Information */}
               {regStep === 2 && (
                 <div className="space-y-4">
-                  {/* Full Name */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                       Full Name *
@@ -951,7 +901,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   </div>
 
-                  {/* Email Address */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                       Email Address *
@@ -973,7 +922,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   </div>
 
-                  {/* Mobile Number */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                       Mobile Number *
@@ -995,7 +943,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   </div>
 
-                  {/* Step 2 Actions */}
                   <div className="flex items-center gap-3 pt-2">
                     <button
                       type="button"
@@ -1017,10 +964,8 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* STEP 3 – Account Credentials */}
               {regStep === 3 && (
                 <div className="space-y-4">
-                  {/* Password */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                       Create Password (Min 8 Characters) *
@@ -1055,7 +1000,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   </div>
 
-                  {/* Confirm Password */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                       Confirm Password *
@@ -1089,7 +1033,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   </div>
 
-                  {/* Password Match Indicator */}
                   {regPassword && regConfirmPassword && (
                     <div className="flex items-center gap-1.5 text-xs">
                       {regPassword === regConfirmPassword ? (
@@ -1106,7 +1049,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </div>
                   )}
 
-                  {/* Step 3 Actions */}
                   <div className="flex items-center gap-3 pt-2">
                     <button
                       type="button"
@@ -1128,16 +1070,13 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* STEP 4 – OTP Verification (Registration ONLY) */}
               {regStep === 4 && (
                 <div className="space-y-4">
-                  {/* Explanation */}
                   <p className="text-xs text-slate-600 leading-relaxed">
                     A 6-digit verification code was simulated for{' '}
                     <span className="font-semibold text-slate-900">{regEmail}</span>.
                   </p>
 
-                  {/* Development Testing OTP Banner with 1-click Auto-Fill */}
                   <div className="p-3 bg-amber-50/90 border border-amber-200/80 rounded-xl flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <KeyRound className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -1157,7 +1096,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </button>
                   </div>
 
-                  {/* 6-box OTP input */}
                   <div className="flex items-center justify-between gap-2 py-2">
                     {otpValues.map((digit, idx) => (
                       <input
@@ -1179,7 +1117,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     ))}
                   </div>
 
-                  {/* Countdown Timer & Resend */}
                   <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                     <span>
                       {otpExpired ? (
@@ -1203,7 +1140,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                     </button>
                   </div>
 
-                  {/* Step 4 Actions */}
                   <div className="flex items-center gap-3 pt-3">
                     <button
                       type="button"
@@ -1235,7 +1171,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
                 </div>
               )}
 
-              {/* Bottom Switch Link */}
               <div className="text-center text-xs text-slate-500 pt-2">
                 Already have an account?{' '}
                 <button
@@ -1253,7 +1188,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
           )}
         </div>
 
-        {/* Footer Guarantee & Developer Credit */}
         <div className="w-full max-w-lg mx-auto text-center pt-6 flex-shrink-0 space-y-1.5">
           <p className="text-[11px] text-slate-400 font-medium">
             Protected by OverThink Simulated Local Authentication • Zero Server Required
@@ -1264,7 +1198,6 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
       {showForgotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200">

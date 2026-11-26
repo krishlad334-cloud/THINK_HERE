@@ -19,11 +19,6 @@ import Footer from '../../sections/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * OverThink Landing Page:
- * Clean editorial sections with the 2.5D Real-Human animation dedicated
- * exclusively inside the 5-step HowItWorks storyteller section.
- */
 export default function LandingPage({
   onSignIn,
   onStartThink,
@@ -67,7 +62,6 @@ export default function LandingPage({
         onGoToApp={onGoToApp}
       />
 
-      {/* Ambient background layer: faint dot grid, low-opacity brand glows & subtle grain */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
@@ -78,7 +72,6 @@ export default function LandingPage({
         <div className="landing-grain absolute inset-0" />
       </div>
 
-      {/* Landing Sections */}
       <main className="relative z-10">
         <Hero
           onStartThink={onStartThink}

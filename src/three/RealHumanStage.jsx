@@ -64,10 +64,6 @@ function LocalFallback({ reducedMotion = false }) {
   );
 }
 
-/**
- * Unframed, local 2.5D Real Human Canvas dedicated solely to the HowItWorks section.
- * Zero round border, zero fixed global positioning conflicts.
- */
 export default function RealHumanStage({
   isMobile = false,
   reducedMotion = false,

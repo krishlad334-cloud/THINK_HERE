@@ -88,13 +88,6 @@ const STORY_STEPS = [
   },
 ];
 
-/**
- * Redesigned 5-Step Storyteller Section:
- * - Human animation lives ONLY inside this section (no global overlay, no round circle frame!)
- * - Clean segmented 5-step timeline bar + spacious single active Story Card on left
- * - Open, unframed 2.5D RealHumanStage on right with contextual floating badges
- * - Supports both GSAP scroll-scrubbing and instant step click / prev-next navigation
- */
 export default function HowItWorks({ isMobile = false, reducedMotion = false }) {
   const sectionRef = useRef(null);
   const stRef = useRef(null);
@@ -178,7 +171,6 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
       className="relative flex lg:min-h-screen items-center py-14 sm:py-16 lg:py-20"
     >
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
-        {/* Top Header + Clean 5-Step Segmented Navigation Bar */}
         <div className="mb-6 lg:mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="font-display text-3xl font-bold tracking-tight text-[#F5F3FF] sm:text-5xl">
@@ -189,7 +181,6 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
             </h2>
           </div>
 
-          {/* Interactive 5-Step Pills */}
           <div className="flex flex-wrap items-center gap-2">
             {STORY_STEPS.map((s, idx) => {
               const isCurrent = idx === activeStep;
@@ -221,9 +212,7 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
           </div>
         </div>
 
-        {/* Main 2-Column Editorial Story Grid */}
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-          {/* LEFT: Single Spacious Active Story Card */}
           <div className="lg:col-span-5">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
@@ -270,7 +259,6 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
                   </p>
                 </div>
 
-                {/* Step-specific interactive content */}
                 {current.chips && (
                   <div className="flex flex-wrap gap-2 pt-1">
                     {current.chips.map((c) => (
@@ -354,7 +342,6 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
                   </ul>
                 )}
 
-                {/* Prev / Next Navigation Footer */}
                 <div className="flex items-center justify-between border-t border-[#4C4585]/40 pt-4">
                   <button
                     type="button"
@@ -393,9 +380,7 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
             </AnimatePresence>
           </div>
 
-          {/* RIGHT: Open, Unframed 2.5D Real-Human Stage (NO circle border!) */}
           <div className="relative lg:col-span-7">
-            {/* Soft ambient glow only—no circular border frame or floating corner tags */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 flex items-center justify-center"

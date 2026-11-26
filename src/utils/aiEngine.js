@@ -1,9 +1,3 @@
-/**
- * AI Engine for OverThink
- * Automatically classifies thoughts, extracts core requirements,
- * suggests consultants, and generates practical AI solutions for the 24-hr fallback.
- */
-
 export function analyzeThought(title = '', description = '', attachments = []) {
   const fullText = `${title} ${description}`.toLowerCase();
 
@@ -35,10 +29,8 @@ export function analyzeThought(title = '', description = '', attachments = []) {
     urgency = 'High (Urgent)';
   }
 
-  // Derive core problem snippet
   const coreProblem = title.length > 0 ? title : description.slice(0, 90) + '...';
 
-  // Extract tags
   const defaultTags = [category.split(' ')[0], 'OverThink-Verified', urgency];
   if (attachments && attachments.length > 0) {
     defaultTags.push(`${attachments.length} Attachment(s)`);

@@ -7,7 +7,6 @@ export default function RoleSwitcher() {
 
   return (
     <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-      {/* Demo Client Button */}
       <button
         onClick={() => switchDemoUser('client_001')}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
@@ -21,7 +20,6 @@ export default function RoleSwitcher() {
         <span>Demo Client</span>
       </button>
 
-      {/* Demo Consultant 1 Button */}
       <button
         onClick={() => switchDemoUser('consultant_001')}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${
@@ -35,7 +33,6 @@ export default function RoleSwitcher() {
         <span>Consultant 1</span>
       </button>
 
-      {/* Demo Consultant 2 Button */}
       <button
         onClick={() => switchDemoUser('consultant_002')}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all ${

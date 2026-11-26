@@ -24,7 +24,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Admin Operations Top Bar (Freelancer.com Admin Style) */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -45,7 +44,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Navigation Shortcuts */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
             onClick={() => setActiveTab('admin_users')}
@@ -64,7 +62,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* KPI Metrics Ribbon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Submissions</span>
@@ -93,7 +90,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* 24-Hour Fallback Guarantee Engine Daemon Monitor */}
       <div className="bg-gradient-to-r from-[#020617] via-[#082f49] to-[#031b2e] text-white rounded-2xl p-6 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -115,7 +111,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Fallback Trigger Buttons */}
         <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-2.5 text-xs">
           <span className="text-slate-300 font-semibold">Test Fallback Trigger on Open Thoughts:</span>
           {thoughts.filter(t => t.status === 'pending_human').map((t) => (
@@ -131,7 +126,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Submissions Queue Table (Freelancer.com Admin Style) */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 shadow-xs">
         <div className="flex items-center justify-between">
           <div>

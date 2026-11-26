@@ -24,7 +24,6 @@ export default function ThoughtDetailModal() {
     activeUser
   } = useApp();
 
-  // If user is in the chat workspace, never display this modal overlay
   if (activeTab === 'chat' || activeTab === 'messages') {
     return null;
   }
@@ -48,7 +47,6 @@ export default function ThoughtDetailModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in duration-150">
       <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh]">
-        {/* Header */}
         <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 flex-wrap gap-2">
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="font-mono text-xs font-extrabold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
@@ -114,9 +112,7 @@ export default function ThoughtDetailModal() {
           </div>
         </div>
 
-        {/* Modal Scrollable Body */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 flex-1">
-          {/* Status & Connection Banner */}
           {isPending ? (
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
               <div className="p-2 rounded-xl bg-amber-100 text-amber-800 flex-shrink-0">
@@ -166,7 +162,6 @@ export default function ThoughtDetailModal() {
             </div>
           )}
 
-          {/* Original Question Card */}
           <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80">
             <div className="flex items-center gap-3 mb-3">
               <UserAvatar
@@ -195,7 +190,6 @@ export default function ThoughtDetailModal() {
               </p>
             )}
 
-            {/* Attachments Display */}
             {thought.attachments && thought.attachments.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-200/60">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">
@@ -221,7 +215,6 @@ export default function ThoughtDetailModal() {
             )}
           </div>
 
-          {/* Consultation Activity / Chat Access */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
             <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between">
               <span>Consultation Conversation</span>

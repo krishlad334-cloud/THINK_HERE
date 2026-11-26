@@ -1,10 +1,3 @@
-/**
- * Contact Privacy & Moderation Guard
- * Requirement 10: Clients and consultants must communicate exclusively inside OverThink.
- * Automatically detects attempts to share personal mobile numbers, emails, WhatsApp, etc.
- */
-
-// Patterns to detect phone numbers, emails, social handles
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi;
 const EMAIL_TEST_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
 const PHONE_REGEX = /(\+?\d{1,4}[-.\s]?)?(\(?\d{2,4}\)?[-.\s]?)?\d{3,4}[-.\s]?\d{3,4}/g;
@@ -18,16 +11,13 @@ export function inspectMessageForPrivacy(text) {
   const violations = [];
   let containsViolation = false;
 
-  // Check email
   if (EMAIL_TEST_REGEX.test(text)) {
     violations.push('Direct Email Address');
     containsViolation = true;
   }
 
-  // Check phone number (look for at least 8 digits)
   const phoneMatches = text.match(PHONE_REGEX);
   if (phoneMatches) {
-    // Filter out simple small numbers like "10 days" or "step 1"
     const realPhones = phoneMatches.filter(m => m.replace(/\D/g, '').length >= 8);
     if (realPhones.length > 0) {
       violations.push('Direct Phone Number');
@@ -35,13 +25,11 @@ export function inspectMessageForPrivacy(text) {
     }
   }
 
-  // Check off-platform keywords with digits or links
   if (SOCIAL_TEST_REGEX.test(text) && /\d/.test(text)) {
     violations.push('External Contact Sharing Intent');
     containsViolation = true;
   }
 
-  // Generate masked text
   let maskedText = text
     .replace(EMAIL_REGEX, ' [EMAIL MASKED FOR PRIVACY] ')
     .replace(/(\+?\d{1,4}[-.\s]?)?(\(?\d{2,4}\)?[-.\s]?)?\d{3,4}[-.\s]?\d{3,4}/g, (match) => {

@@ -1,10 +1,6 @@
 import React from 'react';
 import { Play, Camera, FileText, StickyNote, Search } from 'lucide-react';
 
-/**
- * Code-built chaotic floating browser window / desk prop card.
- * Uses #4C4585 indigo title bar, three window dots, and refined mini-UI skeletons.
- */
 export default function FloatingWindow({
   variant = 'article',
   title = 'research-tab.html',
@@ -77,7 +73,6 @@ export default function FloatingWindow({
       style={style}
       className={`overflow-hidden rounded-2xl border border-[#4C4585]/70 bg-[#F5F3FF]/95 text-[#0A0816] shadow-[0_20px_48px_rgba(0,0,0,0.55)] ${className}`}
     >
-      {/* #4C4585 Indigo Browser Title Bar */}
       <div className="flex items-center justify-between bg-[#4C4585] px-2.5 py-1.5">
         <div className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full bg-[#F472B6]" />
@@ -92,7 +87,6 @@ export default function FloatingWindow({
         </div>
       </div>
 
-      {/* Browser Body */}
       {variant === 'video' && (
         <div className="relative flex h-24 items-center justify-center bg-[#15122B] p-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F3FF] text-[#0A0816] shadow-[0_0_20px_rgba(94,234,212,0.45)]">

@@ -9,16 +9,7 @@ import {
   FileCheck
 } from 'lucide-react';
 
-/**
- * Scene4HumanConnection
- * DEMONSTRATING THE USP OF THINK
- * Heading: "Not Just Answers. Real Human Understanding."
- * Description: "Connect with experienced consultants who understand your situation and help you find practical solutions."
- * 
- * 1-on-1 private consultation between Client (Alex) and Consultant (Dr. Elena Vance).
- */
 export default function Scene4HumanConnection({ progress = 0.5 }) {
-  // Sub-stages based on scroll progress:
   const isAccepted = progress >= 0.3;
   const showChat1 = progress >= 0.45;
   const showChat2 = progress >= 0.6;
@@ -27,7 +18,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
 
   return (
     <div className="relative w-full min-h-[780px] flex flex-col items-center justify-center py-12 px-4 sm:px-6">
-      {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-8 z-10">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Not Just Answers. <span className="text-[#020617]">Real Human</span> <span className="text-[#0891b2]">Understanding</span>.
@@ -38,11 +28,8 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
         </p>
       </div>
 
-      {/* Main Dual-Environment Stage */}
       <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto">
-        {/* Top Split Characters: Client (Alex) on Left, Consultant (Elena) on Right */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
-          {/* Client Environment Card */}
           <div className="relative p-5 sm:p-6 rounded-3xl bg-white/95 border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5 flex flex-col items-center text-center">
             <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 text-left">
@@ -64,7 +51,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
               className="w-full max-w-[280px] my-2"
             />
 
-            {/* Notification Badge on Acceptance */}
             <div
               className={`w-full p-2.5 rounded-xl border text-xs font-medium transition-all duration-500 ${
                 isAccepted
@@ -86,7 +72,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
             </div>
           </div>
 
-          {/* Consultant Environment Card */}
           <div className="relative p-5 sm:p-6 rounded-3xl bg-white/95 border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5 flex flex-col items-center text-center">
             <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2 text-left">
@@ -107,7 +92,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
               className="w-full max-w-[280px] my-2"
             />
 
-            {/* Consultant Acceptance Status */}
             <div className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/60 text-xs">
               <span className="text-slate-600 font-medium">OverThink Status:</span>
               <span
@@ -123,7 +107,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
           </div>
         </div>
 
-        {/* Central Connecting Consultation Room & Dialogue */}
         <div
           className="rounded-3xl bg-white/98 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(8,145,178,0.09)] ring-1 ring-black/5 overflow-hidden transition-all duration-500"
           style={{
@@ -131,7 +114,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
             opacity: Math.min(progress * 2, 1)
           }}
         >
-          {/* Room Header */}
           <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#020617] via-[#082f49] to-[#020617] text-white">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
@@ -150,9 +132,7 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
             </div>
           </div>
 
-          {/* Real Dialogue Messages (4 Specific Messages from Prompt) */}
           <div className="p-6 space-y-4 max-h-[440px] overflow-y-auto bg-slate-50/50">
-            {/* Message 1: Client */}
             <div
               className={`flex gap-3 max-w-[85%] transition-all duration-500 ${
                 showChat1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
@@ -167,7 +147,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* Message 2: Consultant */}
             <div
               className={`flex gap-3 max-w-[88%] ml-auto justify-end transition-all duration-500 delay-100 ${
                 showChat2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
@@ -185,7 +164,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* Message 3: Client */}
             <div
               className={`flex gap-3 max-w-[85%] transition-all duration-500 delay-150 ${
                 showChat3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
@@ -200,7 +178,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* Message 4: Consultant Guidance & Action Card */}
             <div
               className={`flex gap-3 max-w-[90%] ml-auto justify-end transition-all duration-500 delay-200 ${
                 showChat4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
@@ -215,7 +192,6 @@ export default function Scene4HumanConnection({ progress = 0.5 }) {
                   "Start by identifying your ideal customers and improving your conversion process. I'll guide you through the next steps."
                 </p>
 
-                {/* Practical Solution Card */}
                 <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 space-y-2">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
                     <FileCheck className="w-4 h-4" />

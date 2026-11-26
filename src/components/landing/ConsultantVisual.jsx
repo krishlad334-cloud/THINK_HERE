@@ -1,18 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-/**
- * ConsultantVisual
- * Real Human Cinematic Live-Action Character for Verified Consultant (Dr. Elena Vance)
- * 
- * Features:
- * - Scroll-driven video playback (video.currentTime scrubbed bidirectional forward/backward)
- * - Real human video motion in professional consulting office environment
- * - Soft radial feathered perimeter blending
- * - Low-latency seek coordination with fastSeek / currentTime fallback
- * - Interactive 3D cursor tilt & parallax
- * - Ambient glow matching OverThink Deep Space & Neon Cyan brand
- * - Graceful fallback to photorealistic poster frame
- */
 export default function ConsultantVisual({
   hasAccepted = false,
   progress = 0,
@@ -24,18 +11,15 @@ export default function ConsultantVisual({
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
 
-  // References for low-latency, stutter-free video scrubbing
   const targetTimeRef = useRef(0);
   const isSeekingRef = useRef(false);
   const lastSeekTimeRef = useRef(0);
 
-  // Perform seek to target time
   const applySeek = useCallback(() => {
     const video = videoRef.current;
     if (!video || !video.duration || isNaN(video.duration)) return;
     if (video.readyState < 1) return;
 
-    // Safety timeout: if seeking for > 120ms, release the seeking lock
     const now = Date.now();
     if (isSeekingRef.current && now - lastSeekTimeRef.current > 120) {
       isSeekingRef.current = false;
@@ -58,7 +42,6 @@ export default function ConsultantVisual({
     }
   }, []);
 
-  // Update target scrub position whenever scroll progress updates
   useEffect(() => {
     if (!scrub) return;
     const video = videoRef.current;
@@ -71,7 +54,6 @@ export default function ConsultantVisual({
     }
   }, [progress, scrub, applySeek]);
 
-  // Initial playback policy
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -85,13 +67,11 @@ export default function ConsultantVisual({
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Handled silently
         });
       }
     }
   }, [scrub]);
 
-  // Periodic safety heartbeat to release any stalled seeks
   useEffect(() => {
     if (!scrub) return;
     const interval = setInterval(() => {
@@ -158,14 +138,12 @@ export default function ConsultantVisual({
         transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`
       }}
     >
-      {/* Ambient Floor & Backlight Glow */}
       <div
         className={`absolute -inset-6 rounded-full bg-gradient-to-tr ${
           hasAccepted ? 'from-cyan-500/35 via-sky-500/25' : 'from-cyan-600/25 via-blue-500/15'
         } to-transparent blur-3xl transition-all duration-700 pointer-events-none opacity-80 group-hover:opacity-100`}
       />
 
-      {/* Main Cutout-Style Container */}
       <div
         className="relative rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.22)] bg-slate-900 transition-all duration-500 w-full"
         style={{
@@ -173,7 +151,6 @@ export default function ConsultantVisual({
           WebkitMaskImage: 'radial-gradient(ellipse 98% 92% at 50% 50%, black 82%, transparent 100%)'
         }}
       >
-        {/* Real Human Animated Video (with photorealistic image fallback) */}
         {!videoError ? (
           <video
             ref={videoRef}
@@ -204,7 +181,6 @@ export default function ConsultantVisual({
           />
         )}
 
-        {/* Bottom Vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-black/10 pointer-events-none" />
       </div>
     </div>

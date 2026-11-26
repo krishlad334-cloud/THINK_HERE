@@ -3,11 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import MagneticButton from '../components/landing/MagneticButton';
 
-/**
- * Final CTA Section:
- * Centered calm, bright finale with expanding yellow-and-violet bloom
- * and "Every Thought Deserves a Solution." CTA.
- */
 export default function FinalCTA({
   onStartThink,
   onSignIn,
@@ -20,7 +15,6 @@ export default function FinalCTA({
       id="final-cta"
       className="relative flex items-center justify-center py-16 sm:py-20 lg:py-24 overflow-hidden"
     >
-      {/* Expanding yellow (#FACC15) & violet (#A855F7) solution bloom */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 flex items-center justify-center"

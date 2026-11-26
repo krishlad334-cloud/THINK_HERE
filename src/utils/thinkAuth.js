@@ -1,18 +1,3 @@
-/**
- * OverThink Local Authentication & User Management Service (Frontend Only)
- * 
- * Implements a pure client-side simulated auth system using LocalStorage.
- * Handles:
- * - User Registration (4-step workflow with simulated OTP)
- * - User Login (Email or Mobile + Password, NO OTP on normal login)
- * - Role-based authorization & route destination identification
- * - Session Persistence across browser refreshes via 'think_auth_session'
- * 
- * DISCLAIMER:
- * This is a frontend-only demonstration architecture designed for rapid local testing.
- * Passwords and OTPs are simulated locally and must be backed by a secure backend API in production.
- */
-
 import {
   STORAGE_KEYS,
   getUsers,
@@ -23,29 +8,19 @@ import {
   clearAuthSession
 } from './thinkStorage';
 
-// In-memory simulated OTP store with timestamps and limits
-// Key: normalized identifier (email or mobile), Value: { otp, expiresAt, resendCount }
 const OTP_STORE = {};
-const OTP_EXPIRY_SECONDS = 120; // 2 minutes expiry
+const OTP_EXPIRY_SECONDS = 120;
 const MAX_RESEND_LIMIT = 3;
 
-/**
- * Normalizes email or mobile for safe lookup
- */
 export function normalizeIdentifier(val) {
   if (!val) return '';
   const trimmed = val.trim();
   if (trimmed.includes('@')) {
     return trimmed.toLowerCase();
   }
-  // Strip non-numeric chars for mobile numbers
   return trimmed.replace(/\D/g, '');
 }
 
-/**
- * Checks whether an account is currently authenticated.
- * Restores and verifies active session from LocalStorage.
- */
 export function isAuthenticated() {
   const session = getAuthSession();
   if (!session || !session.isAuthenticated || !session.userId) {
@@ -55,18 +30,12 @@ export function isAuthenticated() {
   return !!user;
 }
 
-/**
- * Returns the currently authenticated user object, or null.
- */
 export function getCurrentUser() {
   const session = getAuthSession();
   if (!session || !session.userId) return null;
   return getUserById(session.userId);
 }
 
-/**
- * Returns the role of the authenticated user ('client' | 'consultant'), or null.
- */
 export function getUserRole() {
   const user = getCurrentUser();
   if (user) return user.role;
@@ -74,11 +43,6 @@ export function getUserRole() {
   return session?.role || null;
 }
 
-/**
- * Returns the appropriate dashboard route tab name based on user role.
- * Client -> 'chat' (Client Workspace)
- * Consultant -> 'browse_thoughts' (Client Thinks / Consultant Discovery Portal)
- */
 export function redirectByRole(role) {
   if (role === 'consultant') {
     return 'browse_thoughts';
@@ -86,14 +50,10 @@ export function redirectByRole(role) {
   return 'chat';
 }
 
-/**
- * Generates a simulated 6-digit OTP for registration verification.
- */
 export function generateOTP(emailOrMobile) {
   const key = normalizeIdentifier(emailOrMobile);
   if (!key) return null;
 
-  // Generate a random 6-digit number
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = Date.now() + OTP_EXPIRY_SECONDS * 1000;
 
@@ -111,9 +71,6 @@ export function generateOTP(emailOrMobile) {
   };
 }
 
-/**
- * Resends a registration OTP with count limit enforcement.
- */
 export function resendOTP(emailOrMobile) {
   const key = normalizeIdentifier(emailOrMobile);
   if (!key) {
@@ -140,9 +97,6 @@ export function resendOTP(emailOrMobile) {
   };
 }
 
-/**
- * Verifies the 6-digit registration OTP.
- */
 export function verifyRegistrationOTP(emailOrMobile, inputOtp) {
   const key = normalizeIdentifier(emailOrMobile);
   if (!key) {
@@ -156,7 +110,6 @@ export function verifyRegistrationOTP(emailOrMobile, inputOtp) {
 
   const record = OTP_STORE[key];
   if (!record) {
-    // If no OTP was generated yet, generate one for the tester
     return { success: false, error: 'No OTP generated for this account. Click Resend OTP.' };
   }
 
@@ -171,16 +124,11 @@ export function verifyRegistrationOTP(emailOrMobile, inputOtp) {
   return { success: true };
 }
 
-/**
- * Registers a new user following 4-step validation.
- * Checks for duplicate email or mobile.
- */
 export function registerUser(userData) {
   const users = getUsers();
   const normalizedEmail = (userData.email || '').trim().toLowerCase();
   const cleanMobile = (userData.mobile || '').trim().replace(/\D/g, '');
 
-  // 1. Validation checks
   if (!userData.name || !userData.name.trim()) {
     return { success: false, error: 'Full name is required.' };
   }
@@ -197,7 +145,6 @@ export function registerUser(userData) {
     return { success: false, error: 'Please select an account type (Client or Consultant).' };
   }
 
-  // 2. Duplicate checks
   const existingEmail = users.find(u => u.email && u.email.toLowerCase() === normalizedEmail);
   if (existingEmail) {
     return { success: false, error: 'This email address is already registered. Please sign in instead.' };
@@ -208,7 +155,6 @@ export function registerUser(userData) {
     return { success: false, error: 'This mobile number is already registered. Please sign in instead.' };
   }
 
-  // 3. Create user record
   const id = `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
   const isConsultant = userData.role === 'consultant';
   const newUser = {
@@ -237,7 +183,6 @@ export function registerUser(userData) {
     createdAt: new Date().toISOString()
   };
 
-  // Add to think_users
   const updatedUsers = [...users, newUser];
   try {
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(updatedUsers));
@@ -246,7 +191,6 @@ export function registerUser(userData) {
     console.error('Error saving user in storage:', err);
   }
 
-  // 4. Create active session and set active user
   setActiveUser(newUser.id);
   const session = {
     userId: newUser.id,
@@ -264,11 +208,6 @@ export function registerUser(userData) {
   };
 }
 
-/**
- * Logs in a user using Email OR Mobile number + Password.
- * Strictly NO OTP is required during regular login as specified in Requirement 4.
- * Automatically identifies user role from the stored account (never asks user to select role on login).
- */
 export function loginUser(identifier, password) {
   if (!identifier || !identifier.trim()) {
     return { success: false, error: 'Please enter your registered email address or mobile number.' };
@@ -283,20 +222,16 @@ export function loginUser(identifier, password) {
   const normalizedEmail = isEmail ? rawId.toLowerCase() : null;
   const cleanMobile = !isEmail ? rawId.replace(/\D/g, '') : null;
 
-  // Search by email, mobile, or username/demo match
   const user = users.find(u => {
     if (normalizedEmail && u.email) {
       const uEmail = u.email.toLowerCase();
       if (uEmail === normalizedEmail) return true;
-      // Cross-match @overthink.platform and legacy @think.platform
       if (normalizedEmail.replace('@overthink.platform', '') === uEmail.replace('@think.platform', '')) return true;
       if (normalizedEmail.replace('@think.platform', '') === uEmail.replace('@overthink.platform', '')) return true;
     }
-    // Match username prefix (e.g. "alex.morgan" matches "alex.morgan@overthink.platform")
     if (rawId && u.email && u.email.toLowerCase().startsWith(rawId.toLowerCase() + '@')) {
       return true;
     }
-    // Match by ID or Name for demo convenience
     if (rawId && (u.id === rawId || u.name?.toLowerCase() === rawId.toLowerCase())) {
       return true;
     }
@@ -314,7 +249,6 @@ export function loginUser(identifier, password) {
     };
   }
 
-  // Check password
   if (user.password && user.password !== password) {
     return {
       success: false,
@@ -322,7 +256,6 @@ export function loginUser(identifier, password) {
     };
   }
 
-  // Check verification status
   if (user.isVerified === false) {
     return {
       success: false,
@@ -330,7 +263,6 @@ export function loginUser(identifier, password) {
     };
   }
 
-  // Set active user and active session
   setActiveUser(user.id);
   const session = {
     userId: user.id,
@@ -348,10 +280,6 @@ export function loginUser(identifier, password) {
   };
 }
 
-/**
- * Allows instantaneous local registration for testing if a user enters new credentials on the login screen.
- * Saves email, password, and profile directly into LocalStorage ('think_users').
- */
 export function quickRegisterUser(identifier, password, role = 'client') {
   const cleanId = (identifier || '').trim();
   const isEmail = cleanId.includes('@');
@@ -369,9 +297,6 @@ export function quickRegisterUser(identifier, password, role = 'client') {
   });
 }
 
-/**
- * Logs out the active user, clears 'think_auth_session' and resets active user.
- */
 export function logoutUser() {
   clearAuthSession();
   return { success: true };

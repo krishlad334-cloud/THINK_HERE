@@ -103,9 +103,7 @@ export default function ConsultantProfileView() {
         </div>
       )}
 
-      {/* Header Banner - LinkedIn / Freelancer Style */}
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
-        {/* Cover graphic */}
         <div className="h-40 sm:h-48 bg-gradient-to-r from-[#020617] via-[#082f49] to-[#082f49] relative">
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
@@ -114,7 +112,6 @@ export default function ConsultantProfileView() {
           </div>
         </div>
 
-        {/* Profile Card Body */}
         <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0 relative">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-14 sm:-mt-20 mb-4">
             <div className="relative inline-block">
@@ -183,7 +180,6 @@ export default function ConsultantProfileView() {
             </div>
           </div>
 
-          {/* Name & Headline */}
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-black text-slate-900">{consultantUser.name}</h1>
@@ -246,7 +242,6 @@ export default function ConsultantProfileView() {
             </div>
           </div>
 
-          {/* About / Bio */}
           <div className="mt-6 pt-6 border-t border-slate-100">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               About & Value Proposition
@@ -265,7 +260,6 @@ export default function ConsultantProfileView() {
             )}
           </div>
 
-          {/* Skills & Endorsements */}
           <div className="mt-6 pt-6 border-t border-slate-100">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -321,7 +315,6 @@ export default function ConsultantProfileView() {
         </div>
       </div>
 
-      {/* Services & Fixed-Scope Packages */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
           <Briefcase className="w-5 h-5 text-[#020617]" />
@@ -355,9 +348,7 @@ export default function ConsultantProfileView() {
         )}
       </div>
 
-      {/* Work Experience & Education (LinkedIn Style) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Experience */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-[#020617]" />
@@ -379,7 +370,6 @@ export default function ConsultantProfileView() {
           )}
         </div>
 
-        {/* Education & Certifications */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-[#0891b2]" />
@@ -421,7 +411,6 @@ export default function ConsultantProfileView() {
         </div>
       </div>
 
-      {/* Portfolio Showcase */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
           <Award className="w-5 h-5 text-[#020617]" />

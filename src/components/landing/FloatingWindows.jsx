@@ -9,43 +9,26 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-/**
- * FloatingWindows
- * The Primary Visual Reference (Scene 02: Searching Everywhere)
- * Multi-layer 3D floating browser windows, AI chat interfaces, search engine SERP cards,
- * and information overload cards responding to scroll progress (0.0 to 1.0).
- * 
- * Supports 3-layer depth sandwich via `layer`:
- * - 'back': renders behind the human character (Search SERP, Forum Debate)
- * - 'front': renders in front of the human character (AI Chat, Strategy Gen, Central Thought Bubble)
- * - 'all': renders all layers together
- */
 export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
   const showMissingAnswer = progress > 0.68;
   const isTransitioningOut = progress > 0.9;
 
-  // Compute smooth dynamic transforms based on scroll progress
-  // Window 1: Top-Left Search Engine SERP
-  const w1X = (1 - Math.min(progress * 1.6, 1)) * -140; // slides in from left
+  const w1X = (1 - Math.min(progress * 1.6, 1)) * -140;
   const w1Opacity = Math.min(progress * 2.5, 1) * (isTransitioningOut ? (1 - (progress - 0.9) * 10) : 1);
   const w1RotateY = -10 + progress * 6;
   const w1RotateX = 8 - progress * 4;
 
-  // Window 2: Top-Right AI Chat Assistant (Neuromind AI)
-  const w2X = (1 - Math.min((progress - 0.1) * 1.8, 1)) * 160; // slides in from right
+  const w2X = (1 - Math.min((progress - 0.1) * 1.8, 1)) * 160;
   const w2Opacity = progress > 0.1 ? Math.min((progress - 0.1) * 3, 1) * (isTransitioningOut ? (1 - (progress - 0.9) * 10) : 1) : 0;
   const w2RotateY = 12 - progress * 5;
   const w2RotateX = 6 - progress * 3;
 
-  // Window 3: Bottom-Left Forum & Conflicting Advice
-  const w3Y = (1 - Math.min((progress - 0.25) * 1.8, 1)) * 120; // rises from bottom
+  const w3Y = (1 - Math.min((progress - 0.25) * 1.8, 1)) * 120;
   const w3Opacity = progress > 0.25 ? Math.min((progress - 0.25) * 3, 1) * (isTransitioningOut ? (1 - (progress - 0.9) * 10) : 1) : 0;
 
-  // Window 4: Bottom-Right Secondary AI Framework Card
   const w4X = (1 - Math.min((progress - 0.35) * 1.8, 1)) * 140;
   const w4Opacity = progress > 0.35 ? Math.min((progress - 0.35) * 3, 1) * (isTransitioningOut ? (1 - (progress - 0.9) * 10) : 1) : 0;
 
-  // Window 5: Floating Urgent Snippet / Article ("10 generic ways...")
   const w5Opacity = progress > 0.45 ? Math.min((progress - 0.45) * 3, 1) * (isTransitioningOut ? (1 - (progress - 0.9) * 10) : 1) : 0;
 
   const renderBack = layer === 'all' || layer === 'back';
@@ -58,7 +41,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
     >
       {renderBack && (
         <>
-          {/* WINDOW 1: SEARCH ENGINE SERP (Top-Left Layer) */}
           <div
             className="absolute top-2 sm:top-6 left-1 sm:left-4 md:left-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-[0_16px_40px_rgba(0,0,0,0.07)] ring-1 ring-black/5 overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
@@ -67,28 +49,24 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
               zIndex: 5
             }}
           >
-            {/* Browser Chrome Header */}
             <div className="flex items-center gap-2 px-3.5 py-2.5 bg-slate-100/90 border-b border-slate-200">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
               </div>
-              {/* Mini Search Bar */}
               <div className="flex-1 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[11px] text-slate-600 font-mono shadow-inner">
                 <Search className="w-3 h-3 text-slate-400 flex-shrink-0" />
                 <span className="truncate">search: how to scale business without team burnout</span>
               </div>
             </div>
 
-            {/* Content Body */}
             <div className="p-3.5 space-y-2.5 text-left">
               <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium">
                 <span>About 4,820,000 results (0.42 seconds)</span>
                 <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-semibold text-[9px]">Generic Advice</span>
               </div>
 
-              {/* Result 1 */}
               <div className="p-2.5 rounded-xl bg-slate-50/80 hover:bg-slate-100/80 border border-slate-100 transition-colors">
                 <div className="text-[10px] text-blue-600 flex items-center gap-1">
                   <span>growthhackers-daily.org/scaling</span>
@@ -102,7 +80,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
                 </p>
               </div>
 
-              {/* Result 2 */}
               <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-100">
                 <div className="text-[10px] text-cyan-600 flex items-center gap-1">
                   <span>business-frameworks.io/playbook</span>
@@ -117,7 +94,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
             </div>
           </div>
 
-          {/* WINDOW 3: CONFLICTING FORUM ADVICE (Bottom-Left Layer) */}
           <div
             className="absolute bottom-6 sm:bottom-12 left-1 sm:left-6 md:left-14 w-[84vw] max-w-xs sm:w-72 md:w-80 rounded-2xl bg-white/90 backdrop-blur-md border border-amber-200/80 shadow-lg overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
@@ -155,7 +131,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
 
       {renderFront && (
         <>
-          {/* WINDOW 2: AI CHAT ASSISTANT (Top-Right Layer) */}
           <div
             className="absolute top-0 sm:top-4 right-1 sm:right-4 md:right-8 w-[86vw] max-w-sm sm:w-80 md:w-96 rounded-2xl bg-white/95 backdrop-blur-md border border-indigo-100/90 shadow-[0_20px_50px_rgba(79,70,229,0.1)] ring-1 ring-indigo-500/10 overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
@@ -164,7 +139,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
               zIndex: 25
             }}
           >
-            {/* AI Browser Header */}
             <div className="flex items-center justify-between px-3.5 py-2.5 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
@@ -183,16 +157,13 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
               </span>
             </div>
 
-            {/* AI Chat Dialogue */}
             <div className="p-3.5 space-y-2.5 text-left">
-              {/* User Prompt */}
               <div className="flex justify-end">
                 <div className="max-w-[85%] p-2 rounded-xl bg-indigo-600 text-white text-[11px] leading-relaxed shadow-xs">
                   "How do I fix my retention drop without lowering prices?"
                 </div>
               </div>
 
-              {/* AI Response Card */}
               <div className="flex gap-2">
                 <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Sparkles className="w-3 h-3 text-indigo-600" />
@@ -216,7 +187,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
             </div>
           </div>
 
-          {/* WINDOW 4: SECONDARY AI & AUTOMATION BOT (Bottom-Right Layer) */}
           <div
             className="absolute bottom-4 sm:bottom-10 right-1 sm:right-6 md:right-14 w-[84vw] max-w-xs sm:w-72 md:w-80 rounded-2xl bg-white/90 backdrop-blur-md border border-purple-100 shadow-xl overflow-hidden transition-transform duration-300 pointer-events-auto"
             style={{
@@ -252,7 +222,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
             </div>
           </div>
 
-          {/* FLOATING CHIPS / NOTIFICATION WARNINGS */}
           {progress > 0.4 && (
             <div
               className="absolute -top-6 sm:-top-8 left-1/3 px-3 py-1.5 rounded-full bg-amber-500 text-white font-bold text-[10px] shadow-lg flex items-center gap-1.5 animate-bounce pointer-events-none"
@@ -263,7 +232,6 @@ export default function FloatingWindows({ progress = 0.5, layer = 'all' }) {
             </div>
           )}
 
-          {/* THE CLIMAX THOUGHT BUBBLE */}
           {showMissingAnswer && (
             <div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-auto max-w-md p-4 sm:p-5 rounded-2xl bg-slate-900/95 text-white border-2 border-amber-400/90 shadow-2xl backdrop-blur-xl transition-all duration-500 pointer-events-auto"

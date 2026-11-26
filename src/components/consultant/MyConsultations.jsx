@@ -78,7 +78,6 @@ export default function MyConsultations() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
           <FolderKanban className="w-7 h-7 text-[#020617]" />

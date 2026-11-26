@@ -1,8 +1,3 @@
-/**
- * Comprehensive Seed Data for OverThink
- * Combines ChatGPT, Freelancer.com, and LinkedIn experiences.
- */
-
 export const INITIAL_USERS = {
   client: {
     id: 'user-client-1',
@@ -185,7 +180,6 @@ export const MOCK_CONSULTANTS = [
   }
 ];
 
-// Submitted Thoughts (Client submissions with 24-hr countdown, solutions, status)
 export const INITIAL_THOUGHTS = [
   {
     id: 'thought-1',
@@ -196,9 +190,9 @@ export const INITIAL_THOUGHTS = [
     description: 'I have 3 years of experience in Python and full-stack React development, but my applications seem to get lost in ATS screening. I am wondering if my resume layout is wrong or if I need more high-impact projects on GitHub.',
     category: 'Career & Jobs',
     urgency: 'High (Urgent)',
-    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago (20h remaining)
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
     deadlineHours: 24,
-    status: 'in_consultation', // 'pending_human', 'in_consultation', 'resolved', 'ai_fallback'
+    status: 'in_consultation',
     assignedConsultantId: 'user-cons-2',
     assignedConsultantName: 'Marcus Sterling',
     assignedConsultantAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
@@ -244,7 +238,7 @@ export const INITIAL_THOUGHTS = [
     description: 'We built a physical prototype with Bluetooth and LED reminders. We are stuck on whether to target athletes or office professionals, and how to create content that converts without spending thousands on Facebook ads.',
     category: 'Product & Innovation',
     urgency: 'Standard',
-    createdAt: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(), // 11 hours ago (13h remaining)
+    createdAt: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(),
     deadlineHours: 24,
     status: 'pending_human',
     assignedConsultantId: null,
@@ -270,7 +264,7 @@ export const INITIAL_THOUGHTS = [
     description: 'Small farmers lose 30% of perishable produce before reaching regional retailers due to fragmented cold-storage trucking. We want to aggregate small truck fleets with a dynamic booking app.',
     category: 'Business & Startups',
     urgency: 'Standard',
-    createdAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), // 25 hours ago (Expired -> Auto AI fallback triggered)
+    createdAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(),
     deadlineHours: 24,
     status: 'ai_fallback',
     assignedConsultantId: null,
@@ -357,9 +351,7 @@ export const INITIAL_THOUGHTS = [
   }
 ];
 
-// Initial Messages for Consultation Chat across active thoughts
 export const INITIAL_MESSAGES = [
-  // Thought 1: Python Career & ATS Optimization (Alex Morgan & Marcus Sterling)
   {
     id: 'msg-t1-1',
     thoughtId: 'thought-1',
@@ -405,7 +397,6 @@ export const INITIAL_MESSAGES = [
     attachments: []
   },
 
-  // Thought 2: Smart Water Bottle IoT (Alex Morgan & Dr. Elena Vance)
   {
     id: 'msg-t2-1',
     thoughtId: 'thought-2',
@@ -429,7 +420,6 @@ export const INITIAL_MESSAGES = [
     attachments: []
   },
 
-  // Thought 3: B2B Farm Logistics (Alex Morgan & Priya Sharma)
   {
     id: 'msg-t3-1',
     thoughtId: 'thought-3',
@@ -453,7 +443,6 @@ export const INITIAL_MESSAGES = [
     attachments: []
   },
 
-  // Thought 4: PostgreSQL Sharding & Telemetry (Alex Morgan & Dr. Elena Vance)
   {
     id: 'msg-t4-1',
     thoughtId: 'thought-4',
@@ -489,7 +478,6 @@ export const INITIAL_MESSAGES = [
   }
 ];
 
-// Jobs & Career Opportunities (LinkedIn style)
 export const INITIAL_JOBS = [
   {
     id: 'job-1',
@@ -561,7 +549,6 @@ export const INITIAL_JOBS = [
   }
 ];
 
-// Initial Notifications
 export const INITIAL_NOTIFICATIONS = [
   {
     id: 'notif-1',
@@ -604,7 +591,6 @@ export const INITIAL_NOTIFICATIONS = [
   }
 ];
 
-// Admin Platform Audit & Security Logs
 export const INITIAL_AUDIT_LOGS = [
   {
     id: 'log-1',

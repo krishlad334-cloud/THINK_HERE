@@ -1,20 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-/**
- * CharacterVisual
- * Real Human Cinematic Live-Action Character with Scroll-Scrubbed Video & 3D Tilt
- * 
- * Features:
- * - Scroll-driven video playback (video.currentTime scrubbed bidirectional forward/backward)
- * - Live-action real human footage (breathing, typing, sighing, smiling)
- * - Low-latency seek coordination with fastSeek / currentTime fallback
- * - Photorealistic poster fallback with graceful error recovery
- * - Soft feathered perimeter blending into the background canvas
- * - Interactive 3D cursor tilt & parallax
- * - Multi-layer ambient lighting
- */
 export default function CharacterVisual({
-  state = 'overthinking', // 'overthinking' | 'searching' | 'discovering' | 'connecting' | 'succeeding'
+  state = 'overthinking',
   progress = 0,
   scrub = true,
   className = '',
@@ -25,7 +12,6 @@ export default function CharacterVisual({
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
 
-  // References for low-latency, stutter-free video scrubbing
   const targetTimeRef = useRef(0);
   const isSeekingRef = useRef(false);
   const lastSeekTimeRef = useRef(0);
@@ -57,13 +43,11 @@ export default function CharacterVisual({
     succeeding: 'from-cyan-500/35 via-cyan-400/25 to-transparent'
   };
 
-  // Perform seek to target time
   const applySeek = useCallback(() => {
     const video = videoRef.current;
     if (!video || !video.duration || isNaN(video.duration)) return;
     if (video.readyState < 1) return;
 
-    // Safety timeout: if seeking for > 120ms, release the seeking lock
     const now = Date.now();
     if (isSeekingRef.current && now - lastSeekTimeRef.current > 120) {
       isSeekingRef.current = false;
@@ -86,7 +70,6 @@ export default function CharacterVisual({
     }
   }, []);
 
-  // Update target scrub position whenever scroll progress updates
   useEffect(() => {
     if (!scrub) return;
     const video = videoRef.current;
@@ -99,7 +82,6 @@ export default function CharacterVisual({
     }
   }, [progress, scrub, applySeek]);
 
-  // Handle initial playback policy
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -113,13 +95,11 @@ export default function CharacterVisual({
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Autoplay policy or low-power mode fallback
         });
       }
     }
   }, [scrub]);
 
-  // Periodic safety heartbeat to release any stalled seeks
   useEffect(() => {
     if (!scrub) return;
     const interval = setInterval(() => {
@@ -186,21 +166,17 @@ export default function CharacterVisual({
         transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`
       }}
     >
-      {/* 1. Ambient Floor & Backlight Aura (Blends seamlessly into page canvas) */}
       <div
         className={`absolute -inset-6 sm:-inset-10 rounded-full bg-gradient-to-tr ${glowColors[state]} blur-3xl transition-all duration-700 pointer-events-none opacity-80 group-hover:opacity-100`}
       />
 
-      {/* 2. Cutout-Style Seamless Human Character Canvas */}
       <div
         className="relative w-full rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.22)] bg-slate-900 transition-all duration-500"
         style={{
-          // Soft radial edge feathering so it feels integrated into the webpage space
           maskImage: 'radial-gradient(ellipse 98% 92% at 50% 50%, black 82%, transparent 100%)',
           WebkitMaskImage: 'radial-gradient(ellipse 98% 92% at 50% 50%, black 82%, transparent 100%)'
         }}
       >
-        {/* Real Human Animated Video (with photorealistic image fallback) */}
         {!videoError ? (
           <video
             ref={videoRef}
@@ -231,10 +207,8 @@ export default function CharacterVisual({
           />
         )}
 
-        {/* Cinematic Vignette Shadows */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/10 pointer-events-none" />
 
-        {/* Ambient Top Light Reflection */}
         <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-bl from-white/20 via-transparent to-transparent pointer-events-none" />
       </div>
     </div>

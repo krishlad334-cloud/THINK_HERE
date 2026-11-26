@@ -33,7 +33,6 @@ export default function Sidebar({ isOpen, onClose }) {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef(null);
 
-  // Close account menu on click outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (accountMenuRef.current && !accountMenuRef.current.contains(e.target)) {
@@ -68,7 +67,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Mobile Backdrop */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden transition-opacity"
@@ -77,13 +75,11 @@ export default function Sidebar({ isOpen, onClose }) {
         />
       )}
 
-      {/* Main Sidebar - Full height drawer on mobile, static flush on desktop */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-white border-r border-slate-200/90 flex flex-col transition-transform duration-200 ease-out lg:static lg:z-auto lg:h-full lg:w-72 flex-shrink-0 shadow-2xl lg:shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
           isOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none lg:pointer-events-auto lg:translate-x-0'
         }`}
       >
-        {/* Mobile Header with OverThink Brand & Close Button (Hidden on Desktop) */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 lg:hidden bg-slate-50/80 flex-shrink-0">
           <div className="flex items-center gap-2">
             <img src="/logo.svg" alt="OverThink" className="w-7 h-7 rounded-lg object-contain border border-slate-200/80" />
@@ -102,7 +98,6 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Mobile Dedicated Account Section: Visible at the top of the mobile drawer */}
         <div className="p-3.5 bg-slate-50/95 border-b border-slate-200/80 lg:hidden space-y-2.5 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="relative flex-shrink-0">
@@ -126,7 +121,6 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
           </div>
         </div>
-        {/* Top Header: Primary Action Button (Client: New Thought / Chat, Consultant: Client Thinks) */}
         <div className="p-3.5 border-b border-slate-100 flex-shrink-0 bg-white">
           {role === 'client' ? (
             <button
@@ -152,9 +146,7 @@ export default function Sidebar({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Scrollable Center: Recent Chats & Platform Routes */}
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-          {/* Section 1: Main Navigation Routes */}
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
               {role === 'client' ? 'Client Routes' : 'Consultant Workflow'}
@@ -306,7 +298,6 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Section 2: Recent History (Placed after Client Routes as requested) */}
           {role === 'client' && (
             <div className="pt-2 border-t border-slate-100">
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
@@ -346,7 +337,6 @@ export default function Sidebar({ isOpen, onClose }) {
             </div>
           )}
 
-          {/* Section 3: Account & Settings (Client Only) */}
           {role === 'client' && (
             <div>
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">
@@ -367,7 +357,6 @@ export default function Sidebar({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Mobile Bottom Actions: Logout */}
         <div className="p-3 border-t border-slate-200/80 bg-slate-50/90 lg:hidden flex-shrink-0">
           <button
             type="button"
@@ -382,7 +371,6 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Desktop Bottom User Card with Logout */}
         <div className="hidden lg:block p-3 border-t border-slate-200/80 bg-slate-50/90 relative flex-shrink-0">
           <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-xs">
             <div className="flex items-center gap-2.5 overflow-hidden min-w-0">
@@ -422,7 +410,6 @@ export default function Sidebar({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Developed by Krish Lad Footer Credit */}
           <div className="mt-2 pt-2 border-t border-slate-200/50 flex items-center justify-center gap-1 text-[11px] text-slate-400 select-none">
             <span>Developed by</span>
             <span className="font-semibold text-slate-600">Krish Lad</span>

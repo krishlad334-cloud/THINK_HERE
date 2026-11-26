@@ -7,27 +7,6 @@ import {
   Zap
 } from 'lucide-react';
 
-/**
- * Scene5ApplySucceed
- * TRANSFORMATION: CONFUSION TO CONFIDENCE & TRIUMPH
- * 
- * Heading: "Turn The Right Advice Into Real Progress."
- * Description: "Take action, make better decisions, and move forward with confidence."
- * 
- * 5-Step Action Plan:
- * 1. Understand the problem.
- * 2. Follow expert guidance.
- * 3. Apply the recommended strategy.
- * 4. Measure progress.
- * 5. Achieve the desired result.
- * 
- * Final CTA:
- * "Start Your Think"
- * "Your next breakthrough could start with one conversation."
- * 
- * Brand Statement:
- * "Don't Just Search for Answers. Find the Right People to Move Forward."
- */
 export default function Scene5ApplySucceed({
   progress = 0.5,
   onStartThink,
@@ -35,19 +14,12 @@ export default function Scene5ApplySucceed({
   isAuthenticated = false,
   onGoToApp
 }) {
-  // Compute milestone checkoffs based on scroll progress:
-  // Step 1: >= 0.15
-  // Step 2: >= 0.30
-  // Step 3: >= 0.45
-  // Step 4: >= 0.60
-  // Step 5: >= 0.75
   const isStep1Done = progress >= 0.15;
   const isStep2Done = progress >= 0.3;
   const isStep3Done = progress >= 0.45;
   const isStep4Done = progress >= 0.6;
   const isStep5Done = progress >= 0.75;
 
-  // Numerical percentage calculation
   const completedCount = [isStep1Done, isStep2Done, isStep3Done, isStep4Done, isStep5Done].filter(Boolean).length;
   const progressPercent = Math.min(100, Math.round((completedCount / 5) * 100));
 
@@ -63,7 +35,6 @@ export default function Scene5ApplySucceed({
 
   return (
     <div className="relative w-full min-h-[920px] flex flex-col items-center justify-center py-16 px-4 sm:px-6">
-      {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-10 z-10">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Turn The Right Advice Into <span className="text-[#0891b2]">Real Progress</span>.
@@ -74,12 +45,9 @@ export default function Scene5ApplySucceed({
         </p>
       </div>
 
-      {/* Main Dual Grid: Action Plan Checklist on Left, Victorious Character on Right */}
       <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
-        {/* Left Column: 5 Action Plan Milestones + Dynamic Progress Bar */}
         <div className="lg:col-span-7">
           <div className="rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(8,145,178,0.08)] ring-1 ring-black/5 p-6 sm:p-8 space-y-6">
-            {/* Header with Progress Bar */}
             <div className="space-y-3 pb-4 border-b border-slate-100">
               <div className="flex items-center justify-between">
                 <div>
@@ -101,7 +69,6 @@ export default function Scene5ApplySucceed({
                 </div>
               </div>
 
-              {/* Dynamic Animated Progress Bar */}
               <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden p-0.5 border border-slate-200/60 shadow-inner">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-[#020617] via-[#0891b2] to-[#22d3ee] transition-all duration-500 ease-out shadow-xs"
@@ -110,7 +77,6 @@ export default function Scene5ApplySucceed({
               </div>
             </div>
 
-            {/* The 5 Action Steps */}
             <div className="space-y-3">
               {stepsData.map((step) => (
                 <div
@@ -160,7 +126,6 @@ export default function Scene5ApplySucceed({
           </div>
         </div>
 
-        {/* Right Column: Confident Victorious Character & Impact Cards */}
         <div className="lg:col-span-5 flex flex-col items-center">
           <div
             className="relative transition-all duration-500"
@@ -177,7 +142,6 @@ export default function Scene5ApplySucceed({
               className="w-full max-w-[420px]"
             />
 
-            {/* Victory Impact Stat Pills */}
             {isFullSuccess && (
               <>
                 <div className="absolute top-4 -left-4 px-3.5 py-2 rounded-2xl bg-white/95 border border-cyan-200 shadow-xl flex items-center gap-2 animate-bounce">
@@ -206,12 +170,10 @@ export default function Scene5ApplySucceed({
       </div>
 
       <div className="w-full max-w-5xl xl:max-w-6xl mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#020617] via-[#082f49] to-[#031b2e] p-6 sm:p-10 lg:p-14 text-white shadow-2xl text-center relative overflow-hidden border border-cyan-900/30">
-        {/* Subtle decorative glow */}
         <div className="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-5 sm:space-y-6 max-w-2xl mx-auto">
-          {/* Logo Showcase */}
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white p-1 flex items-center justify-center">
@@ -232,7 +194,6 @@ export default function Scene5ApplySucceed({
             Your next breakthrough could start with one conversation. Share your challenge with verified experts who help you execute with confidence.
           </p>
 
-          {/* Core Action Button: Start Your Think / Open Workspace */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <button
               type="button"
@@ -262,7 +223,6 @@ export default function Scene5ApplySucceed({
             )}
           </div>
 
-          {/* Brand Manifesto Quote */}
           <div className="pt-5 sm:pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs text-cyan-200/80 gap-2 sm:gap-3">
             <span>"AI Can Give You Answers. THINK Connects You With The Right Human Expertise."</span>
             <span className="font-semibold text-white/90">Zero Risk • 24hr Matching Guarantee</span>

@@ -72,10 +72,6 @@ function Card({ item }) {
   );
 }
 
-/**
- * Testimonials Section:
- * Auto-drifting marquee of glass cards with pause-on-hover and soft edge fade.
- */
 export default function Testimonials() {
   return (
     <section

@@ -45,7 +45,6 @@ export default function ClientJobHub() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Toast alert */}
       {appliedNotification && (
         <div className="p-3 bg-cyan-50 border border-cyan-300 rounded-xl text-cyan-800 text-xs font-semibold flex items-center gap-2 animate-in slide-in-from-top-2">
           <CheckCircle className="w-4 h-4 text-[#0891b2] flex-shrink-0" />
@@ -53,7 +52,6 @@ export default function ClientJobHub() {
         </div>
       )}
 
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
@@ -86,7 +84,6 @@ export default function ClientJobHub() {
         )}
       </div>
 
-      {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200">
         <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap max-w-full scrollbar-none pb-1 sm:pb-0">
           {jobTypes.map((type) => (
@@ -116,7 +113,6 @@ export default function ClientJobHub() {
         </div>
       </div>
 
-      {/* Job Cards */}
       <div className="space-y-4">
         {filteredJobs.map((job) => (
           <div
@@ -158,7 +154,6 @@ export default function ClientJobHub() {
                 {job.description}
               </p>
 
-              {/* Skills required */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {job.skills.map((skill, idx) => (
                   <span
@@ -170,7 +165,6 @@ export default function ClientJobHub() {
                 ))}
               </div>
 
-              {/* Career Consultant recommendation */}
               {job.recommendedConsultant && (
                 <div className="text-[11px] text-[#020617] bg-[#ecfeff] p-2.5 rounded-xl border border-[#020617]/20 flex items-center gap-2">
                   <Users className="w-3.5 h-3.5 text-[#0891b2] flex-shrink-0" />
@@ -181,7 +175,6 @@ export default function ClientJobHub() {
               )}
             </div>
 
-            {/* Right Action column */}
             <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-3 self-stretch sm:self-center flex-shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
               <div className="text-left sm:text-right">
                 <span className="text-sm font-extrabold text-slate-900 block">{job.salary}</span>

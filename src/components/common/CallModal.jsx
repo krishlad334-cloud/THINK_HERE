@@ -37,7 +37,6 @@ export default function CallModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 animate-in fade-in duration-200">
       <div className="relative w-full max-w-4xl h-[92dvh] sm:h-[620px] max-h-[92dvh] bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-800">
-        {/* Top bar inside call */}
         <div className="flex items-center justify-between px-3.5 sm:px-6 py-2.5 sm:py-4 bg-slate-900/90 border-b border-slate-800 z-10 gap-2">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <span className="flex h-2.5 w-2.5 sm:h-3 sm:w-3 relative flex-shrink-0">
@@ -63,7 +62,6 @@ export default function CallModal() {
           </div>
         </div>
 
-        {/* Video / Call stage */}
         <div className="flex-1 relative bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center p-6 overflow-hidden">
           {isSharingScreen ? (
             <div className="w-full h-full bg-slate-950 rounded-xl border border-[#020617]/40 flex flex-col items-center justify-center p-6 text-center">
@@ -93,7 +91,6 @@ export default function CallModal() {
                 Live OverThink Consultation Session
               </p>
 
-              {/* Audio wave simulation */}
               <div className="flex items-center gap-1.5 mt-6">
                 {[12, 24, 40, 20, 36, 16, 28, 48, 22, 14].map((h, i) => (
                   <div
@@ -106,7 +103,6 @@ export default function CallModal() {
             </div>
           )}
 
-          {/* Picture-in-picture self preview */}
           <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-28 h-20 sm:w-44 sm:h-32 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl flex items-center justify-center z-10">
             {isVideoOff ? (
               <div className="text-center p-1 sm:p-2">
@@ -134,14 +130,12 @@ export default function CallModal() {
           </div>
         </div>
 
-        {/* Bottom Call Controls */}
         <div className="px-3 sm:px-6 py-3 sm:py-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
           <div className="text-xs text-slate-400 hidden sm:block">
             Connected via WebRTC Relay
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 mx-auto sm:mx-0">
-            {/* Mic Toggle */}
             <button
               onClick={() => setIsMuted(!isMuted)}
               className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
@@ -154,7 +148,6 @@ export default function CallModal() {
               {isMuted ? <MicOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
-            {/* Video Toggle */}
             <button
               onClick={() => setIsVideoOff(!isVideoOff)}
               className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
@@ -167,7 +160,6 @@ export default function CallModal() {
               {isVideoOff ? <VideoOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Video className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
-            {/* Screen Share */}
             <button
               onClick={() => setIsSharingScreen(!isSharingScreen)}
               className={`p-2.5 sm:p-3.5 rounded-full transition-all cursor-pointer ${
@@ -180,7 +172,6 @@ export default function CallModal() {
               <Monitor className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* End Call */}
             <button
               onClick={endCall}
               className="px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-medium flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-rose-600/30 transition-all ml-1 sm:ml-2 cursor-pointer"

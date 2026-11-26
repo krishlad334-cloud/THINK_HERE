@@ -17,7 +17,6 @@ const HEADLINE_WORDS = [
   { text: 'Solution.', grad: true },
 ];
 
-// Balanced multi-depth layout showing all 9 windows & props cleanly across mobile, tablet & desktop
 const CHAOTIC_WINDOWS = [
   { id: 'w1', variant: 'article', title: 'startup-advice.blog', x: '2%', y: '6%', mx: '1%', my: '4%', w: 'w-32 sm:w-44 lg:w-48', rot: -6, depth: 1.2, z: 'z-10' },
   { id: 'w2', variant: 'analytics', title: 'metrics-overload.io', x: '46%', y: '4%', mx: '54%', my: '4%', w: 'w-32 sm:w-44 lg:w-48', rot: 5, depth: 1.0, z: 'z-0' },
@@ -30,12 +29,6 @@ const CHAOTIC_WINDOWS = [
   { id: 'w9', variant: 'camera', title: '', x: '62%', y: '28%', mx: '58%', my: '29%', w: 'scale-90 sm:scale-100', rot: -4, depth: 1.75, z: 'z-30' },
 ];
 
-/**
- * Hero Section (Overthinking Scene):
- * - Left: masked word-by-word headline, 24h subtitle, cycling ThoughtChips, CTAs
- * - Right: 8-9 chaotic floating browser windows & desk props framing the stressed man
- * - On scroll out: windows snap cleanly into a tidy grid and fade
- */
 export default function Hero({
   onStartThink,
   onExplore,
@@ -124,7 +117,6 @@ export default function Hero({
       className="relative flex min-h-[88vh] lg:min-h-screen flex-col justify-center pt-24 pb-12 sm:pt-28 sm:pb-16 overflow-hidden"
     >
       <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-10 px-5 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-12">
-        {/* Left: Copy, ThoughtChips & Magnetic CTAs */}
         <div className="relative z-20 space-y-6 lg:col-span-6">
           <h1 className="font-display text-4xl font-bold leading-[1.06] tracking-tight text-[#F5F3FF] sm:text-6xl xl:text-[4rem]">
             {HEADLINE_WORDS.map((w, idx) => (
@@ -186,7 +178,6 @@ export default function Hero({
           </motion.div>
         </div>
 
-        {/* Right: Chaotic Floating Browser Windows & Desk Props */}
         <div className="relative flex min-h-[380px] sm:min-h-[440px] lg:col-span-6 lg:min-h-[500px] items-center justify-center overflow-visible">
           <div
             aria-hidden="true"

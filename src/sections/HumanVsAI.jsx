@@ -17,11 +17,6 @@ const AI_POINTS = [
   'Seamless handoff to a human specialist anytime',
 ];
 
-/**
- * Human vs AI Section:
- * Small man-choosing.png centered between two 3D-tilt glass cards.
- * Hovering either card shifts the man slightly toward it.
- */
 export default function HumanVsAI({ reducedMotion = false }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -59,7 +54,6 @@ export default function HumanVsAI({ reducedMotion = false }) {
         </motion.div>
 
         <div className="relative grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12">
-          {/* Left: Human Consultants */}
           <div className="lg:col-span-5">
             <TiltCard
               reducedMotion={reducedMotion}
@@ -97,7 +91,6 @@ export default function HumanVsAI({ reducedMotion = false }) {
             </TiltCard>
           </div>
 
-          {/* Scroll-driven animated divider */}
           <div className="relative flex items-center justify-center lg:col-span-2 min-h-[80px]">
             <div className="relative flex h-16 w-full items-center justify-center lg:h-full lg:w-12">
               <motion.div
@@ -117,7 +110,6 @@ export default function HumanVsAI({ reducedMotion = false }) {
             </div>
           </div>
 
-          {/* Right: AI Solutions */}
           <div className="lg:col-span-5">
             <TiltCard
               reducedMotion={reducedMotion}

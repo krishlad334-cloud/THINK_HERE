@@ -56,7 +56,6 @@ export default function SolutionProposalModal({ thought, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in duration-150">
       <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh]">
-        {/* Header */}
         <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div>
             <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
@@ -75,9 +74,7 @@ export default function SolutionProposalModal({ thought, onClose }) {
           </button>
         </div>
 
-        {/* Scrollable Form */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1">
-          {/* Executive Diagnostic */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Executive Assessment & Diagnostic *
@@ -92,7 +89,6 @@ export default function SolutionProposalModal({ thought, onClose }) {
             />
           </div>
 
-          {/* Step-by-Step Action Plan */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -142,7 +138,6 @@ export default function SolutionProposalModal({ thought, onClose }) {
             </div>
           </div>
 
-          {/* Recommended Tooling & Frameworks */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Recommended Tools & Frameworks (Comma separated)
@@ -156,7 +151,6 @@ export default function SolutionProposalModal({ thought, onClose }) {
             />
           </div>
 
-          {/* Next Steps & Invitation */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Follow-Up & Consultation Room Invitation
@@ -169,7 +163,6 @@ export default function SolutionProposalModal({ thought, onClose }) {
             />
           </div>
 
-          {/* Submit Action */}
           <div className="pt-2">
             <button
               type="submit"

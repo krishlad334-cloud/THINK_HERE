@@ -1,9 +1,5 @@
 import React from 'react';
 
-/**
- * Lightweight CSS radial glow fallback shown while the 3D Canvas lazy-loads
- * or if WebGL is unavailable.
- */
 export default function OrbFallback() {
   return (
     <div

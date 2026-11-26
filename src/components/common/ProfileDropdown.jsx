@@ -26,7 +26,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown on outside click or Escape key
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -73,7 +72,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
       className="relative"
       ref={dropdownRef}
     >
-      {/* Profile Trigger Button */}
       <button
         type="button"
         onClick={handleTriggerClick}
@@ -104,13 +102,11 @@ export default function ProfileDropdown({ onGoToLanding }) {
         </div>
       </button>
 
-      {/* Floating Dropdown Menu - Displays strictly the logged-in user's details */}
       {isOpen && (
         <div
           role="menu"
           className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 max-w-sm ml-auto bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50"
         >
-          {/* User Profile Card Header */}
           <div className="px-4 py-3.5 border-b border-slate-100 bg-slate-50/70">
             <div className="flex items-start gap-3">
               <div className="relative flex-shrink-0">
@@ -143,13 +139,11 @@ export default function ProfileDropdown({ onGoToLanding }) {
             </div>
           </div>
 
-          {/* User Details & Metadata */}
           <div className="px-4 py-3 border-b border-slate-100 space-y-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               Account Overview
             </span>
 
-            {/* Title / Specialty */}
             {currentUser?.title && (
               <div className="text-xs text-slate-700 leading-snug">
                 <span className="text-slate-400 block text-[10px] uppercase font-semibold">Specialization</span>
@@ -157,7 +151,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
               </div>
             )}
 
-            {/* Mobile / Contact info */}
             {currentUser?.mobile && (
               <div className="flex items-center justify-between text-xs pt-1">
                 <span className="text-slate-500 flex items-center gap-1.5">
@@ -170,7 +163,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
               </div>
             )}
 
-            {/* Consultant Specifics (Rate & Rating) */}
             {isConsultant && (
               <div className="grid grid-cols-2 gap-2 pt-1.5">
                 <div className="bg-slate-50 p-2 rounded-lg border border-slate-100 text-center">
@@ -190,7 +182,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
             )}
           </div>
 
-          {/* Quick Direct Actions */}
           <div className="p-1.5 border-b border-slate-100 space-y-0.5">
             {isConsultant ? (
               <>
@@ -247,7 +238,6 @@ export default function ProfileDropdown({ onGoToLanding }) {
             )}
           </div>
 
-          {/* Logout Action */}
           <div className="p-1.5">
             <button
               type="button"

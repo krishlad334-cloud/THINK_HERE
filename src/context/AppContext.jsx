@@ -44,12 +44,10 @@ import { analyzeThought } from '../utils/aiEngine';
 import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
 
 export function AppProvider({ children }) {
-  // 1. Initialize LocalStorage on initial load
   useEffect(() => {
     initializeThinkStorage();
   }, []);
 
-  // 2. Core Reactive State from LocalStorage
   const [activeUser, setActiveUserState] = useState(() => {
     initializeThinkStorage();
     const session = getAuthSession();
@@ -81,7 +79,6 @@ export function AppProvider({ children }) {
     return getNotifications(user?.id, user?.role);
   });
 
-  // UI Toast state
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
   const showToast = useCallback((title, message, type = 'success') => {
@@ -104,8 +101,7 @@ export function AppProvider({ children }) {
     setToast(null);
   }, []);
 
-  // Navigation & UI States
-  const role = activeUser?.role || 'client'; // 'client' or 'consultant'
+  const role = activeUser?.role || 'client';
   const [activeTab, setActiveTab] = useState(role === 'consultant' ? 'browse_thoughts' : 'chat');
   const [activeChatThoughtId, setActiveChatThoughtId] = useState(null);
   const [selectedThoughtId, setSelectedThoughtId] = useState(null);
@@ -120,12 +116,10 @@ export function AppProvider({ children }) {
   const [activeCall, setActiveCall] = useState(null);
   const [mutedThoughtIds, setMutedThoughtIds] = useState([]);
 
-  // Mock companion states for secondary views
   const [consultants, setConsultants] = useState(MOCK_CONSULTANTS);
   const [jobs, setJobs] = useState(INITIAL_JOBS);
   const [auditLogs] = useState(INITIAL_AUDIT_LOGS);
 
-  // Synchronize state when storage changes (Cross-Tab via 'storage', Same-Tab via 'think_storage_updated')
   const reloadFromStorage = useCallback(() => {
     const currentActiveUser = getActiveUser();
     setActiveUserState(currentActiveUser);
@@ -155,7 +149,6 @@ export function AppProvider({ children }) {
     };
   }, [reloadFromStorage]);
 
-  // Keep notifications fresh when active user changes
   const prevUserRef = useRef(activeUser?.id);
   useEffect(() => {
     if (activeUser?.id !== prevUserRef.current) {
@@ -188,12 +181,10 @@ export function AppProvider({ children }) {
     showToast('Switched User', `Active as ${targetUser.label || targetUser.name} (${targetUser.name})`, 'info');
   };
 
-  // Backwards compatibility for role switch button
   const switchRole = (newRole) => {
     if (newRole === 'client') {
       switchDemoUser('client_001');
     } else {
-      // Default to Consultant 1
       switchDemoUser('consultant_001');
     }
   };
@@ -228,7 +219,6 @@ export function AppProvider({ children }) {
     return newThink;
   };
 
-  // Legacy alias
   const submitThought = (params) => submitThink(params);
 
   const acceptThink = (thinkId) => {
@@ -243,7 +233,6 @@ export function AppProvider({ children }) {
         showToast('OverThink Accepted!', `Assigned to ${activeUser.name}. Shared conversation created.`, 'success');
       }
 
-      // Navigate to chat
       if (conversation) {
         setActiveConversationId(conversation.id);
         setSelectedThoughtId(think.id);
@@ -258,7 +247,6 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Legacy alias
   const claimThought = (thoughtId) => acceptThink(thoughtId);
 
   const updateThinkStatus = (thinkId, newStatus) => {
@@ -287,7 +275,6 @@ export function AppProvider({ children }) {
       }
     }
 
-    // targetId can be a conversationId or thoughtId
     const conv = conversations.find(c => c.id === targetId || c.thinkId === targetId);
 
     if (conv) {
@@ -296,7 +283,6 @@ export function AppProvider({ children }) {
       return msg;
     }
 
-    // If no conversation exists yet for this thought, persist follow-up notes on the pending think
     const think = thinks.find(t => t.id === targetId);
     if (think && (think.status === 'pending' || think.status === 'pending_human')) {
       const msg = storageAddPendingThinkMessage(targetId, activeUser, finalText, attachments);
@@ -307,7 +293,6 @@ export function AppProvider({ children }) {
     return null;
   };
 
-  // Legacy alias
   const sendMessage = (targetId, text, attachments = []) => sendChatMessage(targetId, text, attachments);
 
   const deleteMessage = (messageId) => {
@@ -398,7 +383,6 @@ export function AppProvider({ children }) {
     showToast('Demo Data Reset', 'Platform restored to initial sample state.', 'info');
   };
 
-  // Legacy helpers & compatibility
   const clientUser = users.find(u => u.id === 'client_001') || activeUser || DEMO_USERS[0];
   const consultantUser = (activeUser?.role === 'consultant' ? activeUser : users.find(u => u.id === 'consultant_001')) || activeUser || DEMO_USERS[1];
   const currentUser = activeUser || DEMO_USERS[0];
@@ -436,7 +420,6 @@ export function AppProvider({ children }) {
     return updated;
   };
 
-  // Derive flat messages list for legacy components
   const allMessages = conversations.flatMap(c => c.messages || []);
 
   const openChatWithThought = useCallback((thoughtId) => {
@@ -492,7 +475,6 @@ export function AppProvider({ children }) {
   };
 
   const loginUser = (identifierOrRole, passwordOrData) => {
-    // If called with identifier & password (e.g. Email/Mobile + Password)
     if (typeof passwordOrData === 'string') {
       const res = authLoginUser(identifierOrRole, passwordOrData);
       if (res.success) {
@@ -509,7 +491,6 @@ export function AppProvider({ children }) {
       return res;
     }
 
-    // Backwards compatibility if called with (role, customUserData)
     let targetUser;
     const userRole = identifierOrRole || 'client';
     const customUserData = passwordOrData;
@@ -590,7 +571,6 @@ export function AppProvider({ children }) {
   };
 
   const value = {
-    // Core state
     activeUser,
     currentUser,
     clientUser,
@@ -600,14 +580,12 @@ export function AppProvider({ children }) {
     switchDemoUser,
     switchRole,
 
-    // Entities
     thinks,
-    thoughts: thinks, // alias for backwards compatibility
+    thoughts: thinks,
     conversations,
     messages: allMessages,
     notifications,
 
-    // Actions
     submitThink,
     submitThought,
     acceptThink,
@@ -630,7 +608,6 @@ export function AppProvider({ children }) {
     setClientUser,
     updateUserProfile,
 
-    // Navigation & UI
     activeTab,
     setActiveTab,
     activeChatThoughtId,
@@ -645,17 +622,14 @@ export function AppProvider({ children }) {
     openChatWithThought,
     toggleSaveThought,
 
-    // Toast
     toast,
     showToast,
     closeToast,
 
-    // Call Modal
     activeCall,
     startCall,
     endCall,
 
-    // Compatibility props
     isAuthenticated,
     setIsAuthenticated,
     authMode,

@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { POSE_IMAGES, getHumanState, setHumanState, useHumanStore } from './useHumanStore';
 
-const VERTEX_SHADER = /* glsl */ `
+const VERTEX_SHADER = `
   uniform sampler2D uDepthA;
   uniform sampler2D uDepthB;
   uniform float uMix;
@@ -20,8 +20,7 @@ const VERTEX_SHADER = /* glsl */ `
   }
 `;
 
-// Clean crossfade fragment shader — never crops or clips edges when rotating in 2.5D
-const FRAGMENT_SHADER = /* glsl */ `
+const FRAGMENT_SHADER = `
   uniform sampler2D uTexA;
   uniform sampler2D uTexB;
   uniform float uMix;
@@ -62,11 +61,6 @@ function createPlaceholderTex(rgba = [0, 0, 0, 0]) {
   return tex;
 }
 
-/**
- * 2.5D Real Human Renderer mounted exclusively inside the HowItWorks Steps stage.
- * Renders 5 unique poses (stressed -> searching -> typing -> choosing -> relieved)
- * with smooth 0.55s crossfade and step-transition depth pulse.
- */
 export default function RealHuman3D({
   isMobile = false,
   reducedMotion = false,
@@ -81,7 +75,6 @@ export default function RealHuman3D({
   const emptyColor = useMemo(() => createPlaceholderTex([0, 0, 0, 0]), []);
   const emptyDepth = useMemo(() => createPlaceholderTex([0, 0, 0, 255]), []);
   const auraTex = useMemo(() => createSoftAuraTexture(), []);
-  // Subdivided plane enables true 3D vertex depth relief without any UV edge clipping
   const planeGeo = useMemo(() => new THREE.PlaneGeometry(2.5, 2.5, 64, 64), []);
 
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -222,7 +215,6 @@ export default function RealHuman3D({
     const f = fadeRef.current;
     const targetLoaded = loadedMapRef.current[f.toPose];
 
-    // Smooth 0.72s quintic crossfade once target pose texture is decoded
     if (f.progress < 1 && targetLoaded) {
       f.progress = Math.min(1, f.progress + dt / 0.72);
     }

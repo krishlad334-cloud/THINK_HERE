@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Tracks prefers-reduced-motion media query so animations and WebGL effects
- * gracefully degrade for motion-sensitive users.
- */
 export function useReducedMotion() {
   const [prefersReduced, setPrefersReduced] = useState(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return false;
@@ -22,10 +18,6 @@ export function useReducedMotion() {
   return prefersReduced;
 }
 
-/**
- * Tracks mobile/touch viewport status to scale down particle counts
- * and bypass heavy hover/cursor effects for 60fps performance.
- */
 export function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false;

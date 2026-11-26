@@ -88,7 +88,6 @@ export default function ClientSettings() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -108,9 +107,7 @@ export default function ClientSettings() {
       </div>
 
       <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: User Profile Overview Card */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Identity Card */}
           <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs space-y-5 text-center">
             <div className="relative inline-block mx-auto">
               <UserAvatar
@@ -145,7 +142,6 @@ export default function ClientSettings() {
               </span>
             </div>
 
-            {/* Quick Metrics */}
             <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-100">
               <div className="p-2.5 bg-slate-50 rounded-2xl text-center">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase">Thoughts</span>
@@ -161,7 +157,6 @@ export default function ClientSettings() {
               </div>
             </div>
 
-            {/* Security Badges */}
             <div className="pt-2 text-left space-y-2">
               <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
                 <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
@@ -178,7 +173,6 @@ export default function ClientSettings() {
             </div>
           </div>
 
-          {/* Quick Help Box */}
           <div className="bg-[#ecfeff] rounded-2xl border border-[#0891b2]/20 p-5 space-y-2">
             <h4 className="text-xs font-bold text-[#020617] flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#0891b2]" />
@@ -190,9 +184,7 @@ export default function ClientSettings() {
           </div>
         </div>
 
-        {/* Right Column: Settings & Forms */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Personal Information Card */}
           <div className="bg-white rounded-3xl border border-slate-200/90 p-4 sm:p-7 space-y-5 shadow-xs">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -258,7 +250,6 @@ export default function ClientSettings() {
             </div>
           </div>
 
-          {/* Contact Privacy & Safeguards Card (Requirement 10) */}
           <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 space-y-4 shadow-xs">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -318,7 +309,6 @@ export default function ClientSettings() {
             </div>
           </div>
 
-          {/* Submit Action Bar */}
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="submit"

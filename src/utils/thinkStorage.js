@@ -1,15 +1,3 @@
-/**
- * OverThink LocalStorage Management Service
- * Pure frontend prototype persistence layer supporting Client and Consultant connection workflow.
- * 
- * Keys used:
- * - think_users
- * - think_data (Thinks collection)
- * - think_conversations
- * - think_notifications
- * - think_active_user
- */
-
 export const STORAGE_KEYS = {
   USERS: 'think_users',
   THINKS: 'think_data',
@@ -157,14 +145,10 @@ export const DEMO_USERS = [
   }
 ];
 
-// Pure clean initial state: ZERO static fake submissions! Only user-created workflow data!
 export const INITIAL_THINKS = [];
 export const INITIAL_CONVERSATIONS = [];
 export const INITIAL_NOTIFICATIONS = [];
 
-/**
- * Storage read/write helper functions with graceful fallbacks
- */
 function safeGetItem(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -185,20 +169,14 @@ function safeSetItem(key, data) {
   }
 }
 
-/**
- * Initialize storage. Cleans out any old legacy static mock data so only genuine user-created
- * workflow data is displayed as requested.
- */
 export function initializeThinkStorage() {
   const existingUsers = safeGetItem(STORAGE_KEYS.USERS, null);
   if (!existingUsers) {
     safeSetItem(STORAGE_KEYS.USERS, DEMO_USERS);
   } else {
-    // Ensure all demo users exist with complete credentials and all new registered users are preserved
     let updated = false;
     const userMap = new Map();
 
-    // 1. Keep existing registered users and migrate any old @think.platform emails
     existingUsers.forEach(u => {
       let email = u.email;
       if (email && email.includes('@think.platform')) {
@@ -208,7 +186,6 @@ export function initializeThinkStorage() {
       userMap.set(u.id, { ...u, email });
     });
 
-    // 2. Ensure all DEMO_USERS are present with valid email, password & mobile
     DEMO_USERS.forEach(demo => {
       if (!userMap.has(demo.id)) {
         userMap.set(demo.id, demo);
@@ -221,7 +198,6 @@ export function initializeThinkStorage() {
           !current.password ||
           current.isVerified === undefined ||
           (demo.role === 'consultant' && (!current.skills || !current.services || !current.responseTime));
-        // Force canonical demo email and backfill rich demo profile metadata if absent
         if (missingDemoFields) {
           userMap.set(demo.id, {
             ...demo,
@@ -249,14 +225,12 @@ export function initializeThinkStorage() {
     }
   }
 
-  // Check if existing data is contaminated with old static dummy IDs
   const rawThinks = localStorage.getItem(STORAGE_KEYS.THINKS);
   if (!rawThinks) {
     safeSetItem(STORAGE_KEYS.THINKS, []);
   } else {
     try {
       const parsed = JSON.parse(rawThinks);
-      // If contains old hardcoded dummy data from previous templates, clean it to empty array
       if (Array.isArray(parsed) && parsed.some(t => t.id === 'thought-1' || t.id === 'thought-2' || t.id === 'think_001')) {
         safeSetItem(STORAGE_KEYS.THINKS, []);
         safeSetItem(STORAGE_KEYS.CONVERSATIONS, []);
@@ -358,7 +332,7 @@ export function saveThink(thinkData) {
     title: thinkData.title.trim(),
     description: (thinkData.description || '').trim(),
     category: thinkData.category || 'General Consultation',
-    status: 'pending', // Starts as Pending
+    status: 'pending',
     urgency: thinkData.urgency || 'Standard',
     createdAt: new Date().toISOString(),
     tags: thinkData.tags || [thinkData.category || 'General'],
@@ -368,7 +342,6 @@ export function saveThink(thinkData) {
   const updated = [newThink, ...currentThinks];
   safeSetItem(STORAGE_KEYS.THINKS, updated);
 
-  // Notify consultants about new submission
   addNotification({
     recipientId: null,
     recipientRole: 'consultant',
@@ -425,10 +398,6 @@ export function getConversationByThinkId(thinkId) {
   return convs.find(c => c.thinkId === thinkId) || null;
 }
 
-/**
- * Accept a Think and create a connected shared conversation.
- * Exclusivity check: only ONE consultant can accept!
- */
 export function acceptThink(thinkId, consultantUser) {
   const think = getThinkById(thinkId);
   if (!think) {
@@ -438,19 +407,16 @@ export function acceptThink(thinkId, consultantUser) {
   const consultant = consultantUser || getActiveUser();
   const existingConv = getConversationByThinkId(thinkId);
 
-  // If this consultant already accepted or a conversation already exists for them, open it
   if (existingConv && (!think.consultantId || think.consultantId === consultant.id)) {
     return { think, conversation: existingConv, alreadyAccepted: true };
   }
 
-  // Prevent duplicate acceptance by another consultant
   if (think.status !== 'pending' && think.status !== 'pending_human' && think.consultantId && think.consultantId !== consultant.id) {
     throw new Error(`This OverThink has already been accepted by ${think.assignedConsultantName || 'another consultant'}.`);
   }
 
   const conversationId = `conversation_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
-  // 1. Update Think in storage
   const updatedThink = updateThink(thinkId, {
     status: 'accepted',
     consultantId: consultant.id,
@@ -459,13 +425,11 @@ export function acceptThink(thinkId, consultantUser) {
     assignedConsultantAvatar: consultant.profileImage || consultant.avatar
   });
 
-  // Carry over any client follow-up notes sent before consultant acceptance
   const carriedMessages = (think.pendingMessages || []).map(m => ({
     ...m,
     conversationId
   }));
 
-  // 2. Create conversation object
   const newConversation = {
     id: conversationId,
     thinkId: think.id,
@@ -497,7 +461,6 @@ export function acceptThink(thinkId, consultantUser) {
   const currentConvs = getConversations();
   safeSetItem(STORAGE_KEYS.CONVERSATIONS, [newConversation, ...currentConvs]);
 
-  // 3. Notify the client
   addNotification({
     recipientId: think.clientId,
     recipientRole: 'client',
@@ -557,7 +520,6 @@ export function sendMessage(conversationId, senderUser, text, attachments = []) 
 
   const updatedMessages = [...(conv.messages || []), newMessage];
 
-  // If conversation was 'accepted', transition to 'in_progress' once chat begins
   const newStatus = (conv.status === 'accepted' || conv.status === 'pending') ? 'in_progress' : conv.status;
 
   updateConversation(conversationId, {
@@ -565,7 +527,6 @@ export function sendMessage(conversationId, senderUser, text, attachments = []) 
     status: newStatus
   });
 
-  // Sync think status to in_progress
   if (conv.thinkId) {
     const think = getThinkById(conv.thinkId);
     if (think && (think.status === 'accepted' || think.status === 'pending')) {

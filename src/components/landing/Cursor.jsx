@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-/**
- * Simple, understated glowing cursor accent:
- * Uses the native crisp OS pointer/hand cursor with a subtle soft
- * brand-secondary (#5EEAD4) ambient glow that brightens gently on hover.
- */
 export default function Cursor({ disabled = false }) {
   const glowRef = useRef(null);
   const visibleRef = useRef(false);

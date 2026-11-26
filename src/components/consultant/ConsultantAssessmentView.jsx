@@ -12,7 +12,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-const PASSING_THRESHOLD = 10; // Exactly 10 right answers out of 15 required to pass into consultant side
+const PASSING_THRESHOLD = 10;
 
 const CONSULTANT_QUESTIONS = [
   {
@@ -305,7 +305,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
     }`}>
       {isStandalone ? (
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-16 px-4 sm:px-8 lg:px-12 w-full flex items-center justify-between gap-4">
-          {/* Left: Logo & Subtitle */}
           <div className="flex items-center gap-3 min-w-0">
             <Logo size="sm" showTagline={false} />
             <div className="hidden sm:block h-5 w-px bg-slate-200 mx-0.5" />
@@ -314,7 +313,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
             </span>
           </div>
 
-          {/* Right: Mandatory Exam Tag at the end of the navbar */}
           <div className="flex items-center flex-shrink-0">
             <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-cyan-50 text-cyan-900 border border-cyan-200 shadow-2xs">
               Mandatory Exam
@@ -322,7 +320,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
           </div>
         </header>
       ) : (
-        /* Top Banner Card for In-App Dashboard Tab */
         <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-2">
           <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -368,7 +365,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
         {!isSubmitted ? (
           <div className="w-full my-auto animate-in fade-in duration-300">
             <div className="w-full bg-white rounded-3xl border border-slate-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col">
-              {/* Card Top Animated Progress Bar */}
               <div className="w-full bg-slate-100 h-1.5 overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-[#0891b2] to-[#22d3ee] transition-all duration-300"
@@ -376,7 +372,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 />
               </div>
 
-              {/* Card Header: Meta Strip */}
               <div className="px-5 sm:px-7 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between gap-3 bg-white">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-3 py-1 rounded-xl bg-[#020617] text-white text-xs font-black shadow-2xs">
@@ -393,13 +388,11 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 </div>
               </div>
 
-              {/* Card Body: Question Prompt & 4 Options */}
               <div className="p-5 sm:p-7 lg:p-8 space-y-5 flex-1">
                 <h2 className="text-base sm:text-lg md:text-xl font-black text-slate-900 leading-snug tracking-tight">
                   {currentQ.question}
                 </h2>
 
-                {/* 4 Interactive Option Cards */}
                 <div className="space-y-2.5 sm:space-y-3">
                   {currentQ.options.map((opt) => {
                     const isSelected = answers[currentQ.id] === opt.id;
@@ -413,7 +406,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                             : 'border-slate-200/80 bg-white hover:border-[#0891b2]/40 hover:bg-slate-50/70 shadow-2xs'
                         }`}
                       >
-                        {/* Option Letter Indicator */}
                         <div
                           className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black flex-shrink-0 transition-all ${
                             isSelected
@@ -424,7 +416,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                           {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : opt.id}
                         </div>
 
-                        {/* Option Text */}
                         <p className={`text-xs sm:text-sm leading-relaxed font-medium transition-colors ${
                           isSelected ? 'text-slate-950 font-bold' : 'text-slate-700 group-hover:text-slate-900'
                         }`}>
@@ -436,9 +427,7 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 </div>
               </div>
 
-              {/* Card Footer: Seamless Integrated Navigation Controls */}
               <div className="px-5 sm:px-7 py-3.5 sm:py-4 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between gap-3">
-                {/* Previous Button */}
                 <button
                   type="button"
                   disabled={currentIndex === 0}
@@ -449,7 +438,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   <span>Previous</span>
                 </button>
 
-                {/* Center Question / Requirement Status */}
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
                   <span className="hidden sm:inline text-slate-400">Question</span>
                   <span className="px-2 py-0.5 rounded-md bg-[#020617] text-white text-xs font-black">
@@ -460,7 +448,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                   <span className="hidden md:inline text-[#0891b2] font-semibold">10+ right to pass</span>
                 </div>
 
-                {/* Next / Submit Button */}
                 {currentIndex < totalQuestions - 1 ? (
                   <button
                     type="button"
@@ -485,7 +472,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
           </div>
         ) : (
           <div className="w-full space-y-6 animate-in zoom-in-95 duration-400">
-            {/* Header Triumph Card */}
             <div className={`p-6 sm:p-10 rounded-3xl border-2 text-center space-y-5 shadow-xl ${
               isPassed
                 ? 'bg-gradient-to-b from-[#ecfeff] to-white border-[#22d3ee]'
@@ -521,7 +507,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 </p>
               </div>
 
-              {/* Score Display Stat Grid */}
               <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-2">
                 <div className="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
                   <div className={`text-2xl sm:text-3xl font-black font-mono ${isPassed ? 'text-[#0891b2]' : 'text-rose-600'}`}>
@@ -543,7 +528,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 {isPassed ? (
                   <button
@@ -567,7 +551,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
               </div>
             </div>
 
-            {/* Detailed Question Review List */}
             <div className="w-full bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 space-y-4 shadow-sm">
               <div className="flex flex-col gap-2 pb-3 border-b border-slate-100 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="min-w-0 text-base font-extrabold text-slate-900 tracking-tight flex items-start gap-2 sm:items-center">
@@ -690,7 +673,6 @@ export default function ConsultantAssessmentView({ onComplete, isStandalone = tr
         </div>
       )}
 
-      {/* Footer */}
       {isStandalone && (
         <footer className="py-4 px-6 border-t border-slate-200/80 bg-white text-center text-xs text-slate-400 w-full">
           OverThink Verified Consultant Certification • 24-Hour Human Guidance Standards

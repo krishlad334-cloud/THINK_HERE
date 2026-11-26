@@ -3,19 +3,9 @@ import CharacterVisual from './CharacterVisual';
 import FloatingWindows from './FloatingWindows';
 import { AlertTriangle, XCircle, CheckCircle2, Bot, Users } from 'lucide-react';
 
-/**
- * Scene2SearchingEverywhere
- * PRIMARY ANIMATION REFERENCE
- * Heading: "More Answers. Still No Clear Direction."
- * Description: "You can search everywhere, but finding advice that truly fits your situation is different."
- * Highlight text: "Your problem deserves more than a generic answer."
- * 
- * Includes the "AI Alone vs. OverThink" comparison card.
- */
 export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
   return (
     <div className="relative w-full min-h-[720px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 overflow-hidden">
-      {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mb-6 z-30">
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           More Answers. Still <span className="text-amber-600">No Clear Direction</span>.
@@ -25,19 +15,15 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
           You can search everywhere, but finding advice that truly fits your situation is different.
         </p>
 
-        {/* Highlight Callout Pill */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900 text-amber-300 text-xs sm:text-sm font-semibold shadow-md">
           <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 flex-shrink-0" />
           <span>"Your problem deserves more than a generic answer."</span>
         </div>
       </div>
 
-      {/* Main Visual Stage: Character Immersed in 3-Layer Depth Sandwich */}
       <div className="relative w-full max-w-6xl mx-auto min-h-[480px] sm:min-h-[560px] flex items-center justify-center">
-        {/* Layer 1: Background Floating Windows (Behind the human) */}
         <FloatingWindows progress={progress} layer="back" />
 
-        {/* Layer 2: Central Cutout Character with 3D Tilt */}
         <div
           className="relative z-10 transition-transform duration-300 pointer-events-auto"
           style={{
@@ -54,7 +40,6 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
           />
         </div>
 
-        {/* Layer 3: Foreground Floating Windows & Thought Climax (In front of the human) */}
         <FloatingWindows progress={progress} layer="front" />
       </div>
 
@@ -69,7 +54,6 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {/* Card A: Searching AI Alone */}
           <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-rose-200/80 shadow-[0_4px_20px_rgba(244,63,94,0.05)] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -103,7 +87,6 @@ export default function Scene2SearchingEverywhere({ progress = 0.5 }) {
             </ul>
           </div>
 
-          {/* Card B: With OverThink Human Guidance */}
           <div className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-cyan-50/70 to-sky-50/70 border-2 border-cyan-300/80 shadow-[0_8px_30px_rgba(6,182,212,0.1)] ring-1 ring-cyan-500/15 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-cyan-100">
               <div className="flex items-center gap-2">

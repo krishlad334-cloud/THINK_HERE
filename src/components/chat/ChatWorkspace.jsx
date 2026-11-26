@@ -58,7 +58,6 @@ export default function ChatWorkspace() {
 
   const allThinks = thinks || thoughts || [];
 
-  // Filter conversations strictly for the active user (security/isolation requirement)
   const myConversations = conversations.filter(c => {
     if (!activeUser) return false;
     if (activeUser.role === 'client') {
@@ -73,7 +72,6 @@ export default function ChatWorkspace() {
   const [showContextDrawer, setShowContextDrawer] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
-  // Active conversation selection
   const currentConversation = myConversations.find(c => c.id === activeConversationId)
     || (activeChatThoughtId ? myConversations.find(c => c.thinkId === activeChatThoughtId) : null)
     || (selectedThoughtId ? myConversations.find(c => c.thinkId === selectedThoughtId) : null)
@@ -81,10 +79,8 @@ export default function ChatWorkspace() {
 
   const activeConvId = currentConversation?.id || null;
 
-  // Connected Think details
   const activeThought = allThinks.find(t => t.id === currentConversation?.thinkId) || null;
 
-  // Mobile master-detail view: 'list' on phone shows conversation list, 'chat' shows active chat
   const [mobileView, setMobileView] = useState(currentConversation ? 'chat' : 'list');
 
   const [activeMsgMenuId, setActiveMsgMenuId] = useState(null);
@@ -106,7 +102,6 @@ export default function ChatWorkspace() {
     setInputMessage(prev => prev + emoji);
   };
 
-  // Close emoji picker on outside click
   useEffect(() => {
     const handleEmojiClickOutside = (e) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
@@ -119,14 +114,12 @@ export default function ChatWorkspace() {
     }
   }, [showEmojiPicker]);
 
-  // Mark messages as read when opening conversation
   useEffect(() => {
     if (activeConvId) {
       markConversationRead(activeConvId);
     }
   }, [activeConvId, markConversationRead]);
 
-  // Scroll to bottom on messages update
   const messageCount = currentConversation?.messages?.length || 0;
   useEffect(() => {
     if (messageCount >= 0) {
@@ -134,7 +127,6 @@ export default function ChatWorkspace() {
     }
   }, [messageCount]);
 
-  // Close popups when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(e.target)) {
@@ -203,7 +195,6 @@ export default function ChatWorkspace() {
     });
   };
 
-  // Search filter
   const filteredConversations = searchQuery
     ? myConversations.filter(c => {
         const q = searchQuery.toLowerCase();
@@ -218,7 +209,6 @@ export default function ChatWorkspace() {
       })
     : myConversations;
 
-  // Empty state when no conversations exist for the active user
   if (myConversations.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-white p-6 sm:p-12">
@@ -288,7 +278,6 @@ export default function ChatWorkspace() {
   return (
     <div className="w-full h-full flex flex-col md:flex-row bg-white overflow-hidden select-none">
       <div className={`w-full md:w-72 lg:w-80 border-r border-slate-200/90 flex flex-col bg-[#fcfdfe] flex-shrink-0 h-full ${mobileView === 'chat' ? 'hidden md:flex' : 'flex'}`}>
-        {/* Rooms Header */}
         <div className="p-3.5 border-b border-slate-200/80 bg-white space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -305,7 +294,6 @@ export default function ChatWorkspace() {
             </span>
           </div>
 
-          {/* Search Bar */}
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -318,7 +306,6 @@ export default function ChatWorkspace() {
           </div>
         </div>
 
-        {/* Room Items List */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100/80 p-2 space-y-1">
           {filteredConversations.length === 0 ? (
             <div className="p-6 text-center text-xs text-slate-400">
@@ -334,7 +321,6 @@ export default function ChatWorkspace() {
               ? conv.messages[conv.messages.length - 1]
               : null;
 
-            // Unread count: messages sent by partner where isRead === false
             const unreadCount = (conv.messages || []).filter(m => m.senderId !== activeUser.id && !m.isRead).length;
 
             return (
@@ -352,7 +338,6 @@ export default function ChatWorkspace() {
                     : 'hover:bg-slate-100/70 border-l-[3.5px] border-transparent'
                 }`}
               >
-                {/* Avatar with Online Ring */}
                 <div className="relative flex-shrink-0 mt-0.5">
                   <UserAvatar
                     src={contactAvatar}
@@ -373,7 +358,6 @@ export default function ChatWorkspace() {
                     </span>
                   </div>
 
-                  {/* Think ID & Category */}
                   <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                     <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
                       #{conv.thinkId}
@@ -410,11 +394,8 @@ export default function ChatWorkspace() {
       </div>
 
       <div className={`flex-1 flex flex-col h-full bg-[#f8fafc] min-w-0 overflow-hidden ${mobileView === 'list' ? 'hidden md:flex' : 'flex'}`}>
-        {/* Top Chat Header - WhatsApp Inspired Clean Layout */}
         <div className="px-2.5 sm:px-4 py-2 sm:py-2.5 border-b border-slate-200/90 flex items-center justify-between bg-white z-20 flex-shrink-0 shadow-2xs gap-1 sm:gap-3 h-14 sm:h-16">
-          {/* Partner Info (WhatsApp Style) */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            {/* Mobile Back Button */}
             <button
               type="button"
               onClick={() => setMobileView('list')}
@@ -425,7 +406,6 @@ export default function ChatWorkspace() {
               <ArrowLeft className="w-5 h-5 text-slate-700" />
             </button>
 
-            {/* Profile Avatar */}
             <div
               className="relative flex-shrink-0 cursor-pointer"
               onClick={() => setShowContextDrawer(prev => !prev)}
@@ -439,7 +419,6 @@ export default function ChatWorkspace() {
               />
             </div>
 
-            {/* Name & Online Status Column (Clean WhatsApp Stack - ZERO wrapping!) */}
             <div
               className="min-w-0 flex-1 cursor-pointer"
               onClick={() => setShowContextDrawer(prev => !prev)}
@@ -466,9 +445,7 @@ export default function ChatWorkspace() {
             </div>
           </div>
 
-          {/* Right Action Header: Video Call, Audio Call & Options Menu */}
           <div className="flex items-center gap-0.5 sm:gap-1.5 flex-shrink-0">
-            {/* Live Video Call Button (WhatsApp Style) */}
             <button
               type="button"
               onClick={() => handleStartCall('video')}
@@ -480,7 +457,6 @@ export default function ChatWorkspace() {
               <span className="hidden lg:inline text-xs font-semibold text-slate-700">Video</span>
             </button>
 
-            {/* Audio Voice Call Button (WhatsApp Style) */}
             <button
               type="button"
               onClick={() => handleStartCall('audio')}
@@ -492,7 +468,6 @@ export default function ChatWorkspace() {
               <span className="hidden lg:inline text-xs font-semibold text-slate-700">Call</span>
             </button>
 
-            {/* Status Dropdown Pill Button (No "Status:" prefix, clean status badge) */}
             <div className="relative hidden md:block" ref={statusMenuRef}>
               {(() => {
                 const config = {
@@ -575,7 +550,6 @@ export default function ChatWorkspace() {
               )}
             </div>
 
-            {/* WhatsApp-Style 3-Dots More Options Menu */}
             <div className="relative" ref={moreMenuRef}>
               <button
                 type="button"
@@ -597,7 +571,6 @@ export default function ChatWorkspace() {
                   onClick={(e) => e.stopPropagation()}
                   className="absolute right-0 top-full mt-1.5 z-50 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 animate-in fade-in zoom-in-95 duration-100"
                 >
-                  {/* Status Section */}
                   <div className="px-3.5 py-2 border-b border-slate-100">
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1.5">
                       Consultation Status
@@ -645,7 +618,6 @@ export default function ChatWorkspace() {
                     </div>
                   </div>
 
-                  {/* Think Context Action */}
                   <div className="p-1.5 border-b border-slate-100">
                     <button
                       type="button"
@@ -660,7 +632,6 @@ export default function ChatWorkspace() {
                     </button>
                   </div>
 
-                  {/* Think ID Copy Action */}
                   <div className="p-1.5">
                     <button
                       type="button"
@@ -687,7 +658,6 @@ export default function ChatWorkspace() {
           </div>
         </div>
 
-        {/* Collapsible Original Think Details Context Drawer */}
         {showContextDrawer && activeThought && (
           <div className="bg-white border-b border-slate-200 p-4 sm:p-5 animate-in slide-in-from-top-2 duration-150 space-y-3 shadow-xs">
             <div className="flex items-start justify-between gap-4">
@@ -715,7 +685,6 @@ export default function ChatWorkspace() {
               </button>
             </div>
 
-            {/* Attachments preview */}
             {activeThought.attachments && activeThought.attachments.length > 0 && (
               <div className="pt-2 border-t border-slate-100 flex items-center gap-2 flex-wrap">
                 <span className="text-[11px] font-bold text-slate-500">Attachments:</span>
@@ -736,7 +705,6 @@ export default function ChatWorkspace() {
 
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-5 bg-[#f8fafc]/90">
           <div className="max-w-3xl sm:max-w-4xl mx-auto space-y-4">
-            {/* Consultation Connected Banner at Top */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-2.5 sm:p-4 shadow-xs text-center space-y-1 max-w-xl mx-auto mb-3">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] text-[10px] sm:text-[11px] font-bold">
                 <CheckCircle className="w-3.5 h-3.5 text-[#0891b2]" />
@@ -766,7 +734,6 @@ export default function ChatWorkspace() {
                 const isMenuOpen = activeMsgMenuId === msg.id;
 
                 if (!isMine) {
-                  // Partner / Consultant Message (Incoming)
                   return (
                     <div
                       key={msg.id}
@@ -801,7 +768,6 @@ export default function ChatWorkspace() {
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
 
-                            {/* Attachments preview inside bubble */}
                             {msg.attachments && msg.attachments.length > 0 && (
                               <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap gap-1.5">
                                 {msg.attachments.map((att, idx) => (
@@ -818,7 +784,6 @@ export default function ChatWorkspace() {
                             )}
                           </div>
 
-                          {/* Hover Trigger */}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -860,7 +825,6 @@ export default function ChatWorkspace() {
                     </div>
                   );
                 } else {
-                  // Current User Message (Outgoing)
                   return (
                     <div
                       key={msg.id}
@@ -890,7 +854,6 @@ export default function ChatWorkspace() {
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
 
-                            {/* Attachments preview inside bubble */}
                             {msg.attachments && msg.attachments.length > 0 && (
                               <div className="mt-2.5 pt-2 border-t border-white/20 flex flex-wrap gap-1.5">
                                 {msg.attachments.map((att, idx) => (
@@ -911,7 +874,6 @@ export default function ChatWorkspace() {
                             </div>
                           </div>
 
-                          {/* Hover Trigger */}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -972,7 +934,6 @@ export default function ChatWorkspace() {
 
         <div className="p-2 sm:p-4 bg-white border-t border-slate-200/90 flex-shrink-0 z-10 shadow-xs pb-[max(0.35rem,env(safe-area-inset-bottom))]">
           <div className="max-w-3xl sm:max-w-4xl mx-auto w-full space-y-1.5 sm:space-y-2">
-            {/* Attachments preview if selected */}
             {attachments.length > 0 && (
               <div className="flex flex-wrap gap-1.5 px-1">
                 {attachments.map((att) => (
@@ -1018,7 +979,6 @@ export default function ChatWorkspace() {
                 <Mic className="w-4 h-4" />
               </button>
 
-              {/* Emoji Picker Button */}
               <div className="relative" ref={emojiPickerRef}>
                 <button
                   type="button"

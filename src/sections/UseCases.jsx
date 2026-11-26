@@ -40,11 +40,6 @@ const USE_CASES = [
   },
 ];
 
-/**
- * Use Cases Pinned Horizontal Gallery:
- * The guide stays tucked in the corner and his aura glowColor shifts
- * dynamically to match each card as you scroll or hover.
- */
 export default function UseCases({ isMobile = false, reducedMotion = false }) {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);

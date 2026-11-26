@@ -5,10 +5,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * Connects Lenis smooth scrolling to GSAP ScrollTrigger.
- * Respects prefers-reduced-motion and provides a clean scrollTo helper.
- */
 export function useSmoothScroll({ disabled = false } = {}) {
   const lenisRef = useRef(null);
 

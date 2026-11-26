@@ -31,7 +31,6 @@ export default function ThoughtFeedModeration() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Top Banner (Freelancer.com Admin Style) */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -49,7 +48,6 @@ export default function ThoughtFeedModeration() {
           </div>
         </div>
 
-        {/* Filter Tabs */}
         <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold overflow-x-auto whitespace-nowrap max-w-full scrollbar-none">
           <button
             onClick={() => setFilterStatus('all')}
@@ -86,7 +84,6 @@ export default function ThoughtFeedModeration() {
         </div>
       </div>
 
-      {/* Moderation Search & Quick Filter Bar */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
         <div className="relative max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -100,7 +97,6 @@ export default function ThoughtFeedModeration() {
         </div>
       </div>
 
-      {/* Full-Width Moderation Table */}
       <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">

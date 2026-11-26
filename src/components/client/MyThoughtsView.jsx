@@ -26,7 +26,6 @@ export default function MyThoughtsView() {
   const user = activeUser || currentUser;
   const allThinks = thinks || thoughts || [];
 
-  // Filter strictly to only thoughts submitted by the currently logged-in user
   const myThinks = allThinks.filter((t) => {
     if (!user) return false;
     if (t.clientId && user.id && t.clientId === user.id) return true;
@@ -41,7 +40,6 @@ export default function MyThoughtsView() {
 
   const categories = ['All', 'Career & Jobs', 'Product & Innovation', 'Business & Startups', 'Technology & IT', 'Marketing & Growth'];
 
-  // Filter thoughts by category and search
   const filtered = myThinks.filter((t) => {
     if (activeCategory !== 'All' && t.category !== activeCategory) {
       return false;
@@ -111,7 +109,6 @@ export default function MyThoughtsView() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -131,9 +128,7 @@ export default function MyThoughtsView() {
         </button>
       </div>
 
-      {/* Search & Category Filter Ribbon */}
       <div className="space-y-3.5">
-        {/* Full-width Responsive Search Bar */}
         <div className="relative w-full">
           <div className="relative flex items-center">
             <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3.5 sm:left-4 pointer-events-none" />
@@ -157,9 +152,7 @@ export default function MyThoughtsView() {
           </div>
         </div>
 
-        {/* Category Pills & Live Count Ribbon */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-          {/* Horizontal Scrolling Category Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 sm:pb-0 scrollbar-none">
             {categories.map((cat) => (
               <button
@@ -176,7 +169,6 @@ export default function MyThoughtsView() {
             ))}
           </div>
 
-          {/* Results Count & Clear Filter Indicator */}
           <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-slate-500 font-medium px-1 sm:px-0 flex-shrink-0">
             <span>
               Showing <strong className="text-slate-900 font-bold">{filtered.length}</strong> of {myThinks.length} thoughts
@@ -197,7 +189,6 @@ export default function MyThoughtsView() {
         </div>
       </div>
 
-      {/* Thoughts Feed */}
       {filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 sm:p-14 text-center">
           <MessageSquare className="w-10 h-10 text-slate-400 mx-auto mb-3" />
@@ -271,7 +262,6 @@ export default function MyThoughtsView() {
                     {thought.description}
                   </p>
 
-                  {/* Consultant Assigned info */}
                   <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-500">
                     {thought.assignedConsultantName ? (
                       <span className="flex items-center gap-1.5 font-semibold text-slate-800 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
@@ -297,7 +287,6 @@ export default function MyThoughtsView() {
                   </div>
                 </div>
 
-                {/* Right Action buttons */}
                 <div className="flex items-center gap-2 self-end md:self-center flex-shrink-0">
                   {thought.assignedConsultantName && (
                     <button

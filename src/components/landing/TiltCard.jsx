@@ -1,9 +1,5 @@
 import React, { useRef, useState } from 'react';
 
-/**
- * 3D Perspective Tilt Card with dynamic light-reflection sheen
- * and animated brand-primary -> brand-secondary gradient border.
- */
 export default function TiltCard({
   children,
   className = '',

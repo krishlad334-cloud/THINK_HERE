@@ -14,7 +14,6 @@ if (typeof window !== 'undefined') {
   );
 }
 
-// Force browser tab and credential managers to refresh the Option 2 favicon
 if (typeof document !== 'undefined') {
   const updateFavicon = () => {
     const existing = document.querySelectorAll("link[rel*='icon']");

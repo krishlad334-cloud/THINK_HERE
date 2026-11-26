@@ -10,12 +10,6 @@ const NAV_LINKS = [
   { label: '24h Promise', target: '#promise-24h' },
 ];
 
-/**
- * Sticky glassmorphic Navbar:
- * - Uses the original OverThink vector Logo component
- * - Hides on scroll down, shows on scroll up with backdrop blur
- * - Preserves Sign In, Share your thought, and Workspace routes
- */
 export default function Navbar({
   onNavigate,
   onSignIn,
@@ -42,7 +36,6 @@ export default function Navbar({
       }
       lastY.current = y;
 
-      // Track active section in viewport using viewport coordinates (works inside GSAP pin-spacers)
       const thresholdY = window.innerHeight * 0.42;
       let current = '';
       for (const item of NAV_LINKS) {

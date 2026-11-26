@@ -45,7 +45,6 @@ export default function ClientFindConsultants() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
           <ShieldCheck className="w-7 h-7 text-[#020617]" />
@@ -56,7 +55,6 @@ export default function ClientFindConsultants() {
         </p>
       </div>
 
-      {/* Filter and Search Ribbon */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200">
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           {skillsList.map((skill) => (
@@ -86,7 +84,6 @@ export default function ClientFindConsultants() {
         </div>
       </div>
 
-      {/* Consultants Grid - Wide 3-column Responsive Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((c) => (
           <div
@@ -134,7 +131,6 @@ export default function ClientFindConsultants() {
                 {c.bio}
               </p>
 
-              {/* Skills Tags */}
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {c.skills?.slice(0, 4).map((skill, idx) => (
                   <span

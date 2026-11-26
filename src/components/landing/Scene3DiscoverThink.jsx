@@ -3,14 +3,6 @@ import CharacterVisual from './CharacterVisual';
 import Logo from '../common/Logo';
 import { Send, Shield, Users, Rocket, Cloud, Briefcase } from 'lucide-react';
 
-/**
- * Scene3DiscoverThink
- * THE TURNING POINT
- * Heading: "Discover THINK. Find The Right Perspective."
- * Description: "One platform to share your challenges and connect with people who understand how to solve them."
- * 
- * Features interactive problem preset chips that update the prompt and tags in real time!
- */
 export default function Scene3DiscoverThink({ progress = 0.5 }) {
   const scenarios = [
     {
@@ -36,7 +28,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
   const [activeScenarioId, setActiveScenarioId] = useState('growth');
   const activeScenario = scenarios.find((s) => s.id === activeScenarioId) || scenarios[0];
 
-  // Typing simulation based on scroll progress (0.2 to 0.8)
   const fullText = activeScenario.text;
   const typeRatio = Math.max(0, Math.min(1, (progress - 0.2) / 0.5));
   const charsCount = Math.floor(typeRatio * fullText.length);
@@ -45,7 +36,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
 
   return (
     <div className="relative w-full min-h-[640px] sm:min-h-[720px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6">
-      {/* Narrative Section Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 mb-8 z-10">
         <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Discover <span className="text-[#020617]">THINK</span>. Find The Right <span className="text-[#0891b2]">Perspective</span>.
@@ -56,9 +46,7 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
         </p>
       </div>
 
-      {/* Main Split Layout: Character on Left, OverThink Submission Interface on Right */}
       <div className="relative w-full max-w-6xl xl:max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        {/* Left Column: Character Discovering THINK (Hopeful, Upright, Hand on Mouse) */}
         <div className="lg:col-span-5 flex justify-center">
           <div
             className="transition-transform duration-500 w-full max-w-[360px] sm:max-w-[420px]"
@@ -76,7 +64,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
           </div>
         </div>
 
-        {/* Right Column: The Real OverThink Submission Interface */}
         <div className="lg:col-span-7">
           <div
             className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_20px_60px_rgba(8,145,178,0.08)] ring-1 ring-black/5 p-5 sm:p-8 space-y-5 transition-all duration-500"
@@ -85,7 +72,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
               opacity: Math.min(progress * 2, 1)
             }}
           >
-            {/* Top Brand Bar */}
             <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 gap-2">
               <Logo size="sm" showTagline={false} />
               <div className="flex items-center gap-2">
@@ -96,7 +82,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* Prompt Header */}
             <div className="space-y-1">
               <h3 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">
                 What are you thinking about?
@@ -106,7 +91,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
               </p>
             </div>
 
-            {/* Interactive Scenario Chips */}
             <div className="space-y-1.5">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                 Tap an example scenario to test:
@@ -134,14 +118,12 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* The Live Typing Problem Input Box */}
             <div className="relative rounded-2xl bg-slate-50/90 border-2 border-cyan-500/70 p-3.5 sm:p-4 shadow-inner ring-2 ring-cyan-500/10">
               <div className="min-h-[75px] sm:min-h-[90px] font-sans text-xs sm:text-sm md:text-base text-slate-800 leading-relaxed">
                 {currentTyped}
                 <span className="inline-block w-1.5 sm:w-2 h-3.5 sm:h-4 ml-1 bg-[#0891b2] animate-pulse align-middle" />
               </div>
 
-              {/* Problem Submission Status Bar */}
               <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs">
                 <span className="text-[11px] text-cyan-700 font-semibold flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
@@ -153,7 +135,6 @@ export default function Scene3DiscoverThink({ progress = 0.5 }) {
               </div>
             </div>
 
-            {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-2 gap-3 sm:gap-2">
               <div className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Users className="w-4 h-4 text-cyan-600 flex-shrink-0" />

@@ -137,7 +137,6 @@ export default function NewThoughtModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in duration-150">
       <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92dvh]">
-        {/* Header */}
         <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-[#ecfeff] text-[#020617] rounded-xl flex-shrink-0">
@@ -160,7 +159,6 @@ export default function NewThoughtModal() {
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
           {validationError && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
@@ -168,7 +166,6 @@ export default function NewThoughtModal() {
             </div>
           )}
 
-          {/* Title */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               OverThink Title *
@@ -183,7 +180,6 @@ export default function NewThoughtModal() {
             />
           </div>
 
-          {/* Category Selection */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Category *
@@ -206,7 +202,6 @@ export default function NewThoughtModal() {
             </div>
           </div>
 
-          {/* Description */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -260,7 +255,6 @@ export default function NewThoughtModal() {
             </div>
           </div>
 
-          {/* Attachments Section */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -325,7 +319,6 @@ export default function NewThoughtModal() {
             )}
           </div>
 
-          {/* Footer Submit Button */}
           <div className="pt-2">
             <button
               type="submit"

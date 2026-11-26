@@ -66,7 +66,6 @@ export default function NotificationDropdown() {
         )}
       </button>
 
-      {/* Mobile backdrop overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-slate-900/20 backdrop-blur-xs z-40 sm:hidden"
@@ -94,7 +93,6 @@ export default function NotificationDropdown() {
                   Mark all as read
                 </button>
               )}
-              {/* Close button on mobile */}
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}

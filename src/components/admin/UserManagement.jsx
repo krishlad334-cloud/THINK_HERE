@@ -11,7 +11,7 @@ import {
 
 export default function UserManagement() {
   const { consultants, setConsultantVerification, clientUser } = useApp();
-  const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'verified' | 'pending' | 'clients'
+  const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [inspectingUser, setInspectingUser] = useState(null);
 
@@ -30,7 +30,6 @@ export default function UserManagement() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Top Banner (Freelancer.com Admin Style) */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -48,7 +47,6 @@ export default function UserManagement() {
           </div>
         </div>
 
-        {/* Filter Pills */}
         <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold overflow-x-auto whitespace-nowrap max-w-full scrollbar-none">
           <button
             onClick={() => setActiveFilter('all')}
@@ -77,7 +75,6 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* Search Bar */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
         <div className="relative max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -91,7 +88,6 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* User Verification Table / Grid */}
       {activeFilter === 'clients' ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-xs">
           <h3 className="text-sm font-bold text-slate-900">Registered Platform Clients</h3>
@@ -171,7 +167,6 @@ export default function UserManagement() {
                   </div>
                 </div>
 
-                {/* Skills Preview */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {c.skills?.slice(0, 4).map((s, idx) => (
                     <span key={idx} className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
@@ -181,7 +176,6 @@ export default function UserManagement() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                 <button
                   onClick={() => setInspectingUser(c)}
@@ -214,7 +208,6 @@ export default function UserManagement() {
         </div>
       )}
 
-      {/* Inspect Credentials Modal */}
       {inspectingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-2.5 sm:p-4 animate-in fade-in">
           <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col p-4 sm:p-6 max-h-[90dvh] overflow-y-auto space-y-4">

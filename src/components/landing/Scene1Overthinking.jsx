@@ -13,18 +13,10 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-/**
- * Scene1Overthinking
- * Expansive Wide Hero Layout (matching the TimePe reference layout):
- * - Left column: Narrative headline, dilemma cards, and call-to-actions
- * - Right column: Cinematic real human video animation with 3D depth
- * - Bottom: Full-width industry specialization pill strip
- */
 export default function Scene1Overthinking({
   progress = 0.5,
   onStartThink
 }) {
-  // Thought bubble progression milestones
   const showBubble1 = progress >= 0.15;
   const showBubble2 = progress >= 0.35;
   const showBubble3 = progress >= 0.55;
@@ -41,9 +33,7 @@ export default function Scene1Overthinking({
   return (
     <div className="relative w-full min-h-[640px] lg:min-h-[720px] flex flex-col justify-center py-10 lg:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
-        {/* LEFT COLUMN: HERO NARRATIVE & ACTION CTAS */}
         <div className="lg:col-span-7 space-y-5 lg:space-y-6 text-left">
-          {/* Top Badge */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50/90 border border-amber-200/70 text-[11px] font-semibold text-amber-800 shadow-2xs">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
@@ -51,12 +41,10 @@ export default function Scene1Overthinking({
             </div>
           </div>
 
-          {/* Main Headline */}
           <h1 className="text-3xl sm:text-5xl xl:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
             Every Big Decision Starts With A <span className="text-[#0891b2]">Question</span>.
           </h1>
 
-          {/* Subheading */}
           <div className="space-y-2">
             <h2 className="text-base sm:text-xl font-bold text-slate-800">
               Turn Overthinking Into Validated Action.
@@ -66,9 +54,7 @@ export default function Scene1Overthinking({
             </p>
           </div>
 
-          {/* Thought Dilemma Grid Cards (highlight with scroll progress) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            {/* Dilemma 1 */}
             <div
               className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble1
@@ -82,7 +68,6 @@ export default function Scene1Overthinking({
               <span className="text-xs font-bold text-slate-800">"How do I solve this?"</span>
             </div>
 
-            {/* Dilemma 2 */}
             <div
               className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble2
@@ -96,7 +81,6 @@ export default function Scene1Overthinking({
               <span className="text-xs font-bold text-slate-800">"What should I do next?"</span>
             </div>
 
-            {/* Dilemma 3 */}
             <div
               className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble3
@@ -110,7 +94,6 @@ export default function Scene1Overthinking({
               <span className="text-xs font-bold text-slate-800">"Am I making the right decision?"</span>
             </div>
 
-            {/* Dilemma 4 */}
             <div
               className={`p-3.5 rounded-2xl bg-white/95 backdrop-blur-xs border transition-all duration-300 flex items-center gap-3 ${
                 showBubble4
@@ -125,7 +108,6 @@ export default function Scene1Overthinking({
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3 pt-3">
             <button
               type="button"
@@ -138,7 +120,6 @@ export default function Scene1Overthinking({
           </div>
         </div>
 
-        {/* RIGHT COLUMN: REAL HUMAN ANIMATION WITH 3D DEPTH */}
         <div className="lg:col-span-5 flex justify-center items-center relative">
           <div
             className="relative w-full max-w-[380px] sm:max-w-[420px] transition-transform duration-500 ease-out"
@@ -154,7 +135,6 @@ export default function Scene1Overthinking({
               className="w-full"
             />
 
-            {/* Desktop Thought Accents (Floating gracefully outside image perimeter) */}
             <div
               className={`hidden xl:flex absolute top-4 -left-20 px-3.5 py-2 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xl text-slate-800 text-xs font-semibold items-center gap-2 transition-all duration-500 ${
                 showBubble1 ? 'opacity-100 -translate-x-2' : 'opacity-0 translate-x-2 pointer-events-none'

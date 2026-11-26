@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// Generates a consistent, visually pleasing background color from any string
 function getAvatarBgColor(name = '', role = '') {
   if (role === 'consultant') {
     return 'bg-[#020617] text-white border border-[#0891b2]/30';
@@ -38,13 +37,11 @@ export default function UserAvatar({
 }) {
   const [imgError, setImgError] = useState(false);
 
-  // Extract first letter of name
   const trimmedName = (name || '').trim();
   const initial = trimmedName.length > 0
     ? trimmedName.charAt(0).toUpperCase()
     : (role === 'consultant' ? 'C' : 'U');
 
-  // Size map
   const sizeClasses = {
     xs: 'w-6 h-6 text-[10px]',
     sm: 'w-8 h-8 text-xs font-bold',
@@ -59,7 +56,6 @@ export default function UserAvatar({
   const roundedClass = rounded === 'full' ? 'rounded-full' : (rounded === '3xl' ? 'rounded-3xl' : 'rounded-2xl');
   const bgClass = getAvatarBgColor(trimmedName, role);
 
-  // Responsive online badge sizing matching avatar dimensions
   const onlineSizeClasses = {
     xs: { dot: 'w-1.5 h-1.5', container: 'w-1.5 h-1.5', ring: 'ring-[1.5px]' },
     sm: { dot: 'w-2 h-2', container: 'w-2 h-2', ring: 'ring-2' },
@@ -99,9 +95,7 @@ export default function UserAvatar({
           className={`absolute bottom-0 right-0 flex items-center justify-center ${onlineStyle.container}`}
           title="Active Now"
         >
-          {/* Continuous active light pulse wave */}
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 pointer-events-none" />
-          {/* Default vibrant green active presence dot */}
           <span className={`relative inline-flex rounded-full bg-emerald-500 ${onlineStyle.dot} ${onlineStyle.ring} ring-white shadow-xs`} />
         </span>
       )}

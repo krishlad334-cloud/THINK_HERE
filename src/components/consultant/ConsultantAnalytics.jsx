@@ -37,7 +37,6 @@ export default function ConsultantAnalytics() {
 
   return (
     <div className="space-y-6 w-full pb-16">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
@@ -57,7 +56,6 @@ export default function ConsultantAnalytics() {
         </div>
       </div>
 
-      {/* Top 4 Stat KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Total Revenue</span>
@@ -92,9 +90,7 @@ export default function ConsultantAnalytics() {
         </div>
       </div>
 
-      {/* Main Charts & Breakdown Section (2 columns) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Monthly Earnings Velocity Bar Chart (Col span 2) */}
         <div className="lg:col-span-2 p-6 sm:p-7 bg-white rounded-3xl border border-slate-200/90 shadow-xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
             <div>
@@ -130,7 +126,6 @@ export default function ConsultantAnalytics() {
           </div>
         </div>
 
-        {/* Right: Domain & Problem Category Breakdown (Col span 1) */}
         <div className="lg:col-span-1 p-6 sm:p-7 bg-white rounded-3xl border border-slate-200/90 shadow-xs space-y-5">
           <div className="border-b border-slate-100 pb-4">
             <h3 className="text-base font-bold text-slate-900">Consultations by Domain</h3>
@@ -163,7 +158,6 @@ export default function ConsultantAnalytics() {
         </div>
       </div>
 
-      {/* Bottom Section: Recent Consultation Payouts Ledger Table */}
       <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div>

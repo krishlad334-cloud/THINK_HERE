@@ -7,9 +7,6 @@ const THOUGHTS = [
   'Is my business idea worth pursuing?',
 ];
 
-/**
- * Cycling glass pills with glowing #5EEAD4 teal indicator dot.
- */
 export default function ThoughtChips({ reducedMotion = false }) {
   const [activeIdx, setActiveIdx] = useState(0);
 

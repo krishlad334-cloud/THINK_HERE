@@ -66,7 +66,6 @@ export default function ClientChatView() {
     setInputVal(prev => prev + emoji);
   };
 
-  // Close emoji picker on outside click
   useEffect(() => {
     const handleEmojiClickOutside = (e) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
@@ -79,10 +78,8 @@ export default function ClientChatView() {
     }
   }, [showEmojiPicker]);
 
-  // Active thought determination
   const activeThought = allThinks.find(t => t.id === activeChatThoughtId) || null;
 
-  // Find linked shared conversation messages (or pre-acceptance pending notes)
   const currentConversation = conversations.find(c => c.thinkId === activeThought?.id || c.id === activeThought?.id);
   const thoughtMessages = currentConversation
     ? (currentConversation.messages || [])
@@ -99,7 +96,6 @@ export default function ClientChatView() {
     }, 1200);
   };
 
-  // Close message popup when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setActiveMsgMenuId(null);
@@ -119,7 +115,6 @@ export default function ClientChatView() {
     }
   }, [thoughtMsgCount, activeThoughtIdKey]);
 
-  // Voice speech-to-text
   const toggleVoice = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (isRecording) {
@@ -167,7 +162,6 @@ export default function ClientChatView() {
     if (!inputVal.trim() && attachments.length === 0) return;
 
     if (!activeThought) {
-      // Create new Think with pending status and stay in workspace view
       submitThink({
         title: inputVal.trim(),
         description: inputVal.trim(),
@@ -177,7 +171,6 @@ export default function ClientChatView() {
       setInputVal('');
       setAttachments([]);
     } else {
-      // Send chat message in existing conversation or pending note
       sendMessage(activeThought.id, inputVal.trim(), attachments);
       setInputVal('');
       setAttachments([]);
@@ -240,7 +233,6 @@ export default function ClientChatView() {
 
   return (
     <div className="flex flex-col h-full w-full bg-white flex-1 overflow-hidden">
-      {/* Top Header of Chat View - Seamless Edge to Edge */}
       {activeThought ? (
         <div className="px-3 sm:px-6 py-2 sm:py-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-white flex-shrink-0 z-10 w-full">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
@@ -270,7 +262,6 @@ export default function ClientChatView() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Open in dedicated 1-on-1 Consultation room button when accepted */}
             {currentConversation && (
               <button
                 type="button"
@@ -304,7 +295,6 @@ export default function ClientChatView() {
                   <ChevronDown className={`w-3 h-3 text-white/70 transition-transform duration-150 ${showCallMenu ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Call Dropdown */}
                 {showCallMenu && (
                   <div
                     onClick={(e) => e.stopPropagation()}
@@ -373,10 +363,8 @@ export default function ClientChatView() {
         </div>
       ) : null}
 
-      {/* Main Conversation Canvas - 100% Full Width, Clean Center Container */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         {!activeThought ? (
-          /* Empty State - Authentic Minimalist ChatGPT Style Landing */
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center max-w-3xl mx-auto space-y-6 pt-6">
             <div className="w-16 h-16 rounded-3xl bg-white border border-slate-200 p-2 shadow-xs flex items-center justify-center">
               <img src="/logo.svg" alt="OverThink" className="w-full h-full object-contain" />
@@ -391,7 +379,6 @@ export default function ClientChatView() {
               </p>
             </div>
 
-            {/* Starter Suggestion Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full text-left pt-2">
               {TOPIC_SUGGESTIONS.slice(0, 4).map((s, idx) => (
                 <div
@@ -410,9 +397,7 @@ export default function ClientChatView() {
             </div>
           </div>
         ) : (
-          /* Active Chat Stream */
           <div className="space-y-6 max-w-3xl sm:max-w-4xl mx-auto w-full">
-            {/* Status / Consultation Room Banner */}
             {currentConversation ? (
               <div className="bg-[#ecfeff]/90 border border-[#020617]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                 <div className="flex items-center gap-3">
@@ -468,7 +453,6 @@ export default function ClientChatView() {
               </div>
             )}
 
-            {/* Original Problem Card as the First Message */}
             <div className="flex gap-4 items-start">
               <UserAvatar
                 src={activeThought.clientAvatar || currentUser.profileImage || currentUser.avatar}
@@ -507,7 +491,6 @@ export default function ClientChatView() {
               </div>
             </div>
 
-            {/* Messages Stream */}
             {thoughtMessages.map((msg) => {
               const isMine = msg.senderId === currentUser.id;
               const isMenuOpen = activeMsgMenuId === msg.id;
@@ -546,7 +529,6 @@ export default function ClientChatView() {
                       >
                         <p className="whitespace-pre-wrap">{msg.text}</p>
 
-                        {/* Attachments */}
                         {msg.attachments && msg.attachments.length > 0 && (
                           <div className="flex flex-wrap gap-2 pt-2 mt-2 border-t border-slate-200/30">
                             {msg.attachments.map((att, aIdx) => (
@@ -564,7 +546,6 @@ export default function ClientChatView() {
                         )}
                       </div>
 
-                      {/* Hover action menu */}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -621,7 +602,6 @@ export default function ClientChatView() {
         )}
       </div>
 
-      {/* Bottom Fixed ChatGPT Input Bar - 100% Width Container */}
       <div className="p-2.5 sm:p-4 bg-white border-t border-slate-100 flex-shrink-0 w-full">
         <form onSubmit={handleSend} className="max-w-3xl mx-auto w-full">
           {attachments.length > 0 && (
@@ -665,7 +645,6 @@ export default function ClientChatView() {
               <Mic className="w-4 h-4" />
             </button>
 
-            {/* Emoji Picker Button */}
             <div className="relative" ref={emojiPickerRef}>
               <button
                 type="button"
@@ -744,7 +723,6 @@ export default function ClientChatView() {
         </form>
       </div>
 
-      {/* Clear Chat Confirmation Modal */}
       {showClearConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 animate-in fade-in duration-150">
           <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4 animate-in zoom-in-95 duration-150">

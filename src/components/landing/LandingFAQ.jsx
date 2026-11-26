@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 
-/**
- * LandingFAQ
- * Objection-Buster FAQ accordion before the footer.
- * Builds trust, removes hesitation, and answers critical user questions.
- */
 export default function LandingFAQ() {
-  const [openIndex, setOpenIndex] = useState(0); // Default open first question
+  const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
     {

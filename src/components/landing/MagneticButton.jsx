@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-/**
- * Brand CTA button with magnetic cursor pull, glow pulse, and click ripple.
- */
 export default function MagneticButton({
   children,
   onClick,

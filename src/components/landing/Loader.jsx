@@ -2,10 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogoIcon } from '../common/Logo';
 
-/**
- * Page-load & route-transition intro with animated progress counter (00% -> 100%)
- * featuring the clean OverThink white-squircle icon badge only.
- */
 export default function Loader({ onComplete, reducedMotion = false, duration = 800 }) {
   const [progress, setProgress] = useState(reducedMotion ? 100 : 0);
   const [visible, setVisible] = useState(!reducedMotion);

@@ -1,7 +1,3 @@
-/**
- * Date, time countdown and string formatters
- */
-
 export function calculateTimeRemaining(createdAtTimestamp, deadlineHours = 24) {
   const createdDate = new Date(createdAtTimestamp).getTime();
   const deadlineDate = createdDate + deadlineHours * 60 * 60 * 1000;

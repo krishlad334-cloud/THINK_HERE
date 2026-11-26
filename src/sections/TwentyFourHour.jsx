@@ -8,11 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 const RADIUS = 104;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-/**
- * 24-Hour Promise Section:
- * Balanced 2-column layout with the animated SVG ring on the left
- * and count-up stats & narrative on the right (no empty human gap).
- */
 export default function TwentyFourHour({ reducedMotion = false }) {
   const sectionRef = useRef(null);
   const ringRef = useRef(null);
@@ -70,7 +65,6 @@ export default function TwentyFourHour({ reducedMotion = false }) {
   return (
     <section id="promise-24h" ref={sectionRef} className="relative py-14 sm:py-16 lg:py-20">
       <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:px-12">
-        {/* Left: Animated SVG Ring Clock */}
         <div className="flex justify-center lg:col-span-5">
           <div className="relative flex h-64 w-64 sm:h-72 sm:w-72 items-center justify-center rounded-full border border-[#4C4585]/60 bg-[#15122B]/70 shadow-[0_0_80px_rgba(250,204,21,0.16)] backdrop-blur-xl">
             <svg className="h-full w-full -rotate-90" viewBox="0 0 240 240">
@@ -115,7 +109,6 @@ export default function TwentyFourHour({ reducedMotion = false }) {
           </div>
         </div>
 
-        {/* Right: Narrative + Count-Up Numbers */}
         <div className="space-y-6 lg:col-span-7">
           <h2 className="font-display text-3xl font-bold tracking-tight text-[#F5F3FF] sm:text-5xl">
             Clarity Before Tomorrow Ends.
