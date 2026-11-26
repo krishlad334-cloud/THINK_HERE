@@ -478,76 +478,7 @@ export const INITIAL_MESSAGES = [
   }
 ];
 
-export const INITIAL_JOBS = [
-  {
-    id: 'job-1',
-    title: 'Senior Full-Stack Engineer (Python / React)',
-    company: 'Stripe Solutions Partner',
-    logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80',
-    location: 'Remote (US/Canada)',
-    type: 'Full-time',
-    salary: '$145,000 - $175,000 / yr',
-    experience: '3 - 6 Years',
-    skills: ['Python', 'React', 'FastAPI', 'PostgreSQL', 'Docker'],
-    description: 'Looking for a skilled engineer to architect customer-facing financial dashboards and resilient backend APIs. Mentorship and equity included.',
-    postedAgo: '2 days ago',
-    applicantsCount: 28,
-    matchPercentage: '96%',
-    recommendedConsultant: 'Marcus Sterling',
-    isSaved: true
-  },
-  {
-    id: 'job-2',
-    title: 'Lead Product Strategist & Systems Architect',
-    company: 'Linear Ecosystem Labs',
-    logo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&auto=format&fit=crop&q=80',
-    location: 'Hybrid • New York, NY',
-    type: 'Full-time',
-    salary: '$160,000 - $195,000 / yr',
-    experience: '5+ Years',
-    skills: ['Product Architecture', 'Distributed Systems', 'User Experience', 'API Design'],
-    description: 'Shape the next generation of developer productivity tools. Work closely with founders and executive leadership.',
-    postedAgo: '3 days ago',
-    applicantsCount: 41,
-    matchPercentage: '91%',
-    recommendedConsultant: 'Dr. Elena Vance',
-    isSaved: false
-  },
-  {
-    id: 'job-3',
-    title: 'Growth Marketing & GTM Lead',
-    company: 'Supabase Community Ventures',
-    logo: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=100&auto=format&fit=crop&q=80',
-    location: 'Remote (Worldwide)',
-    type: 'Contract / Full-time',
-    salary: '$115,000 - $140,000 / yr',
-    experience: '3+ Years',
-    skills: ['B2B SaaS Growth', 'Content Distribution', 'Developer Marketing', 'Analytics'],
-    description: 'Scale developer adoption across thousands of global cloud engineering teams. High ownership and autonomy.',
-    postedAgo: '1 day ago',
-    applicantsCount: 19,
-    matchPercentage: '88%',
-    recommendedConsultant: 'Priya Sharma',
-    isSaved: false
-  },
-  {
-    id: 'job-4',
-    title: 'Senior UI/UX Design System Architect',
-    company: 'NextGen Design Labs',
-    logo: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?w=100&auto=format&fit=crop&q=80',
-    location: 'Remote (US)',
-    type: 'Full-time',
-    salary: '$130,000 - $160,000 / yr',
-    experience: '4+ Years',
-    skills: ['Figma Tokens', 'Design Systems', 'Micro-interactions', 'Accessibility (WCAG)'],
-    description: 'Design world-class component libraries used by hundreds of thousands of users across enterprise dashboards.',
-    postedAgo: '4 days ago',
-    applicantsCount: 52,
-    matchPercentage: '94%',
-    recommendedConsultant: 'David Chen',
-    isSaved: true
-  }
-];
+export { INITIAL_JOBS } from './jobsCatalog';
 
 export const INITIAL_NOTIFICATIONS = [
   {

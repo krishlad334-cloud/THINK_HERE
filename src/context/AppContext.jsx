@@ -43,6 +43,22 @@ import {
 import { analyzeThought } from '../utils/aiEngine';
 import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
 
+function syncJobsCatalog(currentJobs) {
+  const existingById = new Map((currentJobs || []).map((job) => [job.id, job]));
+  return INITIAL_JOBS.map((seedJob) => {
+    const existing = existingById.get(seedJob.id);
+    if (!existing) return seedJob;
+    return {
+      ...seedJob,
+      ...existing,
+      industry: existing.industry || seedJob.industry,
+      qualifications: existing.qualifications || seedJob.qualifications,
+      interests: existing.interests || seedJob.interests,
+      minYears: existing.minYears ?? seedJob.minYears,
+    };
+  });
+}
+
 export function AppProvider({ children }) {
   useEffect(() => {
     initializeThinkStorage();
@@ -341,12 +357,26 @@ export function AppProvider({ children }) {
   };
 
   const toggleSaveJob = (jobId) => {
-    setJobs(prev => prev.map(j => j.id === jobId ? { ...j, isSaved: !j.isSaved } : j));
+    setJobs((prev) =>
+      syncJobsCatalog(prev).map((j) => (j.id === jobId ? { ...j, isSaved: !j.isSaved } : j))
+    );
     showToast('Job Saved', 'Job listing updated in your saved items.', 'info');
   };
 
-  const applyJob = (jobId) => {
-    setJobs(prev => prev.map(j => j.id === jobId ? { ...j, isApplied: true, applicantsCount: (j.applicantsCount || 0) + 1 } : j));
+  const applyJob = (jobId, applicationDetails = null) => {
+    setJobs((prev) =>
+      syncJobsCatalog(prev).map((j) =>
+        j.id === jobId
+          ? {
+              ...j,
+              isApplied: true,
+              applicantsCount: (j.applicantsCount || 0) + 1,
+              appliedAt: new Date().toISOString(),
+              applicationSummary: applicationDetails,
+            }
+          : j
+      )
+    );
     showToast('Application Submitted', 'Your application has been delivered to the hiring team.', 'success');
   };
 
@@ -639,7 +669,7 @@ export function AppProvider({ children }) {
     mutedThoughtIds,
     setMutedThoughtIds,
     consultants,
-    jobs,
+    jobs: syncJobsCatalog(jobs),
     auditLogs,
     logoutUser,
     loginUser,
