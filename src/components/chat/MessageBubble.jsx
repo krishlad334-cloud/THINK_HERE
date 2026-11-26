@@ -87,17 +87,7 @@ export default function MessageBubble({
             }`}
           >
             {msg.isProblemPost ? (
-              <div className="space-y-1.5">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-[#0891b2] border border-[#0891b2]/25">
-                    Submitted Problem
-                  </span>
-                  {msg.problemCategory && (
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/80 border border-slate-200/80 text-slate-600">
-                      {msg.problemCategory}
-                    </span>
-                  )}
-                </div>
+              <div className="space-y-1">
                 <p className="font-bold text-sm sm:text-[15px] leading-snug whitespace-pre-wrap break-words text-slate-900">
                   {msg.problemTitle || msg.text}
                 </p>

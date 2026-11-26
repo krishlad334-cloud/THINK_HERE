@@ -1,9 +1,3 @@
-export const EMOJI_LIST = [
-  '👍', '👋', '😊', '💡', '🚀', '✅', '🙏', '🔥',
-  '👏', '🎉', '❤️', '🤔', '🎯', '🤝', '💼', '📈',
-  '⭐', '💯', '✨', '🙌', '👌', '⚡', '📝', '💬',
-];
-
 export const CHAT_STATUS_OPTIONS = [
   {
     value: 'pending',

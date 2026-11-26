@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Smile } from 'lucide-react';
-import { EMOJI_LIST } from '../../data/chatConstants';
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { Smile, X } from 'lucide-react';
+
+const EmojiPicker = lazy(() => import('emoji-picker-react'));
 
 export default function EmojiPickerButton({ onSelect, buttonTone = 'light' }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,8 +16,18 @@ export default function EmojiPickerButton({ onSelect, buttonTone = 'light' }) {
       }
     };
 
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen]);
 
   const idleClass =
@@ -33,6 +44,8 @@ export default function EmojiPickerButton({ onSelect, buttonTone = 'light' }) {
           isOpen ? 'text-[#020617] bg-slate-200/80' : idleClass
         }`}
         title="Insert Emoji"
+        aria-label="Open Emoji Picker"
+        aria-expanded={isOpen}
       >
         <Smile className="w-4 h-4" />
       </button>
@@ -40,32 +53,40 @@ export default function EmojiPickerButton({ onSelect, buttonTone = 'light' }) {
       {isOpen && (
         <div
           onClick={(e) => e.stopPropagation()}
-          className="absolute bottom-full left-0 mb-2 p-2.5 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 w-64 animate-in fade-in zoom-in-95 duration-100"
+          className="fixed bottom-20 left-3 right-3 mx-auto max-w-[352px] z-[70] sm:mx-0 sm:inset-x-auto sm:absolute sm:bottom-full sm:left-0 sm:mb-2 sm:w-[352px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden animate-in fade-in zoom-in-95 duration-100"
         >
-          <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-              Choose Emoji
+          <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50/80">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              All Emojis
             </span>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-slate-400 hover:text-slate-700 text-xs p-0.5 cursor-pointer"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+              aria-label="Close Emoji Picker"
             >
-              ✕
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="grid grid-cols-6 gap-1 text-lg">
-            {EMOJI_LIST.map((emoji) => (
-              <button
-                key={emoji}
-                type="button"
-                onClick={() => onSelect(emoji)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors cursor-pointer text-base hover:scale-115 active:scale-95 transform"
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
+
+          <Suspense
+            fallback={
+              <div className="h-[360px] flex items-center justify-center text-xs font-semibold text-slate-400">
+                Loading full emoji keyboard...
+              </div>
+            }
+          >
+            <EmojiPicker
+              width="100%"
+              height={360}
+              colorScheme="light"
+              emojiStyle="native"
+              lazyLoadEmojis={true}
+              searchPlaceholder="Search emojis..."
+              previewConfig={{ showPreview: false }}
+              onEmojiClick={(emojiData) => onSelect(emojiData.emoji)}
+            />
+          </Suspense>
         </div>
       )}
     </div>
