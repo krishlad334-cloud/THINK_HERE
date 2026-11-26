@@ -25,6 +25,7 @@ export default function LandingPage({
   isAuthenticated = false,
   currentUser = null,
   onGoToApp,
+  onLogout,
   skipLoader = false,
 }) {
   const reducedMotion = useReducedMotion();
@@ -60,6 +61,7 @@ export default function LandingPage({
         isAuthenticated={isAuthenticated}
         currentUser={currentUser}
         onGoToApp={onGoToApp}
+        onLogout={onLogout}
       />
 
       <div

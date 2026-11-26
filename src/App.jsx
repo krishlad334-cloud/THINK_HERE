@@ -29,7 +29,16 @@ import ConsultantAssessmentView from './components/consultant/ConsultantAssessme
 import ChatWorkspace from './components/chat/ChatWorkspace';
 
 function AppContent() {
-  const { role, activeTab, setActiveTab, isAuthenticated, currentUser, toast, closeToast } = useApp();
+  const {
+    role,
+    activeTab,
+    setActiveTab,
+    isAuthenticated,
+    currentUser,
+    toast,
+    closeToast,
+    logoutUser,
+  } = useApp();
   const reducedMotion = useReducedMotion();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState('landing');
@@ -158,6 +167,10 @@ function AppContent() {
           onGoToApp={() => navigateView(isConsultantUncertified ? 'consultant_test' : 'app')}
           onSignIn={() => navigateView('auth', 'login')}
           onStartThink={() => navigateView('auth', 'register')}
+          onLogout={() => {
+            logoutUser();
+            navigateView('landing');
+          }}
         />
       );
     }
@@ -186,6 +199,7 @@ function AppContent() {
       return (
         <ConsultantAssessmentView
           isStandalone={true}
+          onBackToLanding={() => navigateView('landing')}
           onComplete={() => {
             setActiveTab('browse_thoughts');
             navigateView('app');

@@ -1,14 +1,13 @@
 import React from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import StatusBadge from '../common/StatusBadge';
+import { isConsultantThought } from '../../utils/thoughtFilters';
 import { timeAgo } from '../../utils/formatters';
 import {
   FolderKanban,
   MessageSquare,
-  PhoneCall,
-  CheckCircle,
-  Clock,
-  Lock
+  PhoneCall
 } from 'lucide-react';
 
 export default function MyConsultations() {
@@ -24,9 +23,7 @@ export default function MyConsultations() {
 
   const allThinks = thinks || thoughts || [];
 
-  const myConsultations = allThinks.filter(t =>
-    activeUser?.id && (t.consultantId === activeUser.id || t.assignedConsultantId === activeUser.id)
-  );
+  const myConsultations = allThinks.filter((t) => isConsultantThought(t, activeUser));
 
   const handleStartCall = (thought) => {
     startCall({
@@ -39,41 +36,6 @@ export default function MyConsultations() {
 
   const handleOpenChat = (thoughtId) => {
     openChatWithThought(thoughtId);
-  };
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'accepted':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1">
-            <CheckCircle className="w-3 h-3 text-cyan-600" /> Accepted
-          </span>
-        );
-      case 'in_progress':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
-            <Clock className="w-3 h-3 text-blue-600" /> In Progress
-          </span>
-        );
-      case 'resolved':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200 flex items-center gap-1">
-            <CheckCircle className="w-3 h-3 text-sky-600" /> Resolved
-          </span>
-        );
-      case 'closed':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1">
-            <Lock className="w-3 h-3 text-slate-500" /> Closed
-          </span>
-        );
-      default:
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-            {status}
-          </span>
-        );
-    }
   };
 
   return (
@@ -118,7 +80,7 @@ export default function MyConsultations() {
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#ecfeff] text-[#020617]">
                       {thought.category}
                     </span>
-                    {getStatusBadge(thought.status)}
+                    <StatusBadge status={thought.status} variant="pill" />
                   </div>
 
                   <h3

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Menu, User, X } from 'lucide-react';
+import { ArrowRight, LogOut, Menu, User, X } from 'lucide-react';
 import Logo from '../common/Logo';
 
 const NAV_LINKS = [
@@ -17,6 +17,7 @@ export default function Navbar({
   isAuthenticated = false,
   currentUser = null,
   onGoToApp,
+  onLogout,
 }) {
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -114,14 +115,28 @@ export default function Navbar({
 
         <div className="flex items-center gap-2 sm:gap-3.5">
           {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={onGoToApp}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#4C4585]/60 bg-[#15122B]/80 px-3 py-2 sm:px-3.5 text-xs sm:text-sm font-semibold text-[#F5F3FF] transition hover:border-[#5EEAD4]/60"
-            >
-              <User className="h-3.5 w-3.5 text-[#5EEAD4]" />
-              <span>{currentUser?.name?.split(' ')[0] || 'Workspace'}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onGoToApp}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#4C4585]/60 bg-[#15122B]/80 px-3 py-2 sm:px-3.5 text-xs sm:text-sm font-semibold text-[#F5F3FF] transition hover:border-[#5EEAD4]/60 cursor-pointer"
+              >
+                <User className="h-3.5 w-3.5 text-[#5EEAD4]" />
+                <span>{currentUser?.name?.split(' ')[0] || 'Workspace'}</span>
+              </button>
+              {onLogout && (
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-[#4C4585]/50 bg-[#15122B]/60 px-3 py-2 text-xs font-semibold text-[#A9A4C8] transition hover:border-rose-400/50 hover:text-rose-200 cursor-pointer"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">Sign Out</span>
+                </button>
+              )}
+            </>
           ) : (
             <button
               type="button"
@@ -188,6 +203,19 @@ export default function Navbar({
                 <span>{isAuthenticated ? 'Open Workspace' : 'Share your thought'}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
+              {isAuthenticated && onLogout && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onLogout();
+                  }}
+                  className="mt-1 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-rose-400/35 bg-rose-500/10 py-2 text-xs font-semibold text-rose-200 hover:bg-rose-500/20 cursor-pointer"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}

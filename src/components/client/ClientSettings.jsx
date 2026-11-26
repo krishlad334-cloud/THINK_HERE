@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import { isClientThought, isConsultantThought } from '../../utils/thoughtFilters';
 import {
   User,
   Shield,
@@ -68,16 +69,9 @@ export default function ClientSettings() {
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  const userThoughts = (thoughts || []).filter((t) => {
-    if (!currentUser) return false;
-    if (role === 'consultant') {
-      return t.consultantId === currentUser.id || t.assignedConsultantId === currentUser.id;
-    }
-    return (
-      t.clientId === currentUser.id ||
-      (currentUser.id === 'client_001' && t.clientId === 'user-client-1')
-    );
-  });
+  const userThoughts = (thoughts || []).filter((t) =>
+    role === 'consultant' ? isConsultantThought(t, currentUser) : isClientThought(t, currentUser)
+  );
   const solutionsCount = userThoughts.filter(
     t => t.status === 'resolved' || t.solution || (t.solutions && t.solutions.length > 0)
   ).length;

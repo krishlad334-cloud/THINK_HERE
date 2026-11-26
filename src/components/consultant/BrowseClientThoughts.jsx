@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import StatusBadge from '../common/StatusBadge';
+import { isConsultantThought } from '../../utils/thoughtFilters';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   FileSearch,
@@ -9,8 +11,7 @@ import {
   FileText,
   ShieldCheck,
   MessageSquare,
-  Lock,
-  Clock
+  Lock
 } from 'lucide-react';
 
 export default function BrowseClientThoughts() {
@@ -54,7 +55,7 @@ export default function BrowseClientThoughts() {
     } else if (filterStatus === 'Closed') {
       if (t.status !== 'closed') return false;
     } else if (filterStatus === 'My Accepted') {
-      if (t.consultantId !== activeUser?.id && t.assignedConsultantId !== activeUser?.id) return false;
+      if (!isConsultantThought(t, activeUser)) return false;
     }
 
     if (searchQuery) {
@@ -68,53 +69,6 @@ export default function BrowseClientThoughts() {
     }
     return true;
   });
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'pending':
-      case 'pending_human':
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span>Pending (Available)</span>
-          </span>
-        );
-      case 'accepted':
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-cyan-600" />
-            <span>Accepted</span>
-          </span>
-        );
-      case 'in_progress':
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-blue-600" />
-            <span>In Progress</span>
-          </span>
-        );
-      case 'resolved':
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-50 text-sky-800 border border-sky-200 flex items-center gap-1.5">
-            <CheckCircle className="w-3.5 h-3.5 text-sky-600" />
-            <span>Resolved</span>
-          </span>
-        );
-      case 'closed':
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-slate-500" />
-            <span>Closed</span>
-          </span>
-        );
-      default:
-        return (
-          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">
-            {status}
-          </span>
-        );
-    }
-  };
 
   const handleAccept = (thought) => {
     acceptThink(thought.id);
@@ -273,7 +227,7 @@ export default function BrowseClientThoughts() {
                       </div>
 
                       <div>
-                        {getStatusBadge(thought.status)}
+                        <StatusBadge status={thought.status} variant="card" pendingLabel="Pending (Available)" />
                       </div>
                     </div>
 

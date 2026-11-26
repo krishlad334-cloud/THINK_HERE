@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import StatusBadge from '../common/StatusBadge';
+import { isClientThought } from '../../utils/thoughtFilters';
 import { timeAgo } from '../../utils/formatters';
 import {
   MessageSquare,
-  Clock,
-  CheckCircle,
   PlusCircle,
   Search,
-  Lock,
   X
 } from 'lucide-react';
 
@@ -26,14 +25,7 @@ export default function MyThoughtsView() {
   const user = activeUser || currentUser;
   const allThinks = thinks || thoughts || [];
 
-  const myThinks = allThinks.filter((t) => {
-    if (!user) return false;
-    if (t.clientId && user.id && t.clientId === user.id) return true;
-    if (user.id === 'client_001' && (t.clientId === 'client_001' || t.clientId === 'user-client-1')) return true;
-    if (user.email && t.clientEmail && t.clientEmail.toLowerCase() === user.email.toLowerCase()) return true;
-    if (t.clientName && user.name && t.clientName.trim().toLowerCase() === user.name.trim().toLowerCase()) return true;
-    return false;
-  });
+  const myThinks = allThinks.filter((t) => isClientThought(t, user));
 
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,53 +51,6 @@ export default function MyThoughtsView() {
 
     return true;
   });
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'pending':
-      case 'pending_human':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span>Pending Review</span>
-          </span>
-        );
-      case 'accepted':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1">
-            <CheckCircle className="w-3 h-3 text-cyan-600" />
-            <span>Accepted</span>
-          </span>
-        );
-      case 'in_progress':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
-            <Clock className="w-3 h-3 text-blue-600" />
-            <span>In Progress</span>
-          </span>
-        );
-      case 'resolved':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200 flex items-center gap-1">
-            <CheckCircle className="w-3 h-3 text-sky-600" />
-            <span>Resolved</span>
-          </span>
-        );
-      case 'closed':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1">
-            <Lock className="w-3 h-3 text-slate-500" />
-            <span>Closed</span>
-          </span>
-        );
-      default:
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-            {status}
-          </span>
-        );
-    }
-  };
 
   return (
     <div className="space-y-6 w-full pb-16">
@@ -242,7 +187,7 @@ export default function MyThoughtsView() {
                       {timeAgo(thought.createdAt)}
                     </span>
 
-                    {getStatusBadge(thought.status)}
+                    <StatusBadge status={thought.status} variant="pill" pendingLabel="Pending Review" />
 
                     {thought.urgency === 'High (Urgent)' && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
