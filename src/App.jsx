@@ -49,11 +49,11 @@ function AppContent() {
   const isConsultantUncertified =
     isAuthenticated &&
     role === 'consultant' &&
-    !currentUser?.assessmentPassed &&
-    !currentUser?.isVerified;
+    !currentUser?.assessmentPassed;
 
   const navigateView = (nextView, authMode) => {
     if (authMode) setAuthInitialMode(authMode);
+    if (nextView === 'landing') closeToast();
     setIsSidebarOpen(false);
     if (!reducedMotion) {
       setTransitionKey((k) => k + 1);
@@ -73,13 +73,15 @@ function AppContent() {
   React.useEffect(() => {
     if (!isAuthenticated) return;
     if (role === 'client') {
-      const consultantTabs = ['browse_thoughts', 'my_consultations', 'profile', 'analytics', 'completed', 'assessment'];
+      const consultantTabs = ['browse_thoughts', 'my_consultations', 'profile', 'analytics', 'completed'];
       if (consultantTabs.includes(activeTab)) {
         setActiveTab('chat');
       }
     } else if (role === 'consultant') {
       const clientTabs = ['my_thoughts', 'consultant_responses', 'ai_responses', 'saved_solutions', 'jobs', 'find_consultants'];
       if (clientTabs.includes(activeTab)) {
+        setActiveTab('browse_thoughts');
+      } else if (activeTab === 'assessment') {
         setActiveTab('browse_thoughts');
       }
     }
@@ -138,13 +140,6 @@ function AppContent() {
           return <ConsultantProfileView />;
         case 'analytics':
           return <ConsultantAnalytics />;
-        case 'assessment':
-          return (
-            <ConsultantAssessmentView
-              isStandalone={false}
-              onComplete={() => setActiveTab('browse_thoughts')}
-            />
-          );
         case 'settings':
           return <ClientSettings />;
         default:
@@ -184,7 +179,7 @@ function AppContent() {
             const nextRole = userObj?.role || role;
             const needsTest =
               nextRole === 'consultant' &&
-              (isNewRegistration || (!userObj?.assessmentPassed && !userObj?.isVerified));
+              (isNewRegistration || !userObj?.assessmentPassed);
             if (needsTest) {
               navigateView('consultant_test');
             } else {
@@ -198,7 +193,6 @@ function AppContent() {
     if (effectiveView === 'consultant_test') {
       return (
         <ConsultantAssessmentView
-          isStandalone={true}
           onBackToLanding={() => navigateView('landing')}
           onComplete={() => {
             setActiveTab('browse_thoughts');
@@ -245,7 +239,6 @@ function AppContent() {
           </main>
         </div>
 
-        <ToastContainer toast={toast} onClose={closeToast} />
         <NewThoughtModal />
         <ThoughtDetailModal />
         <CallModal />
@@ -265,6 +258,9 @@ function AppContent() {
         />
       )}
       {renderShell()}
+      {effectiveView !== 'landing' && (
+        <ToastContainer toast={toast} onClose={closeToast} />
+      )}
     </>
   );
 }

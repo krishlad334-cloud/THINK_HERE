@@ -382,7 +382,7 @@ export function AppProvider({ children }) {
 
   const setConsultantVerification = (consultantId, status) => {
     const isApproved = status === 'approved';
-    setConsultants(prev => prev.map(c => c.id === consultantId ? { ...c, isVerified: isApproved } : c));
+    setConsultants(prev => prev.map(c => c.id === consultantId ? { ...c, isVerified: isApproved, assessmentPassed: isApproved } : c));
     showToast('Verification Updated', `Consultant credentials ${isApproved ? 'approved' : 'revoked'}.`, 'info');
   };
 
@@ -501,7 +501,7 @@ export function AppProvider({ children }) {
     setActiveConversationId(null);
     setSelectedThoughtId(null);
     setActiveUserState(DEMO_USERS[0]);
-    showToast('Logged Out', 'You have been signed out successfully.', 'info');
+    closeToast();
   };
 
   const loginUser = (identifierOrRole, passwordOrData) => {
@@ -531,7 +531,9 @@ export function AppProvider({ children }) {
         name: customUserData.name,
         email: customUserData.email,
         role: userRole,
-        title: customUserData.title || (userRole === 'consultant' ? 'Verified Consultant' : 'Client Account'),
+        isVerified: userRole === 'consultant' ? Boolean(customUserData.assessmentPassed) : true,
+        assessmentPassed: userRole === 'consultant' ? Boolean(customUserData.assessmentPassed) : undefined,
+        title: customUserData.title || (userRole === 'consultant' ? 'Consultant Candidate' : 'Client Account'),
         bio: customUserData.bio || '',
         hourlyRate: customUserData.hourlyRate || 120,
         skills: customUserData.skills || [],
@@ -595,7 +597,7 @@ export function AppProvider({ children }) {
         setActiveTab('chat');
       }
       reloadFromStorage();
-      showToast('Account Created Locally!', `Signed in as ${res.user.name}. Saved in LocalStorage for easy testing.`, 'success');
+      showToast('Account Created!', `Signed in as ${res.user.name}. Ready to get started.`, 'success');
     }
     return res;
   };

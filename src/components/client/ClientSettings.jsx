@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import VerifiedBadge from '../common/VerifiedBadge';
 import { isClientThought, isConsultantThought } from '../../utils/thoughtFilters';
 import {
   User,
@@ -75,10 +76,13 @@ export default function ClientSettings() {
   const solutionsCount = userThoughts.filter(
     t => t.status === 'resolved' || t.solution || (t.solutions && t.solutions.length > 0)
   ).length;
+  const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
   const accountBadge =
     role === 'consultant'
-      ? (currentUser?.assessmentPassed || currentUser?.isVerified ? 'Verified Consultant' : 'Verification Pending')
-      : 'Verified Client Account';
+      ? isConsultantVerified
+        ? 'Consultant'
+        : 'Verification Pending'
+      : 'Client Account';
 
   return (
     <div className="space-y-6 w-full pb-16">
@@ -129,11 +133,12 @@ export default function ClientSettings() {
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900">{currentUser?.name}</h2>
+              <h2 className="text-lg font-bold text-slate-900 inline-flex items-center gap-1.5 justify-center">
+                <span>{currentUser?.name}</span>
+                {role === 'consultant' && isConsultantVerified && <VerifiedBadge size="sm" />}
+              </h2>
               <p className="text-xs text-slate-500 mt-0.5">{currentUser?.email}</p>
-              <span className="inline-block mt-2 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20">
-                {accountBadge}
-              </span>
+              <p className="text-[11px] font-semibold text-slate-500 mt-1">{accountBadge}</p>
             </div>
 
             <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-100">

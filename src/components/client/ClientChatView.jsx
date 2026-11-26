@@ -58,7 +58,7 @@ export default function ClientChatView() {
   );
 
   const thoughtMessages = currentConversation
-    ? currentConversation.messages || []
+    ? (currentConversation.messages || []).filter((m) => !m.isProblemPost)
     : activeThought?.pendingMessages?.length
       ? activeThought.pendingMessages
       : messages.filter(
@@ -241,42 +241,50 @@ export default function ClientChatView() {
               </div>
             )}
 
-            <div className="flex gap-4 items-start">
+            <div className="flex gap-3 sm:gap-4 items-start flex-row-reverse">
               <UserAvatar
                 src={activeThought.clientAvatar || currentUser.profileImage || currentUser.avatar}
                 name={activeThought.clientName || currentUser.name}
                 role="client"
                 size="md"
-                className="ring-2 ring-slate-200 flex-shrink-0"
+                className="ring-2 ring-white shadow-xs flex-shrink-0"
               />
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-900">
-                    {activeThought.clientName || currentUser.name}
-                  </span>
+              <div className="flex flex-col items-end space-y-1 max-w-[85%] sm:max-w-[75%]">
+                <div className="flex items-center justify-end gap-2 px-1">
                   <span className="text-[10px] text-slate-400">
                     {timeAgo(activeThought.createdAt)}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">
-                    #{activeThought.id}
+                  <span className="text-xs font-bold text-slate-900">
+                    {activeThought.clientName || currentUser.name}
                   </span>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-100/80 text-slate-900 text-sm leading-relaxed rounded-tl-none font-medium">
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base mb-1">
+                <div className="p-3.5 sm:p-4 rounded-2xl rounded-tr-none bg-[#e8f7fb] border border-[#0891b2]/25 text-slate-900 text-xs sm:text-sm leading-relaxed shadow-xs space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-[#0891b2] border border-[#0891b2]/25">
+                      Submitted Problem
+                    </span>
+                    {activeThought.category && (
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/80 border border-slate-200/80 text-slate-600">
+                        {activeThought.category}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-[15px] leading-snug whitespace-pre-wrap break-words text-slate-900">
                     {activeThought.title}
                   </h3>
-                  {activeThought.description && (
-                    <p className="text-xs sm:text-sm text-slate-700 whitespace-pre-wrap">
-                      {activeThought.description}
-                    </p>
-                  )}
+                  {activeThought.description &&
+                    activeThought.description.trim() !== activeThought.title.trim() && (
+                      <p className="text-xs sm:text-[13px] text-slate-600 whitespace-pre-wrap break-words">
+                        {activeThought.description}
+                      </p>
+                    )}
 
                   {activeThought.attachments && activeThought.attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2 mt-2 border-t border-slate-200/60">
+                    <div className="flex flex-wrap gap-1.5 pt-2 mt-1 border-t border-cyan-200/70">
                       {activeThought.attachments.map((att, i) => (
                         <span
                           key={i}
-                          className="text-xs bg-white px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1 text-slate-700"
+                          className="text-xs bg-white/90 border border-cyan-200/70 px-2.5 py-1 rounded-lg flex items-center gap-1 text-slate-800"
                         >
                           <FileText className="w-3.5 h-3.5 text-[#0891b2]" />
                           {att.name}
@@ -337,20 +345,20 @@ export default function ClientChatView() {
                       <div
                         className={`p-3.5 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                           isMine
-                            ? 'bg-[#020617] text-white rounded-tr-none'
+                            ? 'bg-[#e8f7fb] border border-[#0891b2]/25 text-slate-900 rounded-tr-none shadow-xs'
                             : 'bg-white border border-slate-200/90 text-slate-900 rounded-tl-none shadow-xs'
                         }`}
                       >
                         <p className="whitespace-pre-wrap">{msg.text}</p>
 
                         {msg.attachments && msg.attachments.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-2 mt-2 border-t border-slate-200/30">
+                          <div className="flex flex-wrap gap-2 pt-2 mt-2 border-t border-cyan-200/60">
                             {msg.attachments.map((att, aIdx) => (
                               <div
                                 key={aIdx}
                                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${
                                   isMine
-                                    ? 'bg-white/10 text-white'
+                                    ? 'bg-white/90 border border-cyan-200/70 text-slate-800'
                                     : 'bg-slate-100 text-slate-700'
                                 }`}
                               >

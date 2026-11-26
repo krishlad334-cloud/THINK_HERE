@@ -250,7 +250,7 @@ export default function NewThoughtModal() {
             <div className="p-2.5 bg-[#ecfeff] rounded-xl border border-[#0891b2]/20 flex items-center gap-2.5 text-[#020617]">
               <Clock className="w-4 h-4 text-[#0891b2] flex-shrink-0" />
               <div className="text-[11px] leading-tight">
-                <span className="font-bold">Instant Workflow:</span> Stored in LocalStorage and immediately available in the Consultant Panel.
+                <span className="font-bold">Instant Workflow:</span> Submitted immediately and visible in the Consultant Panel.
               </div>
             </div>
           </div>

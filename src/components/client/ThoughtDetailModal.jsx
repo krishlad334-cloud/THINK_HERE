@@ -234,7 +234,7 @@ export default function ThoughtDetailModal() {
                       Shared 1-on-1 Consultation Channel
                     </h5>
                     <p className="text-[11px] text-slate-500">
-                      Messages sent in this room are saved to LocalStorage and synchronized in real time.
+                      Messages sent in this room are saved automatically and synced in real time.
                     </p>
                   </div>
                 </div>

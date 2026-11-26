@@ -245,7 +245,7 @@ export function loginUser(identifier, password) {
     return {
       success: false,
       notFound: true,
-      error: 'Account not registered in local storage.'
+      error: 'No account found with this email address or mobile number.'
     };
   }
 
@@ -256,7 +256,7 @@ export function loginUser(identifier, password) {
     };
   }
 
-  if (user.isVerified === false) {
+  if (user.role !== 'consultant' && user.isVerified === false) {
     return {
       success: false,
       error: 'Your account is not verified yet. Please complete verification.'

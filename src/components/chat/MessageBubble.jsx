@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, CheckCheck, Copy, FileText, MoreVertical, Trash2 } from 'lucide-react';
 import UserAvatar from '../common/UserAvatar';
+import VerifiedBadge from '../common/VerifiedBadge';
 import { timeAgo } from '../../utils/formatters';
 
 function isOnlyEmojis(text) {
@@ -63,11 +64,7 @@ export default function MessageBubble({
           ) : (
             <>
               <span className="text-xs font-bold text-slate-900">{msg.senderName}</span>
-              {msg.senderRole === 'consultant' && (
-                <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-800 border border-cyan-200">
-                  Consultant
-                </span>
-              )}
+              {msg.senderRole === 'consultant' && <VerifiedBadge size="xs" />}
               <span className="text-[10px] text-slate-400">{timeAgo(msg.createdAt)}</span>
             </>
           )}
@@ -81,20 +78,44 @@ export default function MessageBubble({
           <div
             className={`w-fit max-w-full rounded-2xl shadow-xs leading-relaxed ${
               isMine
-                ? 'rounded-tr-xs bg-[#020617] text-white text-left'
+                ? 'rounded-tr-xs bg-[#e8f7fb] text-slate-900 border border-[#0891b2]/25 text-left'
                 : 'rounded-tl-xs bg-white border border-slate-200/90 text-slate-800'
             } ${
-              emojiOnly
+              emojiOnly && !msg.isProblemPost
                 ? 'px-3.5 py-2 text-2xl sm:text-3xl'
                 : 'px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-[13.5px]'
             }`}
           >
-            <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+            {msg.isProblemPost ? (
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-[#0891b2] border border-[#0891b2]/25">
+                    Submitted Problem
+                  </span>
+                  {msg.problemCategory && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/80 border border-slate-200/80 text-slate-600">
+                      {msg.problemCategory}
+                    </span>
+                  )}
+                </div>
+                <p className="font-bold text-sm sm:text-[15px] leading-snug whitespace-pre-wrap break-words text-slate-900">
+                  {msg.problemTitle || msg.text}
+                </p>
+                {msg.problemDescription &&
+                  msg.problemDescription.trim() !== (msg.problemTitle || msg.text || '').trim() && (
+                    <p className="text-xs sm:text-[13px] whitespace-pre-wrap break-words text-slate-600">
+                      {msg.problemDescription}
+                    </p>
+                  )}
+              </div>
+            ) : (
+              <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+            )}
 
             {msg.attachments && msg.attachments.length > 0 && (
               <div
                 className={`mt-2.5 pt-2 border-t flex flex-wrap gap-1.5 ${
-                  isMine ? 'border-white/20' : 'border-slate-100'
+                  isMine ? 'border-cyan-200/70' : 'border-slate-100'
                 }`}
               >
                 {msg.attachments.map((att, idx) => (
@@ -102,7 +123,7 @@ export default function MessageBubble({
                     key={idx}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs ${
                       isMine
-                        ? 'bg-white/10 text-white'
+                        ? 'bg-white/90 border border-cyan-200/70 text-slate-800'
                         : 'bg-slate-50 border border-slate-200 text-slate-700'
                     }`}
                   >
@@ -117,10 +138,10 @@ export default function MessageBubble({
             )}
 
             {isMine && (
-              <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] text-cyan-200/80">
+              <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] text-slate-500">
                 <span>{timeAgo(msg.createdAt)}</span>
                 <CheckCheck
-                  className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#0891b2]' : 'text-cyan-300'}`}
+                  className={`w-3.5 h-3.5 ${msg.isRead ? 'text-[#0891b2]' : 'text-slate-400'}`}
                 />
               </div>
             )}
@@ -165,7 +186,7 @@ export default function MessageBubble({
                 )}
               </button>
 
-              {isMine && (
+              {isMine && !msg.isProblemPost && (
                 <button
                   type="button"
                   onClick={() => onDeleteMessage(msg.id)}

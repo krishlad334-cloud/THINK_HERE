@@ -245,7 +245,7 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
           {isNotFound && (
             <div className="mt-2 pt-2 border-t border-red-200/60">
               <p className="text-[11px] text-slate-700 font-semibold mb-1.5">
-                Account not found in LocalStorage. Quick create and sign in now:
+                Account not found yet. Quick create and sign in now:
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <button

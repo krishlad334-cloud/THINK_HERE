@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import AppErrorBoundary from './components/common/AppErrorBoundary.jsx'
 
 if (typeof window !== 'undefined') {
   if ('scrollRestoration' in window.history) {
@@ -39,6 +40,8 @@ if (typeof document !== 'undefined') {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </StrictMode>,
 )

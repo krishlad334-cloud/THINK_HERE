@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from './UserAvatar';
+import VerifiedBadge from './VerifiedBadge';
 import {
   User,
   Briefcase,
-  ShieldCheck,
   LogOut,
   ChevronDown,
   Phone,
   Star,
-  CheckCircle2,
   FileText,
   MessageSquare,
   Home
@@ -64,7 +63,7 @@ export default function ProfileDropdown({ onGoToLanding }) {
   const isConsultant = role === 'consultant' || currentUser?.role === 'consultant';
   const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
   const roleBadgeLabel = isConsultant
-    ? (isConsultantVerified ? 'Verified Consultant' : 'Verification Pending')
+    ? (isConsultantVerified ? 'Consultant' : 'Verification Pending')
     : 'Client Account';
 
   return (
@@ -93,7 +92,8 @@ export default function ProfileDropdown({ onGoToLanding }) {
 
         <div className="hidden xl:flex flex-col text-left cursor-pointer">
           <span className="text-xs font-bold text-slate-900 group-hover:text-[#020617] transition-colors leading-tight flex items-center gap-1">
-            {currentUser?.name || 'My Account'}
+            <span>{currentUser?.name || 'My Account'}</span>
+            {isConsultant && isConsultantVerified && <VerifiedBadge size="xs" />}
             <ChevronDown className={`w-3 h-3 text-slate-400 group-hover:text-slate-700 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </span>
           <span className="text-[10px] text-slate-500 font-medium">
@@ -120,21 +120,18 @@ export default function ProfileDropdown({ onGoToLanding }) {
                 />
               </div>
               <div className="overflow-hidden min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   <h4 className="text-xs font-bold text-slate-900 truncate">
                     {currentUser?.name}
                   </h4>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0891b2] flex-shrink-0" />
+                  {isConsultant && isConsultantVerified && <VerifiedBadge size="xs" />}
                 </div>
                 <p className="text-[11px] text-slate-500 truncate mt-0.5">
                   {currentUser?.email}
                 </p>
-                <div className="mt-1.5 flex items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#020617] text-white">
-                    <ShieldCheck className="w-2.5 h-2.5" />
-                    {roleBadgeLabel}
-                  </span>
-                </div>
+                <p className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                  {roleBadgeLabel}
+                </p>
               </div>
             </div>
           </div>

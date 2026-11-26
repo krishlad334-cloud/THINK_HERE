@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import VerifiedBadge from '../common/VerifiedBadge';
 import {
   Star,
   ShieldCheck,
@@ -101,17 +102,13 @@ export default function ClientFindConsultants() {
                     rounded="2xl"
                     className="ring-2 ring-slate-100"
                   />
-                  {c.isVerified && (
-                    <span className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-[#0891b2] text-white" title="Verified Consultant">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                    </span>
-                  )}
                 </div>
 
                 <div className="flex-1 overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-slate-900 leading-snug truncate">
-                      {c.name}
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 leading-snug truncate flex items-center gap-1 min-w-0">
+                      <span className="truncate">{c.name}</span>
+                      {c.isVerified && <VerifiedBadge size="xs" />}
                     </h3>
                     <div className="flex items-center gap-1 text-xs font-bold text-slate-800">
                       <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />

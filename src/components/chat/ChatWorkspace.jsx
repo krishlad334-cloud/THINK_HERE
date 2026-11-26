@@ -196,11 +196,37 @@ export default function ChatWorkspace() {
     });
   };
 
+  const baseMessages = currentConversation.messages || [];
+  const hasProblemBubble = baseMessages.some((m) => m.isProblemPost);
+  const threadMessages =
+    activeThought && !hasProblemBubble
+      ? [
+          {
+            id: `msg_problem_${activeThought.id}`,
+            conversationId: currentConversation.id,
+            senderId: activeThought.clientId,
+            senderName: activeThought.clientName || currentConversation.clientName,
+            senderAvatar: activeThought.clientAvatar || currentConversation.clientAvatar,
+            senderRole: 'client',
+            isProblemPost: true,
+            problemTitle: activeThought.title,
+            problemDescription: activeThought.description || '',
+            problemCategory: activeThought.category || 'General Consultation',
+            text: activeThought.description
+              ? `${activeThought.title}\n\n${activeThought.description}`
+              : activeThought.title,
+            attachments: activeThought.attachments || [],
+            createdAt: activeThought.createdAt,
+            isRead: true,
+          },
+          ...baseMessages,
+        ]
+      : baseMessages;
+
   return (
     <div className="w-full h-full flex flex-col md:flex-row bg-white overflow-hidden select-none">
       <ConversationList
         conversations={filteredConversations}
-        allThinks={allThinks}
         activeConvId={activeConvId}
         activeUserId={activeUser.id}
         isClientRole={isClientRole}
@@ -255,21 +281,20 @@ export default function ChatWorkspace() {
 
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-5 bg-[#f8fafc]/90">
           <div className="max-w-3xl sm:max-w-4xl mx-auto space-y-4">
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-2.5 sm:p-4 shadow-xs text-center space-y-1 max-w-xl mx-auto mb-3">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ecfeff] text-[#020617] text-[10px] sm:text-[11px] font-bold">
-                <CheckCircle className="w-3.5 h-3.5 text-[#0891b2]" />
-                <span>1-on-1 Consultation Connected</span>
+            <div className="flex justify-center pt-0.5 pb-1">
+              <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-3.5 py-1.5 sm:py-1 rounded-2xl sm:rounded-full bg-white border border-slate-200/80 shadow-2xs text-[11px] font-medium text-slate-500 max-w-full text-center">
+                <span className="inline-flex items-center gap-1.5 font-semibold text-slate-700">
+                  <CheckCircle className="w-3.5 h-3.5 text-[#0891b2] flex-shrink-0" />
+                  <span>1-on-1 Consultation Connected</span>
+                </span>
+                <span className="hidden sm:inline text-slate-300">•</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-500 truncate max-w-full">
+                  {currentConversation.clientName} &amp; {currentConversation.consultantName}
+                </span>
               </div>
-              <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 sm:line-clamp-2">
-                "{activeThought?.title || 'Problem Consultation'}"
-              </h4>
-              <p className="text-[10px] sm:text-[11px] text-slate-500 truncate sm:whitespace-normal">
-                OverThink #{currentConversation.thinkId} • Verified discussion between{' '}
-                {currentConversation.clientName} and {currentConversation.consultantName}
-              </p>
             </div>
 
-            {!currentConversation.messages || currentConversation.messages.length === 0 ? (
+            {threadMessages.length === 0 ? (
               <div className="text-center py-16 text-slate-400 text-xs">
                 <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-2.5 shadow-xs">
                   <MessageSquare className="w-6 h-6 text-[#020617]" />
@@ -280,7 +305,7 @@ export default function ChatWorkspace() {
                 </p>
               </div>
             ) : (
-              currentConversation.messages.map((msg) => (
+              threadMessages.map((msg) => (
                 <MessageBubble
                   key={msg.id}
                   msg={msg}

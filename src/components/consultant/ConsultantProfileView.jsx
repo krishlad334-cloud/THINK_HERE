@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
+import VerifiedBadge from '../common/VerifiedBadge';
 import ProfilePortfolioSections from './ProfilePortfolioSections';
 import {
-  ShieldCheck,
   Star,
   MapPin,
   Clock,
@@ -103,11 +103,13 @@ export default function ConsultantProfileView() {
 
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         <div className="h-40 sm:h-48 bg-gradient-to-r from-[#020617] via-[#082f49] to-[#082f49] relative">
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
-              {isVerified ? 'Verified Consultant' : 'Verification Pending'}
-            </span>
-          </div>
+          {!isVerified && (
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-md border border-white/20">
+                Verification Pending
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0 relative">
@@ -121,9 +123,6 @@ export default function ConsultantProfileView() {
                 rounded="3xl"
                 className="ring-4 ring-white shadow-xl"
               />
-              <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-1 sm:p-1.5 bg-[#0891b2] rounded-full text-white ring-2 ring-white z-10">
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </span>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -181,13 +180,13 @@ export default function ConsultantProfileView() {
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-black text-slate-900">{consultantUser.name}</h1>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
-                isVerified
-                  ? 'bg-cyan-50 text-cyan-700 border-cyan-200'
-                  : 'bg-amber-50 text-amber-800 border-amber-200'
-              }`}>
-                {isVerified ? '100% Verified' : 'Exam Pending'}
-              </span>
+              {isVerified ? (
+                <VerifiedBadge size="lg" />
+              ) : (
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-amber-50 text-amber-800 border-amber-200">
+                  Exam Pending
+                </span>
+              )}
             </div>
 
             {isEditing ? (

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import UserAvatar from '../common/UserAvatar';
 import StatusBadge from '../common/StatusBadge';
+import VerifiedBadge from '../common/VerifiedBadge';
 import { CHAT_STATUS_OPTIONS, getChatStatusConfig } from '../../data/chatConstants';
 
 export default function ChatHeader({
@@ -79,9 +80,9 @@ export default function ChatHeader({
               <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate leading-tight">
                 {partnerName}
               </h3>
-              <span className="hidden sm:inline-block text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-[#ecfeff] text-[#020617] border border-[#020617]/20 flex-shrink-0">
-                {partnerRoleLabel}
-              </span>
+              {partnerRoleLabel?.toLowerCase().includes('consultant') && (
+                <VerifiedBadge size="md" />
+              )}
             </div>
             <p className="text-[11px] sm:text-xs text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
               <span className="relative flex h-2 w-2 flex-shrink-0">
@@ -89,10 +90,6 @@ export default function ChatHeader({
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
               <span className="text-emerald-600 font-semibold leading-none">Online</span>
-              <span className="hidden sm:inline text-slate-300">•</span>
-              <span className="hidden sm:inline text-slate-500 truncate font-normal">
-                {activeThought?.title || 'Consultation Room'}
-              </span>
             </p>
           </div>
         </div>

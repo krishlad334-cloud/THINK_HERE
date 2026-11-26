@@ -102,7 +102,7 @@ export default function ProfilePortfolioSections({ consultantUser, hourlyRate, i
               <p className="text-xs text-slate-400 italic">
                 {isVerified
                   ? 'OverThink Verified Consultant Certification'
-                  : 'Complete the Skills Assessment to earn your Verified badge.'}
+                  : 'Pass the Consultant Qualification Exam to earn your Verified status.'}
               </p>
             )}
           </div>

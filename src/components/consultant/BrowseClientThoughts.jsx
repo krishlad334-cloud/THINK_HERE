@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import StatusBadge from '../common/StatusBadge';
+import VerifiedBadge from '../common/VerifiedBadge';
 import { isConsultantThought } from '../../utils/thoughtFilters';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
@@ -9,7 +10,6 @@ import {
   CheckCircle,
   Search,
   FileText,
-  ShieldCheck,
   MessageSquare,
   Lock
 } from 'lucide-react';
@@ -327,8 +327,8 @@ export default function BrowseClientThoughts() {
               />
               <div>
                 <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                  {activeUser?.name || 'Verified Consultant'}
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#0891b2]" />
+                  <span className="truncate">{activeUser?.name || 'Consultant'}</span>
+                  <VerifiedBadge size="xs" />
                 </h4>
                 <p className="text-[10px] text-slate-400">{activeUser?.label || 'Consultant'}</p>
                 <span className="text-xs font-black text-slate-800">${activeUser?.hourlyRate || 150}/hr</span>

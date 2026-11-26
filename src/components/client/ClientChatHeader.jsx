@@ -7,6 +7,7 @@ import {
   Video,
 } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
+import VerifiedBadge from '../common/VerifiedBadge';
 
 export default function ClientChatHeader({
   activeThought,
@@ -58,9 +59,10 @@ export default function ClientChatHeader({
               alt={assignedConsName}
               className="w-4 h-4 rounded-full object-cover flex-shrink-0"
             />
-            <span className="truncate">
+            <span className="truncate flex items-center gap-1">
               <span className="hidden sm:inline text-slate-400">Consultant: </span>
-              <span className="font-bold text-slate-800">{assignedConsName}</span>
+              <span className="font-bold text-slate-800 truncate">{assignedConsName}</span>
+              <VerifiedBadge size="xs" />
             </span>
           </span>
         )}

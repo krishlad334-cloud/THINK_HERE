@@ -57,7 +57,7 @@ export default function AssessmentResults({ score, answers, onComplete, onRetake
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 max-w-lg mx-auto pt-2">
           <div className="p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs">
             <div
               className={`text-2xl sm:text-3xl font-black font-mono ${

@@ -296,6 +296,24 @@ export function acceptThink(thinkId, consultantUser) {
     conversationId
   }));
 
+  const initialProblemMessage = {
+    id: `msg_problem_${think.id}`,
+    conversationId,
+    senderId: think.clientId,
+    senderName: think.clientName,
+    senderAvatar: think.clientAvatar,
+    senderRole: 'client',
+    isProblemPost: true,
+    problemTitle: think.title,
+    problemDescription: think.description || '',
+    problemCategory: think.category || 'General Consultation',
+    problemUrgency: think.urgency || 'Standard',
+    text: think.description ? `${think.title}\n\n${think.description}` : think.title,
+    attachments: think.attachments || [],
+    createdAt: think.createdAt || new Date().toISOString(),
+    isRead: true
+  };
+
   const newConversation = {
     id: conversationId,
     thinkId: think.id,
@@ -309,6 +327,7 @@ export function acceptThink(thinkId, consultantUser) {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     messages: [
+      initialProblemMessage,
       ...carriedMessages,
       {
         id: `msg_${Date.now()}`,
@@ -317,7 +336,7 @@ export function acceptThink(thinkId, consultantUser) {
         senderName: consultant.name,
         senderAvatar: consultant.profileImage || consultant.avatar,
         senderRole: 'consultant',
-        text: `Hello ${think.clientName}! I have reviewed your submission "${think.title}" and accepted this consultation. How would you like to begin?`,
+        text: `Hello ${think.clientName}! I have reviewed your problem and accepted this consultation. Let's work through it together — what extra context would you like to add?`,
         createdAt: new Date().toISOString(),
         isRead: false
       }

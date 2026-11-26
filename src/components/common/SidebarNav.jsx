@@ -5,7 +5,6 @@ import {
   Briefcase,
   CheckCircle2,
   FolderKanban,
-  GraduationCap,
   MessageSquare,
   Settings,
   Users,
@@ -20,7 +19,6 @@ export default function SidebarNav({
   consultationsCount,
   activeChatThoughtId,
   onSelectThought,
-  currentUser,
 }) {
   const clientRoutes = [
     {
@@ -57,7 +55,6 @@ export default function SidebarNav({
     },
   ];
 
-  const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
   const consultantRoutes = [
     {
       id: 'my_consultations',
@@ -71,15 +68,6 @@ export default function SidebarNav({
       label: 'Chat & Call Room',
       icon: MessageSquare,
       iconClass: 'text-[#020617]',
-    },
-    {
-      id: 'assessment',
-      label: 'Skills Assessment',
-      icon: GraduationCap,
-      iconClass: 'text-[#020617]',
-      statusPill: isConsultantVerified
-        ? { label: 'Passed', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-        : { label: 'Mandatory', className: 'bg-amber-50 text-amber-800 border-amber-300' },
     },
     {
       id: 'profile',
@@ -124,13 +112,6 @@ export default function SidebarNav({
                 {item.badge !== undefined && (
                   <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">
                     {item.badge}
-                  </span>
-                )}
-                {item.statusPill && (
-                  <span
-                    className={`text-[10px] border px-1.5 py-0.5 rounded-full font-bold ${item.statusPill.className}`}
-                  >
-                    {item.statusPill.label}
                   </span>
                 )}
               </button>

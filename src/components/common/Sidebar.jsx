@@ -3,6 +3,7 @@ import { FileSearch, LogOut, Plus, X } from 'lucide-react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from './UserAvatar';
 import SidebarNav from './SidebarNav';
+import VerifiedBadge from './VerifiedBadge';
 import { isClientThought, isConsultantThought } from '../../utils/thoughtFilters';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -49,10 +50,11 @@ export default function Sidebar({ isOpen, onClose }) {
   const savedCount = thoughts.filter((t) => t.isSaved).length;
   const consultationsCount = thoughts.filter((t) => isConsultantThought(t, currentUser)).length;
 
+  const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
   const accountRoleLabel =
     role === 'consultant'
-      ? currentUser?.assessmentPassed || currentUser?.isVerified
-        ? 'Verified Consultant'
+      ? isConsultantVerified
+        ? 'Consultant'
         : 'Verification Pending'
       : 'Client Account';
 
@@ -108,11 +110,12 @@ export default function Sidebar({ isOpen, onClose }) {
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-slate-900 truncate">{currentUser?.name}</h4>
+              <h4 className="text-xs font-bold text-slate-900 truncate flex items-center gap-1">
+                <span className="truncate">{currentUser?.name}</span>
+                {role === 'consultant' && isConsultantVerified && <VerifiedBadge size="xs" />}
+              </h4>
               <p className="text-[11px] text-slate-500 truncate">{currentUser?.email}</p>
-              <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#020617] text-white">
-                {accountRoleLabel}
-              </span>
+              <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{accountRoleLabel}</p>
             </div>
           </div>
         </div>
@@ -151,7 +154,6 @@ export default function Sidebar({ isOpen, onClose }) {
           consultationsCount={consultationsCount}
           activeChatThoughtId={activeChatThoughtId}
           onSelectThought={handleSelectThought}
-          currentUser={currentUser}
         />
 
         <div className="p-3 border-t border-slate-200/80 bg-slate-50/90 lg:hidden flex-shrink-0">
@@ -178,9 +180,10 @@ export default function Sidebar({ isOpen, onClose }) {
                   className="ring-1 ring-slate-200"
                 />
               </div>
-              <div className="truncate">
-                <span className="text-xs font-bold text-slate-900 truncate block">
-                  {currentUser?.name}
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-slate-900 truncate flex items-center gap-1">
+                  <span className="truncate">{currentUser?.name}</span>
+                  {role === 'consultant' && isConsultantVerified && <VerifiedBadge size="xs" />}
                 </span>
                 <span className="text-[10px] text-slate-400 block truncate">
                   {accountRoleLabel}
