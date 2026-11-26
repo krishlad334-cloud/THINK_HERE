@@ -184,7 +184,7 @@ export default function RealHuman3D({
   useEffect(() => {
     const f = fadeRef.current;
     if (pose !== f.toPose) {
-      f.fromPose = f.toPose;
+      f.fromPose = f.progress > 0.45 ? f.toPose : f.fromPose;
       f.toPose = pose;
       f.progress = reducedMotion ? 1 : 0;
       f.pulse = reducedMotion ? 0 : 1;

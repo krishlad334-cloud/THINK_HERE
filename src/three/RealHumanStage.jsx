@@ -1,4 +1,5 @@
 import React, { Component, Suspense, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import RealHuman3D from './RealHuman3D';
 import { POSE_IMAGES, useHumanStore } from './useHumanStore';
@@ -54,11 +55,18 @@ function LocalFallback({ reducedMotion = false }) {
           className="absolute inset-6 rounded-full blur-3xl opacity-40 transition-colors duration-500"
           style={{ background: glowColor }}
         />
-        <img
-          src={entry.color}
-          alt={entry.alt}
-          className="relative z-10 h-auto w-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.65)]"
-        />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.img
+            key={entry.color}
+            src={entry.color}
+            alt={entry.alt}
+            initial={reducedMotion ? false : { opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={reducedMotion ? undefined : { opacity: 0, scale: 1.02, y: -8 }}
+            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10 h-auto w-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.65)]"
+          />
+        </AnimatePresence>
       </div>
     </div>
   );

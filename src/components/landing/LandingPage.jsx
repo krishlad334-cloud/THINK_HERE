@@ -83,7 +83,11 @@ export default function LandingPage({
           isMobile={isMobile}
           reducedMotion={reducedMotion}
         />
-        <HowItWorks isMobile={isCompact} reducedMotion={reducedMotion} />
+        <HowItWorks
+          isMobile={isCompact}
+          reducedMotion={reducedMotion}
+          onScrollTo={scrollTo}
+        />
         <HumanVsAI reducedMotion={reducedMotion} />
         <UseCases isMobile={isCompact} reducedMotion={reducedMotion} />
         <TwentyFourHour reducedMotion={reducedMotion} />

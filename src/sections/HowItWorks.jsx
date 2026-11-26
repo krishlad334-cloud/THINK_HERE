@@ -9,31 +9,63 @@ gsap.registerPlugin(ScrollTrigger);
 
 const RealHumanStage = lazy(() => import('../three/RealHumanStage'));
 
-export default function HowItWorks({ isMobile = false, reducedMotion = false }) {
+export default function HowItWorks({
+  isMobile = false,
+  reducedMotion = false,
+  onScrollTo,
+}) {
   const sectionRef = useRef(null);
   const stRef = useRef(null);
   const progressBarRef = useRef(null);
   const activeStepRef = useRef(0);
+  const manualPauseUntilRef = useRef(0);
+  const programmaticLockUntilRef = useRef(0);
+
   const [activeStep, setActiveStep] = useState(0);
   const [typedCount, setTypedCount] = useState(18);
   const [routeChoice, setRouteChoice] = useState('human');
+  const [isVisibleInView, setIsVisibleInView] = useState(false);
 
   const goToStep = (idx) => {
     const clamped = Math.max(0, Math.min(STORY_STEPS.length - 1, idx));
     activeStepRef.current = clamped;
     setActiveStep(clamped);
     setHumanStepIndex(clamped);
+    manualPauseUntilRef.current = Date.now() + 9000;
+
+    if (progressBarRef.current) {
+      progressBarRef.current.style.width = `${((clamped + 1) / STORY_STEPS.length) * 100}%`;
+    }
 
     const st = stRef.current;
-    if (st && st.isActive) {
-      const targetProgress = (clamped + 0.12) / STORY_STEPS.length;
+    if (!isMobile && st) {
+      programmaticLockUntilRef.current = Date.now() + 950;
+      const targetProgress = (clamped + 0.08) / STORY_STEPS.length;
       const targetY = st.start + (st.end - st.start) * targetProgress;
-      window.scrollTo({ top: targetY, behavior: 'smooth' });
+      if (onScrollTo) {
+        onScrollTo(targetY, { offset: 0, duration: 0.75 });
+      } else {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+      }
     }
   };
 
   useEffect(() => {
     setHumanStepIndex(0);
+  }, []);
+
+  useEffect(() => {
+    if (!sectionRef.current) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisibleInView(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -53,9 +85,12 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
         start: 'top top',
         end: '+=340%',
         pin: true,
-        scrub: 0.75,
+        scrub: 0.65,
         anticipatePin: 1,
+        invalidateOnRefresh: true,
         onUpdate: (self) => {
+          if (Date.now() < programmaticLockUntilRef.current) return;
+
           if (progressBarRef.current) {
             progressBarRef.current.style.width = `${Math.min(100, Math.max(4, self.progress * 100))}%`;
           }
@@ -72,11 +107,28 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
       });
     }, sectionRef);
 
+    const refreshId = setTimeout(() => ScrollTrigger.refresh(), 240);
+
     return () => {
+      clearTimeout(refreshId);
       stRef.current = null;
       ctx.revert();
     };
   }, [isMobile, reducedMotion]);
+
+  useEffect(() => {
+    if (!isMobile || reducedMotion || !isVisibleInView) return undefined;
+
+    const intervalId = setInterval(() => {
+      if (Date.now() < manualPauseUntilRef.current) return;
+      const nextStep = (activeStepRef.current + 1) % STORY_STEPS.length;
+      activeStepRef.current = nextStep;
+      setActiveStep(nextStep);
+      setHumanStepIndex(nextStep);
+    }, 3600);
+
+    return () => clearInterval(intervalId);
+  }, [isMobile, reducedMotion, isVisibleInView]);
 
   const current = STORY_STEPS[activeStep];
   const typedText =
@@ -113,9 +165,9 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
                     borderColor: isCurrent ? s.accent : undefined,
                     boxShadow: isCurrent ? `0 0 22px ${s.accent}35` : undefined,
                   }}
-                  className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all ${
+                  className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-300 cursor-pointer ${
                     isCurrent
-                      ? 'bg-[#15122B] text-[#F5F3FF]'
+                      ? 'bg-[#15122B] text-[#F5F3FF] scale-[1.03]'
                       : 'border-[#4C4585]/50 bg-[#15122B]/50 text-[#A9A4C8] hover:text-[#F5F3FF]'
                   }`}
                 >
@@ -136,7 +188,10 @@ export default function HowItWorks({ isMobile = false, reducedMotion = false }) 
               current={current}
               typedText={typedText}
               routeChoice={routeChoice}
-              onSelectRoute={setRouteChoice}
+              onSelectRoute={(choice) => {
+                manualPauseUntilRef.current = Date.now() + 9000;
+                setRouteChoice(choice);
+              }}
               onGoToStep={goToStep}
               progressBarRef={progressBarRef}
               reducedMotion={reducedMotion}

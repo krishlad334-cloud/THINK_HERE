@@ -6,9 +6,9 @@ import EasyApplyReviewStep from './apply/EasyApplyReviewStep';
 import EasyApplySuccessStep from './apply/EasyApplySuccessStep';
 
 const APPLY_STEPS = [
-  { id: 1, label: 'Contact Info' },
-  { id: 2, label: 'Resume & Questions' },
-  { id: 3, label: 'Review' },
+  { id: 1, shortLabel: 'Contact', label: 'Contact Info' },
+  { id: 2, shortLabel: 'Questions', label: 'Resume & Questions' },
+  { id: 3, shortLabel: 'Review', label: 'Review' },
 ];
 
 export default function EasyApplyModal({
@@ -176,40 +176,17 @@ export default function EasyApplyModal({
         </div>
 
         {step < 4 && (
-          <div className="px-5 py-2.5 bg-slate-50/80 border-b border-slate-100 flex-shrink-0 space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-bold">
-              <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto">
-                {APPLY_STEPS.map((item) => {
-                  const isDone = step > item.id;
-                  const isActive = step === item.id;
-                  return (
-                    <div
-                      key={item.id}
-                      className={`flex items-center gap-1.5 whitespace-nowrap ${
-                        isActive
-                          ? 'text-[#020617]'
-                          : isDone
-                            ? 'text-[#0891b2]'
-                            : 'text-slate-400'
-                      }`}
-                    >
-                      <span
-                        className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-black ${
-                          isDone
-                            ? 'bg-[#0891b2] text-white'
-                            : isActive
-                              ? 'bg-[#020617] text-white'
-                              : 'bg-slate-200 text-slate-500'
-                        }`}
-                      >
-                        {isDone ? <Check className="w-2.5 h-2.5 stroke-[3]" /> : item.id}
-                      </span>
-                      <span>{item.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              <span className="text-[#0891b2] flex-shrink-0 pl-2">{progressPercent}%</span>
+          <div className="px-4 sm:px-5 py-3 bg-slate-50/80 border-b border-slate-100 flex-shrink-0 space-y-2.5">
+            <div className="flex items-center justify-between gap-2 text-[11px] font-bold">
+              <span className="text-slate-600">
+                Step {step} of 3 •{' '}
+                <strong className="text-[#020617]">
+                  {APPLY_STEPS[step - 1]?.label}
+                </strong>
+              </span>
+              <span className="text-[#0891b2] font-extrabold flex-shrink-0">
+                {progressPercent}%
+              </span>
             </div>
 
             <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -217,6 +194,39 @@ export default function EasyApplyModal({
                 className="h-full bg-[#0891b2] transition-all duration-300 rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
+            </div>
+
+            <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+              {APPLY_STEPS.map((item) => {
+                const isDone = step > item.id;
+                const isActive = step === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    className={`flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-bold min-w-0 ${
+                      isActive
+                        ? 'text-[#020617]'
+                        : isDone
+                          ? 'text-[#0891b2]'
+                          : 'text-slate-400'
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-black flex-shrink-0 ${
+                        isDone
+                          ? 'bg-[#0891b2] text-white'
+                          : isActive
+                            ? 'bg-[#020617] text-white'
+                            : 'bg-slate-200 text-slate-500'
+                      }`}
+                    >
+                      {isDone ? <Check className="w-2.5 h-2.5 stroke-[3]" /> : item.id}
+                    </span>
+                    <span className="sm:hidden truncate">{item.shortLabel}</span>
+                    <span className="hidden sm:inline truncate">{item.label}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

@@ -16,27 +16,27 @@ export default function StoryStepCard({
   const StepIcon = current.icon;
 
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={current.num}
-        initial={reducedMotion ? false : { opacity: 0, y: 14, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        exit={reducedMotion ? undefined : { opacity: 0, y: -10, filter: 'blur(4px)' }}
-        transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+        initial={reducedMotion ? false : { opacity: 0, x: 20, scale: 0.985 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={reducedMotion ? undefined : { opacity: 0, x: -20, scale: 0.985 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         style={{
           borderColor: `${current.accent}66`,
           boxShadow: `0 0 48px ${current.accent}1a`,
         }}
         className="relative overflow-hidden rounded-3xl border bg-[#15122B]/75 p-6 sm:p-8 backdrop-blur-xl space-y-5"
       >
-        <div className="absolute left-0 right-0 top-0 h-0.5 bg-[#4C4585]/35">
+        <div className="absolute left-0 right-0 top-0 h-1 bg-[#4C4585]/35">
           <div
             ref={progressBarRef}
             style={{
               width: `${((activeStep + 1) / STORY_STEPS.length) * 100}%`,
               backgroundColor: current.accent,
             }}
-            className="h-full transition-[background-color,width] duration-300 ease-out"
+            className="h-full transition-[background-color,width] duration-500 ease-out"
           />
         </div>
 
