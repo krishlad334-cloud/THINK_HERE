@@ -24,6 +24,14 @@ export const CHAT_STATUS_OPTIONS = [
     badgeClass: 'bg-blue-50 text-blue-800 border-blue-200',
   },
   {
+    value: 'answered',
+    label: 'Answered',
+    dotClass: 'bg-emerald-500',
+    menuItemClass: 'hover:bg-emerald-50 text-emerald-800',
+    pillClass: 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700',
+    badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  },
+  {
     value: 'resolved',
     label: 'Completed',
     dotClass: 'bg-sky-500',
@@ -32,11 +40,19 @@ export const CHAT_STATUS_OPTIONS = [
     badgeClass: 'bg-sky-50 text-sky-800 border-sky-200',
   },
   {
+    value: 'ai_fallback',
+    label: 'AI Fallback',
+    dotClass: 'bg-violet-500',
+    menuItemClass: 'hover:bg-violet-50 text-violet-800',
+    pillClass: 'bg-violet-50 hover:bg-violet-100 text-violet-700',
+    badgeClass: 'bg-violet-50 text-violet-800 border-violet-200',
+  },
+  {
     value: 'closed',
     label: 'Closed',
     dotClass: 'bg-slate-500',
     menuItemClass: 'hover:bg-slate-100 text-slate-700',
-    pillClass: 'col-span-2 bg-slate-100 hover:bg-slate-200 text-slate-700',
+    pillClass: 'bg-slate-100 hover:bg-slate-200 text-slate-700',
     badgeClass: 'bg-slate-100 text-slate-700 border-slate-300',
   },
 ];

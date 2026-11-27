@@ -1,10 +1,43 @@
-import React from 'react';
-import { Globe, Mail, MessageCircle, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, CheckCircle2, Globe, Mail, MessageCircle, Share2 } from 'lucide-react';
 import Logo from '../components/common/Logo';
+import { subscribeNewsletter } from '../utils/thinkStorage';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 export default function Footer({ onNavigate }) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    const cleanEmail = email.trim();
+    if (!cleanEmail || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setStatus(null);
+    try {
+      const res = await subscribeNewsletter(cleanEmail, 'landing_footer');
+      setStatus({
+        type: 'success',
+        text: res.alreadySubscribed
+          ? 'You are already subscribed to OverThink updates.'
+          : res.message || 'Subscribed to OverThink clarity dispatches!',
+      });
+      if (!res.alreadySubscribed) {
+        setEmail('');
+      }
+    } catch (err) {
+      setStatus({
+        type: 'error',
+        text: err.message || 'Please enter a valid email address.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer
       id="footer"
@@ -60,12 +93,46 @@ export default function Footer({ onNavigate }) {
         </div>
       </div>
 
-      <div className="mx-auto mt-6 max-w-[1400px] border-t border-[#4C4585]/25 pt-5 flex flex-col items-center justify-between gap-2 text-xs text-[#A9A4C8] sm:flex-row">
-        <div>&copy; {CURRENT_YEAR} OverThink Platform. All rights reserved.</div>
-        <div className="font-medium text-[#A9A4C8]">
-          Developed by <span className="font-bold text-[#F5F3FF]">Krish Lad</span>
+      <div className="mx-auto mt-6 max-w-[1400px] border-t border-[#4C4585]/25 pt-5 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="text-xs text-[#A9A4C8]">
+          &copy; {CURRENT_YEAR} OverThink Platform. Developed by{' '}
+          <span className="font-bold text-[#F5F3FF]">Krish Lad</span>.
         </div>
-        <div>Every Thought Deserves a Solution.</div>
+
+        <form onSubmit={handleSubscribe} className="w-full sm:w-auto flex flex-col items-center sm:items-end gap-1.5">
+          <div className="flex w-full sm:w-auto items-center gap-2">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (status) setStatus(null);
+              }}
+              placeholder="Subscribe for clarity updates..."
+              aria-label="Newsletter email address"
+              className="w-full sm:w-64 rounded-xl border border-[#4C4585]/60 bg-[#15122B]/80 px-3.5 py-2 text-xs text-[#F5F3FF] placeholder:text-[#A9A4C8]/70 focus:border-[#5EEAD4] focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#A855F7] to-[#5EEAD4] px-3.5 py-2 text-xs font-bold text-[#0A0816] transition hover:opacity-95 disabled:opacity-60 cursor-pointer flex-shrink-0"
+            >
+              <span>{isSubmitting ? 'Joining...' : 'Subscribe'}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          {status && (
+            <p
+              className={`text-[11px] flex items-center gap-1 ${
+                status.type === 'error' ? 'text-rose-300' : 'text-[#5EEAD4]'
+              }`}
+            >
+              {status.type === 'success' && <CheckCircle2 className="h-3 w-3" />}
+              <span>{status.text}</span>
+            </p>
+          )}
+        </form>
       </div>
     </footer>
   );

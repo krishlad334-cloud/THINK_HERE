@@ -117,8 +117,8 @@ function ActiveCallSession({ activeCall, endCall, currentUser }) {
             {isVideoOff ? (
               <div className="text-center p-1 sm:p-2">
                 <UserAvatar
-                  src={currentUser.avatar || currentUser.profileImage}
-                  name={currentUser.name}
+                  src={currentUser?.avatar || currentUser?.profileImage}
+                  name={currentUser?.name}
                   size="sm"
                   className="mx-auto mb-1 opacity-80"
                 />
@@ -127,8 +127,8 @@ function ActiveCallSession({ activeCall, endCall, currentUser }) {
             ) : (
               <div className="relative w-full h-full bg-slate-900 flex items-center justify-center">
                 <UserAvatar
-                  src={currentUser.avatar || currentUser.profileImage}
-                  name={currentUser.name}
+                  src={currentUser?.avatar || currentUser?.profileImage}
+                  name={currentUser?.name}
                   size="md"
                   className="opacity-90"
                 />

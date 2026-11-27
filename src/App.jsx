@@ -95,7 +95,7 @@ function AppContent() {
       if (consultantTabs.includes(activeTab)) {
         setActiveTab('chat');
       }
-    } else if (role === 'consultant') {
+    } else if (role === 'consultant' || role === 'admin') {
       const clientTabs = ['my_thoughts', 'consultant_responses', 'ai_responses', 'saved_solutions', 'jobs', 'find_consultants'];
       if (clientTabs.includes(activeTab)) {
         setActiveTab('browse_thoughts');
@@ -111,7 +111,7 @@ function AppContent() {
         <div className="w-full h-full overflow-y-auto">
           <LandingPage
             skipLoader={true}
-            onSignIn={() => setActiveTab(role === 'consultant' ? 'browse_thoughts' : 'chat')}
+            onSignIn={() => setActiveTab(role === 'consultant' || role === 'admin' ? 'browse_thoughts' : 'chat')}
             onStartThink={() => setActiveTab('chat')}
           />
         </div>
@@ -147,7 +147,7 @@ function AppContent() {
       }
     }
 
-    if (role === 'consultant') {
+    if (role === 'consultant' || role === 'admin') {
       switch (activeTab) {
         case 'browse_thoughts':
           return <BrowseClientThoughts />;

@@ -26,37 +26,48 @@ export default function ConsultantProfileView() {
     };
   }, []);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [headline, setHeadline] = useState(consultantUser?.title || '');
-  const [bio, setBio] = useState(consultantUser?.bio || '');
-  const [hourlyRate, setHourlyRate] = useState(consultantUser?.hourlyRate || 150);
-  const [location, setLocation] = useState(consultantUser?.location || '');
-  const [avatar, setAvatar] = useState(consultantUser?.avatar || consultantUser?.profileImage || '');
+  const [draftHeadline, setDraftHeadline] = useState('');
+  const [draftBio, setDraftBio] = useState('');
+  const [draftHourlyRate, setDraftHourlyRate] = useState(150);
+  const [draftLocation, setDraftLocation] = useState('');
+  const [draftAvatar, setDraftAvatar] = useState('');
   const [newSkill, setNewSkill] = useState('');
-  const [skills, setSkills] = useState(consultantUser?.skills || []);
+  const [draftSkills, setDraftSkills] = useState([]);
 
-  const prevUserIdRef = useRef(consultantUser?.id);
-  useEffect(() => {
-    if (consultantUser && !isEditing && consultantUser.id !== prevUserIdRef.current) {
-      prevUserIdRef.current = consultantUser.id;
-      setHeadline(consultantUser.title || '');
-      setBio(consultantUser.bio || '');
-      setHourlyRate(consultantUser.hourlyRate || 150);
-      setLocation(consultantUser.location || '');
-      setSkills(consultantUser.skills || []);
-      setAvatar(consultantUser.avatar || consultantUser.profileImage || '');
-    }
-  }, [consultantUser, isEditing]);
+  const headline = isEditing
+    ? draftHeadline
+    : consultantUser?.title || consultantUser?.headline || '';
+  const bio = isEditing ? draftBio : consultantUser?.bio || '';
+  const hourlyRate = isEditing
+    ? draftHourlyRate
+    : Number(consultantUser?.hourlyRate) || 150;
+  const location = isEditing ? draftLocation : consultantUser?.location || '';
+  const avatar = isEditing
+    ? draftAvatar
+    : consultantUser?.avatar || consultantUser?.profileImage || '';
+  const skills = isEditing ? draftSkills : consultantUser?.skills || [];
+
+  const startEditing = () => {
+    setDraftHeadline(consultantUser?.title || consultantUser?.headline || '');
+    setDraftBio(consultantUser?.bio || '');
+    setDraftHourlyRate(Number(consultantUser?.hourlyRate) || 150);
+    setDraftLocation(consultantUser?.location || '');
+    setDraftAvatar(consultantUser?.avatar || consultantUser?.profileImage || '');
+    setDraftSkills(consultantUser?.skills || []);
+    setIsEditing(true);
+  };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (file && (!file.type || file.type.startsWith('image/'))) {
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const result = reader.result;
-        setAvatar(result);
+        setDraftAvatar(result);
         if (updateConsultantProfile) {
-          updateConsultantProfile({
+          await updateConsultantProfile({
             avatar: result,
             profileImage: result
           });
@@ -67,33 +78,40 @@ export default function ConsultantProfileView() {
     e.target.value = '';
   };
 
-  const handleSave = () => {
-    if (updateConsultantProfile) {
-      updateConsultantProfile({
+  const handleSave = async () => {
+    if (!updateConsultantProfile || isSaving) return;
+    setIsSaving(true);
+    try {
+      const updated = await updateConsultantProfile({
         title: headline,
+        headline,
         bio,
-        hourlyRate: Number(hourlyRate),
+        hourlyRate: Number(hourlyRate) || 150,
         location,
         skills,
         avatar,
         profileImage: avatar
       });
+      if (updated) {
+        setIsEditing(false);
+        setSavedSuccess(true);
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3500);
+      }
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditing(false);
-    setSavedSuccess(true);
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3500);
   };
 
   const addSkill = () => {
-    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills(prev => [...prev, newSkill.trim()]);
+    if (newSkill.trim() && !draftSkills.includes(newSkill.trim())) {
+      setDraftSkills(prev => [...prev, newSkill.trim()]);
       setNewSkill('');
     }
   };
 
   const removeSkill = (s) => {
-    setSkills(prev => prev.filter(item => item !== s));
+    setDraftSkills(prev => prev.filter(item => item !== s));
   };
 
   const isVerified = Boolean(consultantUser?.isVerified || consultantUser?.assessmentPassed);
@@ -155,14 +173,7 @@ export default function ConsultantProfileView() {
               {isEditing && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setHeadline(consultantUser.title || '');
-                    setBio(consultantUser.bio || '');
-                    setHourlyRate(consultantUser.hourlyRate || 150);
-                    setLocation(consultantUser.location || '');
-                    setSkills(consultantUser.skills || []);
-                  }}
+                  onClick={() => setIsEditing(false)}
                   className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all cursor-pointer"
                 >
                   Cancel
@@ -170,13 +181,14 @@ export default function ConsultantProfileView() {
               )}
               <button
                 type="button"
-                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-                className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                disabled={isSaving}
+                onClick={() => isEditing ? handleSave() : startEditing()}
+                className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-60"
               >
                 {isEditing ? (
                   <>
                     <Save className="w-4 h-4 text-[#0891b2]" />
-                    <span>Save Profile Changes</span>
+                    <span>{isSaving ? 'Saving...' : 'Save Profile Changes'}</span>
                   </>
                 ) : (
                   <>
@@ -205,21 +217,21 @@ export default function ConsultantProfileView() {
                 <input
                   type="text"
                   value={headline}
-                  onChange={(e) => setHeadline(e.target.value)}
+                  onChange={(e) => setDraftHeadline(e.target.value)}
                   placeholder="Headline..."
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
                 />
                 <input
                   type="text"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e) => setDraftLocation(e.target.value)}
                   placeholder="Location (e.g. San Francisco, CA)..."
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
                 />
                 <input
                   type="number"
                   value={hourlyRate}
-                  onChange={(e) => setHourlyRate(e.target.value)}
+                  onChange={(e) => setDraftHourlyRate(e.target.value)}
                   placeholder="Hourly Rate ($/hr)..."
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-900"
                 />
@@ -258,7 +270,7 @@ export default function ConsultantProfileView() {
               <textarea
                 rows={4}
                 value={bio}
-                onChange={(e) => setBio(e.target.value)}
+                onChange={(e) => setDraftBio(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900"
               />
             ) : (

@@ -1,23 +1,26 @@
 export function isClientThought(thought, user) {
   if (!thought || !user) return false;
-  if (thought.clientId && user.id && thought.clientId === user.id) return true;
+  const thoughtUserId =
+    thought.clientId ||
+    (typeof thought.user === 'object' ? thought.user?._id || thought.user?.id : thought.user);
+  if (thoughtUserId && user.id && thoughtUserId === user.id) return true;
   if (
     user.id === 'client_001' &&
-    (thought.clientId === 'client_001' || thought.clientId === 'user-client-1')
+    (thoughtUserId === 'client_001' || thoughtUserId === 'user-client-1')
   ) {
     return true;
   }
   if (
     user.email &&
-    thought.clientEmail &&
-    thought.clientEmail.toLowerCase() === user.email.toLowerCase()
+    (thought.clientEmail || thought.email) &&
+    (thought.clientEmail || thought.email).toLowerCase() === user.email.toLowerCase()
   ) {
     return true;
   }
   if (
-    thought.clientName &&
+    (thought.clientName || thought.name) &&
     user.name &&
-    thought.clientName.trim().toLowerCase() === user.name.trim().toLowerCase()
+    (thought.clientName || thought.name).trim().toLowerCase() === user.name.trim().toLowerCase()
   ) {
     return true;
   }
@@ -26,5 +29,11 @@ export function isClientThought(thought, user) {
 
 export function isConsultantThought(thought, user) {
   if (!thought || !user?.id) return false;
-  return thought.consultantId === user.id || thought.assignedConsultantId === user.id;
+  const consId =
+    thought.consultantId ||
+    thought.assignedConsultantId ||
+    (typeof thought.assignedConsultant === 'object'
+      ? thought.assignedConsultant?._id || thought.assignedConsultant?.id
+      : thought.assignedConsultant);
+  return consId === user.id;
 }

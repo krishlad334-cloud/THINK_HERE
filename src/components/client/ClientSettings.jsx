@@ -25,46 +25,43 @@ export default function ClientSettings() {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
   }, []);
-  const [name, setName] = useState(currentUser?.name || '');
-  const [email, setEmail] = useState(currentUser?.email || '');
-  const [bio, setBio] = useState(currentUser?.bio || '');
-  const [location, setLocation] = useState(currentUser?.location || '');
-  const [title, setTitle] = useState(currentUser?.title || '');
-  const [avatar, setAvatar] = useState(currentUser?.avatar || currentUser?.profileImage || '');
+  const [draft, setDraft] = useState(null);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [inPlatformMasking, setInPlatformMasking] = useState(true);
   const [timerAlerts, setTimerAlerts] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
 
-  const prevUserIdRef = useRef(currentUser?.id);
-  useEffect(() => {
-    if (currentUser && currentUser.id !== prevUserIdRef.current) {
-      prevUserIdRef.current = currentUser.id;
-      setName(currentUser.name || '');
-      setEmail(currentUser.email || '');
-      setBio(currentUser.bio || '');
-      setLocation(currentUser.location || '');
-      setTitle(currentUser.title || '');
-      setAvatar(currentUser.avatar || currentUser.profileImage || '');
-    }
-  }, [currentUser]);
+  const name = draft?.name ?? currentUser?.name ?? '';
+  const email = draft?.email ?? currentUser?.email ?? '';
+  const bio = draft?.bio ?? currentUser?.bio ?? '';
+  const location = draft?.location ?? currentUser?.location ?? '';
+  const title = draft?.title ?? currentUser?.title ?? currentUser?.headline ?? '';
+  const avatar = draft?.avatar ?? currentUser?.avatar ?? currentUser?.profileImage ?? '';
+
+  const updateField = (field, value) => {
+    setDraft((prev) => ({ ...(prev || {}), [field]: value }));
+  };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (file && (!file.type || file.type.startsWith('image/'))) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result);
+        updateField('avatar', reader.result);
       };
       reader.readAsDataURL(file);
     }
     e.target.value = '';
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (currentUser?.id && updateUserProfile) {
-      updateUserProfile(currentUser.id, {
+    if (!currentUser?.id || !updateUserProfile || isSaving) return;
+
+    setIsSaving(true);
+    try {
+      const updated = await updateUserProfile(currentUser.id, {
         name: name.trim() || currentUser.name,
         email: email.trim() || currentUser.email,
         bio,
@@ -73,17 +70,23 @@ export default function ClientSettings() {
         avatar,
         profileImage: avatar
       });
+
+      if (updated) {
+        setDraft(null);
+        setSavedSuccess(true);
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3000);
+      }
+    } finally {
+      setIsSaving(false);
     }
-    setSavedSuccess(true);
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3000);
   };
 
   const userThoughts = (thoughts || []).filter((t) =>
     role === 'consultant' ? isConsultantThought(t, currentUser) : isClientThought(t, currentUser)
   );
   const solutionsCount = userThoughts.filter(
-    t => t.status === 'resolved' || t.solution || (t.solutions && t.solutions.length > 0)
+    t => t.status === 'resolved' || t.status === 'answered' || t.solution || (t.solutions && t.solutions.length > 0)
   ).length;
   const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);
   const accountBadge =
@@ -208,7 +211,7 @@ export default function ClientSettings() {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => updateField('name', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
@@ -218,7 +221,7 @@ export default function ClientSettings() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => updateField('email', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
@@ -230,7 +233,7 @@ export default function ClientSettings() {
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => updateField('title', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
@@ -240,7 +243,7 @@ export default function ClientSettings() {
                 <input
                   type="text"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e) => updateField('location', e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all"
                 />
               </div>
@@ -251,7 +254,7 @@ export default function ClientSettings() {
               <textarea
                 rows={4}
                 value={bio}
-                onChange={(e) => setBio(e.target.value)}
+                onChange={(e) => updateField('bio', e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617] transition-all leading-relaxed"
               />
               <p className="text-[10px] text-slate-400 mt-1">Brief summary displayed to consultants when they review your submitted thoughts.</p>
@@ -320,10 +323,11 @@ export default function ClientSettings() {
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center gap-2 shadow-sm shadow-[#020617]/25 cursor-pointer transition-all transform active:scale-98"
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center gap-2 shadow-sm shadow-[#020617]/25 cursor-pointer transition-all transform active:scale-98 disabled:opacity-60"
             >
               <Save className="w-4 h-4 text-[#0891b2]" />
-              <span>Save Settings</span>
+              <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
             </button>
           </div>
         </div>

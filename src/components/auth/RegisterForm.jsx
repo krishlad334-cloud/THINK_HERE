@@ -16,7 +16,6 @@ import {
   User,
 } from 'lucide-react';
 import { useApp } from '../../context/useApp';
-import { getUsers } from '../../utils/thinkStorage';
 
 const ACCOUNT_OPTIONS = [
   {
@@ -70,13 +69,6 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const otpInputRefs = useRef([]);
-  const registerTimerRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (registerTimerRef.current) clearTimeout(registerTimerRef.current);
-    };
-  }, []);
 
   useEffect(() => {
     if (step !== 4 || otpTimer <= 0 || otpExpired) return undefined;
@@ -126,27 +118,8 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       return;
     }
     const digitsOnly = cleanMobile.replace(/\D/g, '');
-    if (digitsOnly.length < 10) {
-      setError('Please enter a valid 10-digit mobile number.');
-      return;
-    }
-
-    const existingUsers = getUsers();
-    const emailExists = existingUsers.some(
-      (u) => u.email && u.email.toLowerCase() === cleanEmail.toLowerCase()
-    );
-    if (emailExists) {
-      setError(
-        'An account with this email address already exists. Please sign in or use a different email.'
-      );
-      return;
-    }
-
-    const mobileExists = existingUsers.some(
-      (u) => u.mobile && u.mobile.replace(/\D/g, '') === digitsOnly
-    );
-    if (mobileExists) {
-      setError('An account with this mobile number already exists.');
+    if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+      setError('Please enter a valid 10 to 15 digit mobile number.');
       return;
     }
 
@@ -222,7 +195,7 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
     showToast('Code Resent', `New simulated OTP: ${res.otp}`, 'info');
   };
 
-  const handleFinalSubmit = (e) => {
+  const handleFinalSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -242,24 +215,24 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       return;
     }
 
-    if (registerTimerRef.current) clearTimeout(registerTimerRef.current);
     setIsRegistering(true);
-    registerTimerRef.current = setTimeout(() => {
-      const regRes = register({
+    try {
+      const regRes = await register({
         role,
         name: name.trim(),
         email: email.trim(),
-        mobile: mobile.trim(),
+        mobile: mobile.trim().replace(/\D/g, ''),
         password,
       });
 
-      setIsRegistering(false);
-      if (!regRes.success) {
-        setError(regRes.error || 'Registration failed.');
+      if (!regRes?.success) {
+        setError(regRes?.error || 'Registration failed.');
       } else if (onSuccess) {
         onSuccess(regRes.user || { role }, true);
       }
-    }, 500);
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   return (

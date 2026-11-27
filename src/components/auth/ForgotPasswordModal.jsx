@@ -10,11 +10,11 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
           Password Recovery (Demo)
         </h3>
         <p className="text-xs text-slate-600 leading-relaxed mb-4">
-          In this frontend-only platform, demo accounts use password{' '}
+          Demo accounts use password{' '}
           <code className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 font-mono font-bold">
             password123
           </code>
-          . If you registered a new account, you can log in directly using the password you set during registration.
+          . If you registered a new account, you can log in directly using the email or mobile number and password you set during registration.
         </p>
         <button
           type="button"

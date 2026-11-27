@@ -1,31 +1,32 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AppContext } from './useApp';
+import { getAuthToken } from '../utils/apiClient';
 import {
-  initializeThinkStorage,
-  getUsers,
-  getActiveUser,
-  setActiveUser as setStorageActiveUser,
-  getThinks,
-  saveThink as storageSaveThink,
-  updateThink as storageUpdateThink,
-  acceptThink as storageAcceptThink,
-  getConversations,
-  sendMessage as storageSendMessage,
-  addPendingThinkMessage as storageAddPendingThinkMessage,
-  deleteMessage as storageDeleteMessage,
-  clearChatMessages as storageClearChatMessages,
-  markMessagesAsRead as storageMarkMessagesRead,
-  getNotifications,
-  markNotificationRead as storageMarkNotifRead,
-  markAllNotificationsRead as storageMarkAllNotifsRead,
-  resetDemoData as storageResetDemoData,
-  updateUser as storageUpdateUser,
-  getUserById,
-  getAuthSession,
-  setAuthSession,
-  DEMO_USERS
+  checkApiHealth,
+  getConsultants as apiGetConsultants,
+  getMyThoughts as apiGetMyThoughts,
+  getAllThoughts as apiGetAllThoughts,
+  getThoughtById as apiGetThoughtById,
+  saveThink as apiSaveThink,
+  updateThink as apiUpdateThink,
+  acceptThink as apiAcceptThink,
+  createReply as apiCreateReply,
+  getRepliesForThought as apiGetRepliesForThought,
+  getConversations as apiGetConversations,
+  sendMessage as apiSendMessage,
+  deleteMessage as apiDeleteMessage,
+  markMessagesAsRead as apiMarkMessagesRead,
+  getNotifications as apiGetNotifications,
+  markNotificationRead as apiMarkNotifRead,
+  markAllNotificationsRead as apiMarkAllNotifsRead,
+  subscribeNewsletter as apiSubscribeNewsletter,
+  getSavedThoughtIds,
+  toggleSavedThoughtId,
+  DEMO_USERS,
 } from '../utils/thinkStorage';
 import {
+  getCurrentUser as authGetCurrentUser,
+  updateCurrentUserProfile as authUpdateProfile,
   registerUser as authRegisterUser,
   quickRegisterUser as authQuickRegisterUser,
   loginUser as authLoginUser,
@@ -33,14 +34,14 @@ import {
   verifyRegistrationOTP,
   generateOTP,
   resendOTP,
-  isAuthenticated as checkIsAuthenticated
+  redirectByRole,
 } from '../utils/thinkAuth';
+import { normalizeThought } from '../utils/normalizers';
 import {
-  MOCK_CONSULTANTS,
   INITIAL_JOBS,
-  INITIAL_AUDIT_LOGS
+  INITIAL_AUDIT_LOGS,
 } from '../data/mockSeedData';
-import { analyzeThought } from '../utils/aiEngine';
+import { analyzeThought, generateAISolution } from '../utils/aiEngine';
 import { inspectMessageForPrivacy } from '../utils/contactPrivacy';
 
 function syncJobsCatalog(currentJobs) {
@@ -59,41 +60,39 @@ function syncJobsCatalog(currentJobs) {
   });
 }
 
+function enrichThoughtsFromConversations(thoughtsList, conversationsList) {
+  if (!Array.isArray(thoughtsList) || thoughtsList.length === 0) return thoughtsList || [];
+  const convByThinkId = new Map();
+  (conversationsList || []).forEach((c) => {
+    if (c.thinkId) convByThinkId.set(c.thinkId, c);
+  });
+
+  return thoughtsList.map((t) => {
+    const conv = convByThinkId.get(t.id);
+    if (!conv) return t;
+    return {
+      ...t,
+      assignedConsultantId: t.assignedConsultantId || conv.consultantId || null,
+      consultantId: t.consultantId || conv.consultantId || null,
+      assignedConsultantName: t.assignedConsultantName || conv.consultantName || null,
+      assignedConsultantAvatar: t.assignedConsultantAvatar || conv.consultantAvatar || null,
+      clientName: t.clientName || conv.clientName,
+      clientAvatar: t.clientAvatar || conv.clientAvatar,
+    };
+  });
+}
+
 export function AppProvider({ children }) {
-  useEffect(() => {
-    initializeThinkStorage();
-  }, []);
+  const [activeUser, setActiveUserState] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(() => Boolean(getAuthToken()));
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [apiHealth, setApiHealth] = useState(null);
 
-  const [activeUser, setActiveUserState] = useState(() => {
-    initializeThinkStorage();
-    const session = getAuthSession();
-    if (session && session.isAuthenticated && session.userId) {
-      const user = getUserById(session.userId);
-      if (user) return user;
-    }
-    return getActiveUser() || DEMO_USERS[0];
-  });
-
-  const [users, setUsersState] = useState(() => {
-    initializeThinkStorage();
-    return getUsers();
-  });
-
-  const [thinks, setThinksState] = useState(() => {
-    initializeThinkStorage();
-    return getThinks();
-  });
-
-  const [conversations, setConversationsState] = useState(() => {
-    initializeThinkStorage();
-    return getConversations();
-  });
-
-  const [notifications, setNotificationsState] = useState(() => {
-    initializeThinkStorage();
-    const user = getActiveUser();
-    return getNotifications(user?.id, user?.role);
-  });
+  const [thinks, setThinksState] = useState([]);
+  const [conversations, setConversationsState] = useState([]);
+  const [notifications, setNotificationsState] = useState([]);
+  const [consultants, setConsultants] = useState([]);
 
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
@@ -102,7 +101,7 @@ export function AppProvider({ children }) {
     setToast({ title, message, type, id });
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     toastTimerRef.current = setTimeout(() => {
-      setToast(prev => (prev?.id === id ? null : prev));
+      setToast((prev) => (prev?.id === id ? null : prev));
     }, 4000);
   }, []);
 
@@ -118,354 +117,1013 @@ export function AppProvider({ children }) {
   }, []);
 
   const role = activeUser?.role || 'client';
-  const [activeTab, setActiveTab] = useState(role === 'consultant' ? 'browse_thoughts' : 'chat');
+  const [activeTab, setActiveTab] = useState('chat');
   const [activeChatThoughtId, setActiveChatThoughtId] = useState(null);
   const [selectedThoughtId, setSelectedThoughtId] = useState(null);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [isNewThoughtModalOpen, setIsNewThoughtModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    initializeThinkStorage();
-    return checkIsAuthenticated();
-  });
   const [authMode, setAuthMode] = useState('login');
   const [privacyAlert, setPrivacyAlert] = useState(null);
   const [activeCall, setActiveCall] = useState(null);
   const [mutedThoughtIds, setMutedThoughtIds] = useState([]);
 
-  const [consultants, setConsultants] = useState(MOCK_CONSULTANTS);
   const [jobs, setJobs] = useState(INITIAL_JOBS);
   const [auditLogs] = useState(INITIAL_AUDIT_LOGS);
 
-  const reloadFromStorage = useCallback(() => {
-    const currentActiveUser = getActiveUser();
-    setActiveUserState(currentActiveUser);
-    setUsersState(getUsers());
-    setThinksState(getThinks());
-    setConversationsState(getConversations());
-    setNotificationsState(getNotifications(currentActiveUser?.id, currentActiveUser?.role));
+  const activeUserRef = useRef(activeUser);
+  const conversationsRef = useRef(conversations);
+  const thinksRef = useRef(thinks);
+  const consultantsRef = useRef(consultants);
+
+  useEffect(() => {
+    activeUserRef.current = activeUser;
+    conversationsRef.current = conversations;
+    thinksRef.current = thinks;
+    consultantsRef.current = consultants;
+  }, [activeUser, conversations, thinks, consultants]);
+
+  const getNormalizeOpts = useCallback((user = activeUserRef.current, consList = consultantsRef.current) => {
+    const consultantsById = new Map();
+    (consList || []).forEach((c) => {
+      if (c?.id) consultantsById.set(c.id, c);
+    });
+    return {
+      savedIdsSet: getSavedThoughtIds(user?.id),
+      consultantsById,
+    };
   }, []);
 
-  useEffect(() => {
-    const handleStorageEvent = (e) => {
-      if (!e.key || e.key.startsWith('think_')) {
-        reloadFromStorage();
+  const checkHealth = useCallback(async () => {
+    try {
+      const health = await checkApiHealth();
+      setApiHealth(health);
+      return health;
+    } catch {
+      setApiHealth({ status: 'offline', database: 'disconnected' });
+      return null;
+    }
+  }, []);
+
+  const loadConsultants = useCallback(async () => {
+    try {
+      const list = await apiGetConsultants();
+      setConsultants(list);
+      return list;
+    } catch (err) {
+      console.warn('[AppContext] Failed to load consultants:', err.message);
+      return consultantsRef.current;
+    }
+  }, []);
+
+  const loadWorkspaceData = useCallback(
+    async (userObj = activeUserRef.current, { silent = false } = {}) => {
+      if (!userObj || !getAuthToken()) return;
+      if (!silent) setIsDataLoading(true);
+
+      try {
+        const isQueueViewer = userObj.role === 'consultant' || userObj.role === 'admin';
+        const consList = await loadConsultants();
+        const normOpts = getNormalizeOpts(userObj, consList);
+
+        const [thoughtsRes, convsRes, notifsRes] = await Promise.allSettled([
+          isQueueViewer
+            ? apiGetAllThoughts({ limit: 100 }, normOpts)
+            : apiGetMyThoughts({ limit: 100 }, normOpts),
+          apiGetConversations(),
+          apiGetNotifications(),
+        ]);
+
+        const fetchedConvs =
+          convsRes.status === 'fulfilled' ? convsRes.value : conversationsRef.current;
+        if (convsRes.status === 'fulfilled') {
+          setConversationsState(fetchedConvs);
+        }
+
+        if (thoughtsRes.status === 'fulfilled') {
+          const enriched = enrichThoughtsFromConversations(
+            thoughtsRes.value.thoughts || [],
+            fetchedConvs
+          );
+          setThinksState(enriched);
+        }
+
+        if (notifsRes.status === 'fulfilled') {
+          setNotificationsState(notifsRes.value);
+        }
+      } catch (err) {
+        if (!silent) {
+          showToast('Sync Warning', err.message || 'Could not load latest workspace data.', 'error');
+        }
+      } finally {
+        if (!silent) setIsDataLoading(false);
       }
-    };
+    },
+    [getNormalizeOpts, loadConsultants, showToast]
+  );
 
-    const handleCustomUpdate = () => {
-      reloadFromStorage();
-    };
+  useEffect(() => {
+    let cancelled = false;
 
-    window.addEventListener('storage', handleStorageEvent);
-    window.addEventListener('think_storage_updated', handleCustomUpdate);
+    async function bootstrap() {
+      checkHealth();
+      loadConsultants();
+
+      if (!getAuthToken()) {
+        if (!cancelled) setIsAuthLoading(false);
+        return;
+      }
+
+      const user = await authGetCurrentUser();
+      if (cancelled) return;
+
+      if (user) {
+        setActiveUserState(user);
+        setIsAuthenticated(true);
+        setActiveTab(redirectByRole(user.role));
+        await loadWorkspaceData(user);
+      } else {
+        setActiveUserState(null);
+        setIsAuthenticated(false);
+      }
+      if (!cancelled) setIsAuthLoading(false);
+    }
+
+    bootstrap();
 
     return () => {
-      window.removeEventListener('storage', handleStorageEvent);
-      window.removeEventListener('think_storage_updated', handleCustomUpdate);
+      cancelled = true;
     };
-  }, [reloadFromStorage]);
+  }, [checkHealth, loadConsultants, loadWorkspaceData]);
 
-  const prevUserRef = useRef(activeUser?.id);
+  const logoutUser = useCallback(() => {
+    authLogoutUser();
+    setIsAuthenticated(false);
+    setActiveUserState(null);
+    setThinksState([]);
+    setConversationsState([]);
+    setNotificationsState([]);
+    setActiveChatThoughtId(null);
+    setActiveConversationId(null);
+    setSelectedThoughtId(null);
+    setIsNewThoughtModalOpen(false);
+    setPrivacyAlert(null);
+    setActiveCall(null);
+    setActiveTab('chat');
+    closeToast();
+  }, [closeToast]);
+
   useEffect(() => {
-    if (activeUser?.id !== prevUserRef.current) {
-      prevUserRef.current = activeUser?.id;
-      setNotificationsState(getNotifications(activeUser?.id, activeUser?.role));
+    const handleUnauthorized = () => {
+      logoutUser();
+      showToast('Session Expired', 'Please sign in again to continue.', 'warning');
+    };
+    window.addEventListener('overthink_unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('overthink_unauthorized', handleUnauthorized);
+  }, [logoutUser, showToast]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !activeUser?.id) return undefined;
+
+    const refreshIfVisible = () => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
+      loadWorkspaceData(activeUserRef.current, { silent: true });
+    };
+
+    const intervalId = setInterval(refreshIfVisible, 15000);
+    window.addEventListener('focus', refreshIfVisible);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', refreshIfVisible);
+    };
+  }, [isAuthenticated, activeUser?.id, loadWorkspaceData]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !activeUser?.id) return undefined;
+    if (!['browse_thoughts', 'my_thoughts', 'my_consultations', 'messages', 'find_consultants', 'saved_solutions'].includes(activeTab)) {
+      return undefined;
     }
-  }, [activeUser]);
+    const timer = setTimeout(() => {
+      loadWorkspaceData(activeUserRef.current, { silent: true });
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [activeTab, isAuthenticated, activeUser?.id, loadWorkspaceData]);
 
-  const switchDemoUser = (userId) => {
-    const targetUser = DEMO_USERS.find(u => u.id === userId) || getUserById(userId);
-    if (!targetUser) return;
+  const applyAuthenticatedSession = useCallback(
+    async (user, toastTitle, toastMessage) => {
+      setActiveUserState(user);
+      setIsAuthenticated(true);
+      setActiveTab(redirectByRole(user?.role));
+      await loadWorkspaceData(user);
+      if (toastTitle) {
+        showToast(toastTitle, toastMessage, 'success');
+      }
+    },
+    [loadWorkspaceData, showToast]
+  );
 
-    setStorageActiveUser(userId);
-    setActiveUserState(targetUser);
-    setAuthSession({
-      userId: targetUser.id,
-      role: targetUser.role,
-      isAuthenticated: true,
-      createdAt: new Date().toISOString()
-    });
-    setIsAuthenticated(true);
+  const performLogin = useCallback(
+    async (identifier, password, options = {}) => {
+      const { allowDemoProvision = false } = options;
+      let res = await authLoginUser(identifier, password);
 
-    if (targetUser.role === 'consultant') {
-      setActiveTab('browse_thoughts');
-    } else {
-      setActiveTab('chat');
-    }
+      if (!res.success && allowDemoProvision) {
+        const demoMatch = DEMO_USERS.find(
+          (u) =>
+            (u.email?.toLowerCase() === identifier?.trim().toLowerCase() ||
+              u.mobile === identifier?.trim().replace(/\D/g, '')) &&
+            password === (u.password || 'password123')
+        );
 
-    setNotificationsState(getNotifications(targetUser.id, targetUser.role));
-    showToast('Switched User', `Active as ${targetUser.label || targetUser.name} (${targetUser.name})`, 'info');
-  };
-
-  const switchRole = (newRole) => {
-    if (newRole === 'client') {
-      switchDemoUser('client_001');
-    } else {
-      switchDemoUser('consultant_001');
-    }
-  };
-
-  const submitThink = ({ title, description = '', category = 'General Consultation', attachments = [], urgency = 'Standard' }) => {
-    if (!title || !title.trim()) {
-      showToast('Validation Error', 'Please enter a title for your OverThink.', 'error');
-      return null;
-    }
-
-    const aiAnalysis = analyzeThought(title, description, attachments);
-    const assignedCategory = category || aiAnalysis.category || 'General Consultation';
-
-    const newThink = storageSaveThink({
-      clientId: activeUser.id,
-      clientName: activeUser.name,
-      clientAvatar: activeUser.profileImage || activeUser.avatar,
-      title: title.trim(),
-      description: description.trim(),
-      category: assignedCategory,
-      urgency,
-      tags: aiAnalysis.tags || [assignedCategory],
-      attachments
-    });
-
-    reloadFromStorage();
-    setActiveChatThoughtId(newThink.id);
-    setSelectedThoughtId(newThink.id);
-
-    showToast('OverThink Submitted!', `"${newThink.title.slice(0, 40)}..." is now live for consultants to review. Status: Pending`, 'success');
-
-    return newThink;
-  };
-
-  const submitThought = (params) => submitThink(params);
-
-  const acceptThink = (thinkId) => {
-    try {
-      const { think, conversation, alreadyAccepted } = storageAcceptThink(thinkId, activeUser);
-
-      reloadFromStorage();
-
-      if (alreadyAccepted) {
-        showToast('Already Accepted', 'You have already accepted this OverThink. Opening conversation...', 'info');
-      } else {
-        showToast('OverThink Accepted!', `Assigned to ${activeUser.name}. Shared conversation created.`, 'success');
+        if (demoMatch) {
+          const regRes = await authRegisterUser({
+            name: demoMatch.name,
+            email: demoMatch.email,
+            mobile: demoMatch.mobile,
+            password: demoMatch.password || 'password123',
+            role: demoMatch.role,
+            headline: demoMatch.title,
+            bio: demoMatch.bio,
+            skills: demoMatch.skills,
+            services: demoMatch.services,
+            avatar: demoMatch.avatar || demoMatch.profileImage,
+            hourlyRate: demoMatch.hourlyRate,
+            assessmentPassed: demoMatch.assessmentPassed,
+            assessmentScore: demoMatch.assessmentScore,
+            isVerified: demoMatch.isVerified,
+          });
+          if (regRes.success) {
+            res = regRes;
+          }
+        }
       }
 
-      if (conversation) {
-        setActiveConversationId(conversation.id);
-        setSelectedThoughtId(think.id);
-        setActiveChatThoughtId(think.id);
-        setActiveTab('messages');
+      if (res.success && res.user) {
+        await applyAuthenticatedSession(
+          res.user,
+          'Welcome Back',
+          `Signed in successfully as ${res.user.name}.`
+        );
+      }
+      return res;
+    },
+    [applyAuthenticatedSession]
+  );
+
+  const loginUser = useCallback(
+    async (identifierOrRole, passwordOrData, options = {}) => {
+      if (typeof passwordOrData === 'string') {
+        return performLogin(identifierOrRole, passwordOrData, options);
       }
 
-      return { think, conversation };
-    } catch (err) {
-      showToast('Acceptance Failed', err.message || 'Could not accept OverThink.', 'error');
-      return null;
-    }
-  };
+      const userRole = identifierOrRole || 'client';
+      const defaultDemo =
+        DEMO_USERS.find((u) => u.role === userRole) || DEMO_USERS[0];
+      return performLogin(
+        defaultDemo.email,
+        defaultDemo.password || 'password123',
+        { allowDemoProvision: true }
+      );
+    },
+    [performLogin]
+  );
 
-  const claimThought = (thoughtId) => acceptThink(thoughtId);
+  const register = useCallback(
+    async (userData) => {
+      const res = await authRegisterUser(userData);
+      if (res.success && res.user) {
+        await applyAuthenticatedSession(
+          res.user,
+          'Account Created!',
+          `Welcome to OverThink, ${res.user.name}!`
+        );
+      }
+      return res;
+    },
+    [applyAuthenticatedSession]
+  );
 
-  const updateThinkStatus = (thinkId, newStatus) => {
-    const updated = storageUpdateThink(thinkId, { status: newStatus });
-    reloadFromStorage();
+  const quickRegister = useCallback(
+    async (identifier, password, userRole = 'client') => {
+      const res = await authQuickRegisterUser(identifier, password, userRole);
+      if (res.success && res.user) {
+        await applyAuthenticatedSession(
+          res.user,
+          'Account Created!',
+          `Signed in as ${res.user.name}. Ready to get started.`
+        );
+      }
+      return res;
+    },
+    [applyAuthenticatedSession]
+  );
 
-    const formattedStatus = newStatus.replace('_', ' ').toUpperCase();
-    showToast('Status Updated', `OverThink status changed to ${formattedStatus}`, 'success');
+  const switchDemoUser = useCallback(
+    async (userId) => {
+      const target = DEMO_USERS.find((u) => u.id === userId);
+      if (!target) return null;
+      return loginUser(target.email, target.password || 'password123', {
+        allowDemoProvision: true,
+      });
+    },
+    [loginUser]
+  );
 
-    return updated;
-  };
+  const switchRole = useCallback(
+    async (newRole) => {
+      if (newRole === 'client') {
+        return switchDemoUser('client_001');
+      }
+      return switchDemoUser('consultant_001');
+    },
+    [switchDemoUser]
+  );
 
-  const sendChatMessage = (targetId, text, attachments = []) => {
-    const rawText = (text || '').trim();
-    if (!rawText && (!attachments || attachments.length === 0)) return null;
+  const fetchThoughtDetails = useCallback(
+    async (thoughtId) => {
+      if (!thoughtId) return null;
+      try {
+        const normOpts = getNormalizeOpts();
+        const [thoughtRes, repliesRes] = await Promise.allSettled([
+          apiGetThoughtById(thoughtId, normOpts),
+          apiGetRepliesForThought(thoughtId),
+        ]);
 
-    let finalText = rawText;
-    if (rawText) {
-      const privacy = inspectMessageForPrivacy(rawText);
-      if (privacy.isViolation) {
-        finalText = privacy.cleanText;
-        setPrivacyAlert({
-          message: privacy.warningMessage,
-          violations: privacy.violations
+        if (thoughtRes.status !== 'fulfilled' || !thoughtRes.value) {
+          return null;
+        }
+
+        const fetchedThought = thoughtRes.value;
+        const replies =
+          repliesRes.status === 'fulfilled' && repliesRes.value?.length > 0
+            ? repliesRes.value
+            : fetchedThought.replies || [];
+
+        const mergedThought = normalizeThought(
+          {
+            ...fetchedThought,
+            replies,
+          },
+          normOpts
+        );
+
+        setThinksState((prev) => {
+          const exists = prev.some((t) => t.id === mergedThought.id);
+          if (!exists) return [mergedThought, ...prev];
+          return prev.map((t) =>
+            t.id === mergedThought.id ? { ...t, ...mergedThought } : t
+          );
+        });
+
+        return mergedThought;
+      } catch (err) {
+        console.warn('[AppContext] fetchThoughtDetails failed:', err.message);
+        return null;
+      }
+    },
+    [getNormalizeOpts]
+  );
+
+  const submitThink = useCallback(
+    async ({
+      title,
+      description = '',
+      category = null,
+      attachments = [],
+      urgency = 'Standard',
+      solverType = 'human',
+    }) => {
+      if (!title || !title.trim()) {
+        showToast('Validation Error', 'Please enter a title for your OverThink.', 'error');
+        return null;
+      }
+
+      const user = activeUserRef.current;
+      const aiAnalysis = analyzeThought(title, description, attachments);
+      const assignedCategory = category || aiAnalysis.category || 'General Consultation';
+
+      try {
+        const normOpts = getNormalizeOpts();
+        const newThink = await apiSaveThink(
+          {
+            name: user?.name,
+            email: user?.email,
+            title: title.trim(),
+            description: (description || title).trim(),
+            category: assignedCategory,
+            urgency,
+            solverType,
+            tags: aiAnalysis.tags || [assignedCategory],
+            attachments,
+          },
+          normOpts
+        );
+
+        const normalizedWithUser = {
+          ...newThink,
+          clientId: newThink.clientId || user?.id,
+          clientName: newThink.clientName || user?.name,
+          clientAvatar: newThink.clientAvatar || user?.profileImage || user?.avatar,
+        };
+
+        setThinksState((prev) => [normalizedWithUser, ...prev]);
+        setActiveChatThoughtId(normalizedWithUser.id);
+        setSelectedThoughtId(normalizedWithUser.id);
+
+        showToast(
+          'OverThink Submitted!',
+          `"${normalizedWithUser.title.slice(0, 40)}..." is now live for consultants to review. Status: Pending`,
+          'success'
+        );
+
+        loadWorkspaceData(user, { silent: true });
+        return normalizedWithUser;
+      } catch (err) {
+        showToast('Submission Failed', err.message || 'Could not submit OverThink.', 'error');
+        return null;
+      }
+    },
+    [getNormalizeOpts, loadWorkspaceData, showToast]
+  );
+
+  const submitThought = useCallback((params) => submitThink(params), [submitThink]);
+
+  const acceptThink = useCallback(
+    async (thinkId) => {
+      try {
+        const user = activeUserRef.current;
+        const normOpts = getNormalizeOpts();
+        const { think, conversation, alreadyAccepted } = await apiAcceptThink(
+          thinkId,
+          normOpts
+        );
+
+        if (think) {
+          const enrichedThink = {
+            ...think,
+            assignedConsultantId: think.assignedConsultantId || user?.id,
+            consultantId: think.consultantId || user?.id,
+            assignedConsultantName:
+              think.assignedConsultantName || conversation?.consultantName || user?.name,
+            assignedConsultantAvatar:
+              think.assignedConsultantAvatar ||
+              conversation?.consultantAvatar ||
+              user?.avatar ||
+              user?.profileImage,
+          };
+
+          setThinksState((prev) => {
+            const exists = prev.some((t) => t.id === enrichedThink.id);
+            if (!exists) return [enrichedThink, ...prev];
+            return prev.map((t) =>
+              t.id === enrichedThink.id ? { ...t, ...enrichedThink } : t
+            );
+          });
+        }
+
+        if (conversation) {
+          setConversationsState((prev) => {
+            const exists = prev.some((c) => c.id === conversation.id);
+            if (!exists) return [conversation, ...prev];
+            return prev.map((c) => (c.id === conversation.id ? conversation : c));
+          });
+          setActiveConversationId(conversation.id);
+          setSelectedThoughtId(think?.id || thinkId);
+          setActiveChatThoughtId(think?.id || thinkId);
+          setActiveTab('messages');
+        }
+
+        if (alreadyAccepted) {
+          showToast(
+            'Already Accepted',
+            'You have already accepted this OverThink. Opening conversation...',
+            'info'
+          );
+        } else {
+          showToast(
+            'OverThink Accepted!',
+            `Assigned to ${user?.name || 'Consultant'}. Shared conversation created.`,
+            'success'
+          );
+        }
+
+        loadWorkspaceData(user, { silent: true });
+        return { think, conversation };
+      } catch (err) {
+        showToast('Acceptance Failed', err.message || 'Could not accept OverThink.', 'error');
+        return null;
+      }
+    },
+    [getNormalizeOpts, loadWorkspaceData, showToast]
+  );
+
+  const claimThought = useCallback((thoughtId) => acceptThink(thoughtId), [acceptThink]);
+
+  const updateThinkStatus = useCallback(
+    async (thinkId, newStatus, extra = {}) => {
+      try {
+        const normOpts = getNormalizeOpts();
+        const updated = await apiUpdateThink(
+          thinkId,
+          { status: newStatus, ...extra },
+          normOpts
+        );
+
+        setThinksState((prev) =>
+          prev.map((t) => {
+            if (t.id !== thinkId) return t;
+            return {
+              ...t,
+              ...updated,
+              assignedConsultantName:
+                updated.assignedConsultantName || t.assignedConsultantName,
+              assignedConsultantAvatar:
+                updated.assignedConsultantAvatar || t.assignedConsultantAvatar,
+              replies: updated.replies?.length ? updated.replies : t.replies,
+              solutions: updated.solutions?.length ? updated.solutions : t.solutions,
+            };
+          })
+        );
+
+        setConversationsState((prev) =>
+          prev.map((c) =>
+            c.thinkId === thinkId ? { ...c, status: newStatus } : c
+          )
+        );
+
+        const formattedStatus = String(newStatus).replace('_', ' ').toUpperCase();
+        showToast('Status Updated', `OverThink status changed to ${formattedStatus}`, 'success');
+        return updated;
+      } catch (err) {
+        showToast('Status Update Failed', err.message || 'Could not update status.', 'error');
+        return null;
+      }
+    },
+    [getNormalizeOpts, showToast]
+  );
+
+  const submitReply = useCallback(
+    async (thoughtId, { message, responderType = 'consultant', actionChecklist = [] }) => {
+      try {
+        const { reply, thought, emailNotification } = await apiCreateReply({
+          thoughtId,
+          message,
+          responderType,
+          actionChecklist,
+        });
+
+        setThinksState((prev) =>
+          prev.map((t) => {
+            if (t.id !== thoughtId) return t;
+            const nextReplies = [...(t.replies || []), reply].filter(Boolean);
+            const merged = normalizeThought(
+              {
+                ...t,
+                ...(thought || {}),
+                replies: nextReplies,
+                assignedConsultantName:
+                  thought?.assignedConsultantName || t.assignedConsultantName,
+                assignedConsultantAvatar:
+                  thought?.assignedConsultantAvatar || t.assignedConsultantAvatar,
+              },
+              getNormalizeOpts()
+            );
+            return merged;
+          })
+        );
+
+        setConversationsState((prev) =>
+          prev.map((c) =>
+            c.thinkId === thoughtId ? { ...c, status: 'answered' } : c
+          )
+        );
+
+        const emailHint = emailNotification?.sent
+          ? ' Client notified via email.'
+          : '';
+        showToast(
+          'Solution Reply Delivered!',
+          `Your reply has been published and marked as Answered.${emailHint}`,
+          'success'
+        );
+
+        loadWorkspaceData(activeUserRef.current, { silent: true });
+        return { reply, thought, emailNotification };
+      } catch (err) {
+        showToast('Reply Failed', err.message || 'Could not submit reply.', 'error');
+        return null;
+      }
+    },
+    [getNormalizeOpts, loadWorkspaceData, showToast]
+  );
+
+  const submitSolution = useCallback(
+    async (thoughtId, solutionData) => {
+      const user = activeUserRef.current;
+      const summary =
+        typeof solutionData === 'string'
+          ? solutionData
+          : solutionData?.executiveSummary ||
+            solutionData?.message ||
+            'Solution delivered.';
+      const checklist = Array.isArray(solutionData?.actionChecklist)
+        ? solutionData.actionChecklist
+        : Array.isArray(solutionData?.actionPlan)
+          ? solutionData.actionPlan.map((s) =>
+              typeof s === 'string' ? s : s.title || s.details
+            )
+          : [];
+
+      let replyRes = null;
+      if (summary && summary.trim().length >= 2) {
+        replyRes = await submitReply(thoughtId, {
+          message: summary.trim(),
+          responderType: user?.role === 'admin' ? 'admin' : 'consultant',
+          actionChecklist: checklist,
         });
       }
-    }
 
-    const conv = conversations.find(c => c.id === targetId || c.thinkId === targetId);
+      const statusRes = await updateThinkStatus(thoughtId, 'resolved', {
+        solution: {
+          ...(typeof solutionData === 'object' ? solutionData : { executiveSummary: summary }),
+          submittedAt: new Date().toISOString(),
+          consultantId: user?.id,
+          consultantName: user?.name,
+        },
+      });
 
-    if (conv) {
-      const msg = storageSendMessage(conv.id, activeUser, finalText, attachments);
-      reloadFromStorage();
-      return msg;
-    }
+      return statusRes || replyRes?.thought || null;
+    },
+    [submitReply, updateThinkStatus]
+  );
 
-    const think = thinks.find(t => t.id === targetId);
-    if (think && (think.status === 'pending' || think.status === 'pending_human')) {
-      const msg = storageAddPendingThinkMessage(targetId, activeUser, finalText, attachments);
-      reloadFromStorage();
-      return msg;
-    }
+  const triggerAIFallback = useCallback(
+    async (thoughtId) => {
+      const target = (thinksRef.current || []).find((t) => t.id === thoughtId);
+      if (!target) return null;
 
-    return null;
-  };
+      const aiSol = generateAISolution(target);
+      const aiSummary = aiSol.executiveSummary || 'Automated diagnostic analysis complete.';
+      const aiPlan = (aiSol.actionPlan || []).map((step) =>
+        typeof step === 'string'
+          ? step
+          : `${step.title}${step.details ? `: ${step.details}` : ''}`
+      );
 
-  const sendMessage = (targetId, text, attachments = []) => sendChatMessage(targetId, text, attachments);
+      const updated = await updateThinkStatus(thoughtId, 'ai_fallback', {
+        aiResponse: aiSummary,
+        aiDiagnosticPlan: aiPlan,
+      });
 
-  const deleteMessage = (messageId) => {
-    const success = storageDeleteMessage(messageId);
-    if (success) {
-      reloadFromStorage();
-      showToast('Message Deleted', 'Message removed from consultation.', 'info');
-    }
-  };
-
-  const clearChat = (targetId) => {
-    const success = storageClearChatMessages(targetId);
-    if (success) {
-      reloadFromStorage();
-      showToast('Chat Cleared', 'All messages cleared from consultation.', 'info');
-    }
-  };
-
-  const submitSolution = (thoughtId, solutionData) => {
-    const updated = storageUpdateThink(thoughtId, {
-      status: 'resolved',
-      solution: {
-        ...solutionData,
-        submittedAt: new Date().toISOString(),
-        consultantId: activeUser?.id,
-        consultantName: activeUser?.name
+      if (updated) {
+        showToast(
+          'AI Triage Triggered',
+          `Generated automated diagnostic response for #${thoughtId}`,
+          'info'
+        );
       }
-    });
-    reloadFromStorage();
-    showToast('Solution Proposal Submitted!', 'Your structured solution has been delivered to the client.', 'success');
-    return updated;
-  };
+      return updated;
+    },
+    [showToast, updateThinkStatus]
+  );
 
-  const triggerAIFallback = (thoughtId) => {
-    const target = (thinks || []).find(t => t.id === thoughtId);
-    if (!target) return;
-    const aiAnalysis = analyzeThought(target.title, target.description);
-    const updated = storageUpdateThink(thoughtId, {
-      status: 'ai_fallback',
-      aiResponse: aiAnalysis.summary || 'Automated diagnostic analysis complete.',
-      aiDiagnosticPlan: aiAnalysis.actionChecklist || []
-    });
-    reloadFromStorage();
-    showToast('AI Triage Triggered', `Generated automated response for #${thoughtId}`, 'info');
-    return updated;
-  };
+  const sendChatMessage = useCallback(
+    async (targetId, text, attachments = []) => {
+      const rawText = (text || '').trim();
+      if (!rawText && (!attachments || attachments.length === 0)) return null;
 
-  const toggleSaveJob = (jobId) => {
-    setJobs((prev) =>
-      syncJobsCatalog(prev).map((j) => (j.id === jobId ? { ...j, isSaved: !j.isSaved } : j))
-    );
-    showToast('Job Saved', 'Job listing updated in your saved items.', 'info');
-  };
+      let finalText = rawText;
+      if (rawText) {
+        const privacy = inspectMessageForPrivacy(rawText);
+        if (privacy.isViolation) {
+          finalText = privacy.cleanText;
+          setPrivacyAlert({
+            message: privacy.warningMessage,
+            violations: privacy.violations,
+          });
+        }
+      }
 
-  const applyJob = (jobId, applicationDetails = null) => {
-    setJobs((prev) =>
-      syncJobsCatalog(prev).map((j) =>
-        j.id === jobId
-          ? {
-              ...j,
-              isApplied: true,
-              applicantsCount: (j.applicantsCount || 0) + 1,
-              appliedAt: new Date().toISOString(),
-              applicationSummary: applicationDetails,
-            }
-          : j
-      )
-    );
-    showToast('Application Submitted', 'Your application has been delivered to the hiring team.', 'success');
-  };
+      const conv = (conversationsRef.current || []).find(
+        (c) => c.id === targetId || c.thinkId === targetId
+      );
 
-  const setConsultantVerification = (consultantId, status) => {
-    const isApproved = status === 'approved';
-    setConsultants(prev => prev.map(c => c.id === consultantId ? { ...c, isVerified: isApproved, assessmentPassed: isApproved } : c));
-    showToast('Verification Updated', `Consultant credentials ${isApproved ? 'approved' : 'revoked'}.`, 'info');
-  };
+      if (!conv) {
+        showToast(
+          'Awaiting Consultant Acceptance',
+          'Direct 1-on-1 chat opens automatically as soon as a consultant accepts your OverThink.',
+          'info'
+        );
+        return null;
+      }
+
+      const textToSend =
+        finalText ||
+        (attachments.length > 0
+          ? `Shared attachment: ${attachments.map((a) => a.name).join(', ')}`
+          : '');
+
+      try {
+        const { message, conversation } = await apiSendMessage(
+          conv.id,
+          textToSend,
+          attachments
+        );
+
+        if (conversation) {
+          setConversationsState((prev) =>
+            prev.map((c) => (c.id === conversation.id ? conversation : c))
+          );
+        } else if (message) {
+          setConversationsState((prev) =>
+            prev.map((c) =>
+              c.id === conv.id
+                ? { ...c, messages: [...(c.messages || []), message] }
+                : c
+            )
+          );
+        }
+
+        return message;
+      } catch (err) {
+        showToast('Message Failed', err.message || 'Could not send message.', 'error');
+        return null;
+      }
+    },
+    [showToast]
+  );
+
+  const sendMessage = useCallback(
+    (targetId, text, attachments = []) => sendChatMessage(targetId, text, attachments),
+    [sendChatMessage]
+  );
+
+  const deleteMessage = useCallback(
+    async (messageId, optionalConvId = null) => {
+      const targetConv = optionalConvId
+        ? (conversationsRef.current || []).find((c) => c.id === optionalConvId)
+        : (conversationsRef.current || []).find((c) =>
+            (c.messages || []).some((m) => m.id === messageId)
+          );
+
+      if (!targetConv) return;
+
+      try {
+        await apiDeleteMessage(targetConv.id, messageId);
+        setConversationsState((prev) =>
+          prev.map((c) =>
+            c.id === targetConv.id
+              ? {
+                  ...c,
+                  messages: (c.messages || []).filter((m) => m.id !== messageId),
+                }
+              : c
+          )
+        );
+        showToast('Message Deleted', 'Message removed from consultation.', 'info');
+      } catch (err) {
+        showToast('Delete Failed', err.message || 'Could not delete message.', 'error');
+      }
+    },
+    [showToast]
+  );
+
+  const clearChat = useCallback(
+    async (targetId) => {
+      const user = activeUserRef.current;
+      const conv = (conversationsRef.current || []).find(
+        (c) => c.id === targetId || c.thinkId === targetId
+      );
+      if (!conv) return;
+
+      const deletable = (conv.messages || []).filter(
+        (m) =>
+          !m.isProblemPost &&
+          (m.senderId === user?.id || user?.role === 'admin')
+      );
+
+      if (deletable.length === 0) {
+        showToast(
+          'Nothing to Clear',
+          'Only your own chat messages can be removed from a consultation.',
+          'info'
+        );
+        return;
+      }
+
+      try {
+        await Promise.all(deletable.map((m) => apiDeleteMessage(conv.id, m.id)));
+        const deletedSet = new Set(deletable.map((m) => m.id));
+        setConversationsState((prev) =>
+          prev.map((c) =>
+            c.id === conv.id
+              ? {
+                  ...c,
+                  messages: (c.messages || []).filter((m) => !deletedSet.has(m.id)),
+                }
+              : c
+          )
+        );
+        showToast('Chat Cleared', 'Your messages were cleared from the consultation.', 'info');
+      } catch (err) {
+        showToast('Clear Failed', err.message || 'Could not clear messages.', 'error');
+      }
+    },
+    [showToast]
+  );
 
   const activeUserId = activeUser?.id;
-  const activeUserRole = activeUser?.role;
 
-  const markConversationRead = useCallback((conversationId) => {
-    if (!conversationId || !activeUserId) return;
-    const changed = storageMarkMessagesRead(conversationId, activeUserId);
-    if (changed) {
-      reloadFromStorage();
+  const markConversationRead = useCallback(
+    async (conversationId) => {
+      if (!conversationId || !activeUserId) return;
+      const conv = (conversationsRef.current || []).find((c) => c.id === conversationId);
+      if (!conv) return;
+
+      const hasUnread = (conv.messages || []).some(
+        (m) => m.senderId !== activeUserId && !m.isRead
+      );
+      if (!hasUnread) return;
+
+      try {
+        await apiMarkMessagesRead(conversationId);
+        setConversationsState((prev) =>
+          prev.map((c) =>
+            c.id === conversationId
+              ? {
+                  ...c,
+                  messages: (c.messages || []).map((m) =>
+                    m.senderId !== activeUserId ? { ...m, isRead: true } : m
+                  ),
+                }
+              : c
+          )
+        );
+      } catch (err) {
+        console.warn('[AppContext] markConversationRead failed:', err.message);
+      }
+    },
+    [activeUserId]
+  );
+
+  const markNotificationRead = useCallback(async (notifId) => {
+    if (!notifId) return;
+    setNotificationsState((prev) =>
+      prev.map((n) => (n.id === notifId ? { ...n, isRead: true } : n))
+    );
+    try {
+      await apiMarkNotifRead(notifId);
+    } catch (err) {
+      console.warn('[AppContext] markNotificationRead failed:', err.message);
     }
-  }, [activeUserId, reloadFromStorage]);
+  }, []);
 
-  const markNotificationRead = useCallback((notifId) => {
-    storageMarkNotifRead(notifId);
-    reloadFromStorage();
-  }, [reloadFromStorage]);
-
-  const markAllNotificationsRead = useCallback(() => {
-    storageMarkAllNotifsRead(activeUserId, activeUserRole);
-    reloadFromStorage();
-  }, [activeUserId, activeUserRole, reloadFromStorage]);
-
-  const resetAllData = () => {
-    storageResetDemoData();
-    reloadFromStorage();
-    showToast('Demo Data Reset', 'Platform restored to initial sample state.', 'info');
-  };
-
-  const clientUser = users.find(u => u.id === 'client_001') || activeUser || DEMO_USERS[0];
-  const consultantUser = (activeUser?.role === 'consultant' ? activeUser : users.find(u => u.id === 'consultant_001')) || activeUser || DEMO_USERS[1];
-  const currentUser = activeUser || DEMO_USERS[0];
-
-  const updateConsultantProfile = (updates) => {
-    const targetId = (activeUser?.role === 'consultant' ? activeUser?.id : consultantUser?.id) || 'consultant_001';
-    const updated = storageUpdateUser(targetId, updates);
-    if (activeUser?.id === targetId) {
-      setActiveUserState(prev => ({ ...prev, ...updates }));
+  const markAllNotificationsRead = useCallback(async () => {
+    setNotificationsState((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    try {
+      await apiMarkAllNotifsRead();
+    } catch (err) {
+      console.warn('[AppContext] markAllNotificationsRead failed:', err.message);
     }
-    setConsultants(prev => prev.map(c => (c.id === targetId ? { ...c, ...updates } : c)));
-    reloadFromStorage();
-    showToast('Profile Updated', 'Profile changes have been saved successfully.', 'success');
-    return updated;
-  };
+  }, []);
 
-  const setClientUser = (updaterOrObj) => {
-    const targetId = activeUser?.id || 'client_001';
-    const current = getUserById(targetId) || clientUser;
-    const nextVal = typeof updaterOrObj === 'function' ? updaterOrObj(current) : { ...current, ...updaterOrObj };
-    storageUpdateUser(targetId, nextVal);
-    if (activeUser?.id === targetId) {
-      setActiveUserState(prev => ({ ...prev, ...nextVal }));
-    }
-    reloadFromStorage();
-    showToast('Settings Saved', 'Account settings saved successfully.', 'success');
-  };
+  const updateUserProfile = useCallback(
+    async (_userId, updates) => {
+      try {
+        const updatedUser = await authUpdateProfile(updates);
+        const merged = {
+          ...updatedUser,
+          location: updates.location ?? updatedUser?.location ?? 'Remote',
+        };
+        setActiveUserState(merged);
+        setConsultants((prev) =>
+          prev.map((c) => (c.id === merged.id ? { ...c, ...merged } : c))
+        );
+        if (merged.role === 'consultant') {
+          loadConsultants();
+        }
+        showToast('Profile Saved', 'Profile details have been updated.', 'success');
+        return merged;
+      } catch (err) {
+        showToast('Update Failed', err.message || 'Could not update profile.', 'error');
+        return null;
+      }
+    },
+    [loadConsultants, showToast]
+  );
 
-  const updateUserProfile = (userId, updates) => {
-    const updated = storageUpdateUser(userId, updates);
-    if (activeUser?.id === userId) {
-      setActiveUserState(prev => ({ ...prev, ...updates }));
-    }
-    setConsultants(prev => prev.map(c => (c.id === userId ? { ...c, ...updates } : c)));
-    reloadFromStorage();
-    showToast('Profile Saved', 'Profile details have been updated.', 'success');
-    return updated;
-  };
+  const updateConsultantProfile = useCallback(
+    async (updates) => updateUserProfile(activeUserRef.current?.id, updates),
+    [updateUserProfile]
+  );
 
-  const allMessages = conversations.flatMap(c => c.messages || []);
+  const setClientUser = useCallback(
+    async (updaterOrObj) => {
+      const current = activeUserRef.current;
+      const nextVal =
+        typeof updaterOrObj === 'function'
+          ? updaterOrObj(current)
+          : { ...current, ...updaterOrObj };
+      return updateUserProfile(current?.id, nextVal);
+    },
+    [updateUserProfile]
+  );
 
-  const openChatWithThought = useCallback((thoughtId) => {
-    setActiveChatThoughtId(thoughtId);
-    setSelectedThoughtId(null);
-    const conv = conversations.find(c => c.thinkId === thoughtId);
-    if (conv) {
-      setActiveConversationId(conv.id);
-      setActiveTab('messages');
-    } else {
-      setActiveConversationId(null);
-      setActiveTab('chat');
-    }
-  }, [conversations]);
+  const toggleSaveThought = useCallback(
+    (thoughtId) => {
+      const userId = activeUserRef.current?.id;
+      const nextSaved = toggleSavedThoughtId(userId, thoughtId);
+      setThinksState((prev) =>
+        prev.map((t) => (t.id === thoughtId ? { ...t, isSaved: nextSaved } : t))
+      );
+    },
+    []
+  );
+
+  const toggleSaveJob = useCallback(
+    (jobId) => {
+      setJobs((prev) =>
+        syncJobsCatalog(prev).map((j) =>
+          j.id === jobId ? { ...j, isSaved: !j.isSaved } : j
+        )
+      );
+      showToast('Job Saved', 'Job listing updated in your saved items.', 'info');
+    },
+    [showToast]
+  );
+
+  const applyJob = useCallback(
+    (jobId, applicationDetails = null) => {
+      setJobs((prev) =>
+        syncJobsCatalog(prev).map((j) =>
+          j.id === jobId
+            ? {
+                ...j,
+                isApplied: true,
+                applicantsCount: (j.applicantsCount || 0) + 1,
+                appliedAt: new Date().toISOString(),
+                applicationSummary: applicationDetails,
+              }
+            : j
+        )
+      );
+      showToast(
+        'Application Submitted',
+        'Your application has been delivered to the hiring team.',
+        'success'
+      );
+    },
+    [showToast]
+  );
+
+  const setConsultantVerification = useCallback(
+    async (consultantId, status) => {
+      const isApproved = status === 'approved';
+      if (activeUserRef.current?.id === consultantId) {
+        await updateUserProfile(consultantId, {
+          isVerified: isApproved,
+          assessmentPassed: isApproved,
+        });
+      } else {
+        setConsultants((prev) =>
+          prev.map((c) =>
+            c.id === consultantId
+              ? { ...c, isVerified: isApproved, assessmentPassed: isApproved }
+              : c
+          )
+        );
+        showToast(
+          'Verification Updated',
+          `Consultant credentials ${isApproved ? 'approved' : 'revoked'}.`,
+          'info'
+        );
+      }
+    },
+    [showToast, updateUserProfile]
+  );
+
+  const resetAllData = useCallback(() => {
+    loadWorkspaceData(activeUserRef.current);
+    showToast('Workspace Refreshed', 'Synced latest records from server.', 'info');
+  }, [loadWorkspaceData, showToast]);
+
+  const openChatWithThought = useCallback(
+    (thoughtId) => {
+      setActiveChatThoughtId(thoughtId);
+      setSelectedThoughtId(null);
+      const conv = (conversationsRef.current || []).find(
+        (c) => c.thinkId === thoughtId
+      );
+      if (conv) {
+        setActiveConversationId(conv.id);
+        setActiveTab('messages');
+      } else {
+        setActiveConversationId(null);
+        setActiveTab('chat');
+      }
+    },
+    []
+  );
 
   const startNewChat = useCallback(() => {
     setActiveChatThoughtId(null);
@@ -475,137 +1133,38 @@ export function AppProvider({ children }) {
     setIsNewThoughtModalOpen(false);
   }, []);
 
-  const toggleSaveThought = (thoughtId) => {
-    const target = thinks.find(t => t.id === thoughtId);
-    if (!target) return;
-    storageUpdateThink(thoughtId, { isSaved: !target.isSaved });
-    reloadFromStorage();
-  };
+  const startCall = useCallback(
+    ({ thoughtId, participantName, participantAvatar, callType = 'video' }) => {
+      setActiveCall({
+        thoughtId,
+        participantName,
+        participantAvatar,
+        callType,
+        startTime: Date.now(),
+      });
+    },
+    []
+  );
 
-  const startCall = ({ thoughtId, participantName, participantAvatar, callType = 'video' }) => {
-    setActiveCall({
-      thoughtId,
-      participantName,
-      participantAvatar,
-      callType,
-      startTime: Date.now()
-    });
-  };
-
-  const endCall = () => {
+  const endCall = useCallback(() => {
     setActiveCall(null);
-  };
+  }, []);
 
-  const logoutUser = () => {
-    authLogoutUser();
-    setIsAuthenticated(false);
-    setActiveChatThoughtId(null);
-    setActiveConversationId(null);
-    setSelectedThoughtId(null);
-    setIsNewThoughtModalOpen(false);
-    setPrivacyAlert(null);
-    setActiveCall(null);
-    setActiveUserState(DEMO_USERS[0]);
-    closeToast();
-  };
+  const subscribeNewsletter = useCallback(async (email, source = 'landing_footer') => {
+    return apiSubscribeNewsletter(email, source);
+  }, []);
 
-  const loginUser = (identifierOrRole, passwordOrData) => {
-    if (typeof passwordOrData === 'string') {
-      const res = authLoginUser(identifierOrRole, passwordOrData);
-      if (res.success) {
-        setIsAuthenticated(true);
-        setActiveUserState(res.user);
-        if (res.role === 'consultant') {
-          setActiveTab('browse_thoughts');
-        } else {
-          setActiveTab('chat');
-        }
-        reloadFromStorage();
-        showToast('Welcome Back', `Signed in successfully as ${res.user.name}.`, 'success');
-      }
-      return res;
-    }
+  const currentUser = activeUser;
+  const clientUser = activeUser?.role === 'client' ? activeUser : null;
+  const consultantUser =
+    activeUser?.role === 'consultant'
+      ? activeUser
+      : consultants.find((c) => c.id === activeUser?.id) || activeUser;
 
-    let targetUser;
-    const userRole = identifierOrRole || 'client';
-    const customUserData = passwordOrData;
-    if (customUserData && customUserData.name) {
-      const id = customUserData.id || `user_${Date.now()}`;
-      targetUser = {
-        id,
-        name: customUserData.name,
-        email: customUserData.email,
-        role: userRole,
-        isVerified: userRole === 'consultant' ? Boolean(customUserData.assessmentPassed) : true,
-        assessmentPassed: userRole === 'consultant' ? Boolean(customUserData.assessmentPassed) : undefined,
-        title: customUserData.title || (userRole === 'consultant' ? 'Consultant Candidate' : 'Client Account'),
-        bio: customUserData.bio || '',
-        hourlyRate: customUserData.hourlyRate || 120,
-        skills: customUserData.skills || [],
-        location: customUserData.location || 'Remote',
-        avatar: customUserData.avatar || customUserData.profileImage || null,
-        profileImage: customUserData.profileImage || customUserData.avatar || null,
-        label: customUserData.label || (userRole === 'consultant' ? 'Consultant' : 'Client')
-      };
-      storageUpdateUser(id, targetUser);
-      setStorageActiveUser(id);
-    } else {
-      const defaultId = userRole === 'consultant' ? 'consultant_001' : 'client_001';
-      targetUser = getUserById(defaultId) || DEMO_USERS.find(u => u.id === defaultId);
-      setStorageActiveUser(defaultId);
-    }
-
-    setAuthSession({
-      userId: targetUser.id,
-      role: targetUser.role,
-      isAuthenticated: true,
-      createdAt: new Date().toISOString()
-    });
-    setActiveUserState(targetUser);
-    setIsAuthenticated(true);
-
-    if (userRole === 'consultant') {
-      setActiveTab('browse_thoughts');
-    } else {
-      setActiveTab('chat');
-    }
-
-    reloadFromStorage();
-    showToast('Authentication Successful', `Welcome, ${targetUser.name}! Opening ${userRole === 'consultant' ? 'Consultant' : 'Client'} Dashboard...`, 'success');
-    return { success: true, user: targetUser, role: targetUser.role };
-  };
-
-  const register = (userData) => {
-    const res = authRegisterUser(userData);
-    if (res.success) {
-      setIsAuthenticated(true);
-      setActiveUserState(res.user);
-      if (res.role === 'consultant') {
-        setActiveTab('browse_thoughts');
-      } else {
-        setActiveTab('chat');
-      }
-      reloadFromStorage();
-      showToast('Account Created!', `Welcome to OverThink, ${res.user.name}!`, 'success');
-    }
-    return res;
-  };
-
-  const quickRegister = (identifier, password, userRole = 'client') => {
-    const res = authQuickRegisterUser(identifier, password, userRole);
-    if (res.success) {
-      setIsAuthenticated(true);
-      setActiveUserState(res.user);
-      if (res.role === 'consultant') {
-        setActiveTab('browse_thoughts');
-      } else {
-        setActiveTab('chat');
-      }
-      reloadFromStorage();
-      showToast('Account Created!', `Signed in as ${res.user.name}. Ready to get started.`, 'success');
-    }
-    return res;
-  };
+  const allMessages = useMemo(
+    () => conversations.flatMap((c) => c.messages || []),
+    [conversations]
+  );
 
   const syncedJobs = useMemo(() => syncJobsCatalog(jobs), [jobs]);
 
@@ -619,17 +1178,26 @@ export function AppProvider({ children }) {
     switchDemoUser,
     switchRole,
 
+    apiHealth,
+    checkHealth,
+    isAuthLoading,
+    isDataLoading,
+    refreshData: () => loadWorkspaceData(activeUserRef.current),
+
     thinks,
     thoughts: thinks,
     conversations,
     messages: allMessages,
     notifications,
 
+    fetchThoughtDetails,
     submitThink,
     submitThought,
     acceptThink,
     claimThought,
     updateThinkStatus,
+    submitReply,
+    getRepliesForThought: apiGetRepliesForThought,
     sendChatMessage,
     sendMessage,
     deleteMessage,
@@ -646,6 +1214,7 @@ export function AppProvider({ children }) {
     updateConsultantProfile,
     setClientUser,
     updateUserProfile,
+    subscribeNewsletter,
 
     activeTab,
     setActiveTab,
@@ -688,7 +1257,7 @@ export function AppProvider({ children }) {
     verifyRegistrationOTP,
     generateOTP,
     resendOTP,
-    DEMO_USERS
+    DEMO_USERS,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

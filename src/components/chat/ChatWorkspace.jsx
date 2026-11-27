@@ -30,6 +30,7 @@ export default function ChatWorkspace() {
 
   const myConversations = conversations.filter((c) => {
     if (!activeUser) return false;
+    if (activeUser.role === 'admin') return true;
     return activeUser.role === 'client'
       ? c.clientId === activeUser.id
       : c.consultantId === activeUser.id;
@@ -54,6 +55,7 @@ export default function ChatWorkspace() {
   const [activeMsgMenuId, setActiveMsgMenuId] = useState(null);
   const [copiedMsgId, setCopiedMsgId] = useState(null);
   const [attachments, setAttachments] = useState([]);
+  const [isSending, setIsSending] = useState(false);
 
   if (activeConvId !== prevConvId) {
     setPrevConvId(activeConvId);
@@ -152,14 +154,25 @@ export default function ChatWorkspace() {
       })
     : myConversations;
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (!inputMessage.trim() && attachments.length === 0) return;
+    if ((!inputMessage.trim() && attachments.length === 0) || isSending) return;
     if (!currentConversation) return;
 
-    sendChatMessage(currentConversation.id, inputMessage.trim(), attachments);
-    setInputMessage('');
-    setAttachments([]);
+    setIsSending(true);
+    try {
+      const sent = await sendChatMessage(
+        currentConversation.id,
+        inputMessage.trim(),
+        attachments
+      );
+      if (sent) {
+        setInputMessage('');
+        setAttachments([]);
+      }
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleCopyText = (msgId, text) => {
@@ -181,9 +194,9 @@ export default function ChatWorkspace() {
     });
   };
 
-  const handleStatusChange = (newStatus) => {
+  const handleStatusChange = async (newStatus) => {
     if (activeThought) {
-      updateThinkStatus(activeThought.id, newStatus);
+      await updateThinkStatus(activeThought.id, newStatus);
     }
     setShowStatusMenu(false);
   };
@@ -284,6 +297,7 @@ export default function ChatWorkspace() {
           onBackToList={() => setMobileView('list')}
           onStartCall={handleStartCall}
           onStatusChange={handleStatusChange}
+          canChangeStatus={activeUser?.role === 'consultant' || activeUser?.role === 'admin'}
         />
 
         <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-5 bg-[#f8fafc]/90">

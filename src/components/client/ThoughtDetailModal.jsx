@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import { timeAgo, formatDate } from '../../utils/formatters';
@@ -8,7 +8,10 @@ import {
   FileText,
   Bookmark,
   MessageSquare,
-  Printer
+  Printer,
+  CheckCircle2,
+  Sparkles,
+  Send,
 } from 'lucide-react';
 
 export default function ThoughtDetailModal() {
@@ -21,19 +24,39 @@ export default function ThoughtDetailModal() {
     activeTab,
     acceptThink,
     openChatWithThought,
-    activeUser
+    activeUser,
+    fetchThoughtDetails,
+    submitReply,
+    triggerAIFallback,
   } = useApp();
 
-  if (activeTab === 'chat' || activeTab === 'messages') {
+  const [replyMessage, setReplyMessage] = useState('');
+  const [checklistText, setChecklistText] = useState('');
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+  const [isTriggeringAI, setIsTriggeringAI] = useState(false);
+
+  const isModalVisible =
+    Boolean(selectedThoughtId) && activeTab !== 'chat' && activeTab !== 'messages';
+
+  useEffect(() => {
+    if (isModalVisible && selectedThoughtId && fetchThoughtDetails) {
+      fetchThoughtDetails(selectedThoughtId);
+    }
+  }, [isModalVisible, selectedThoughtId, fetchThoughtDetails]);
+
+  if (!isModalVisible) {
     return null;
   }
 
   const allThinks = thinks || thoughts || [];
-  const thought = allThinks.find(t => t.id === selectedThoughtId);
+  const thought = allThinks.find((t) => t.id === selectedThoughtId);
 
   if (!thought) return null;
 
   const isPending = thought.status === 'pending' || thought.status === 'pending_human';
+  const isConsultantOrAdmin =
+    activeUser?.role === 'consultant' || activeUser?.role === 'admin';
+  const solutions = thought.solutions || [];
 
   const handleOpenChat = () => {
     openChatWithThought(thought.id);
@@ -42,6 +65,41 @@ export default function ThoughtDetailModal() {
 
   const printSolution = () => {
     window.print();
+  };
+
+  const handleSubmitReply = async (e) => {
+    e.preventDefault();
+    if (!replyMessage.trim() || replyMessage.trim().length < 2 || isSubmittingReply) return;
+
+    const actionChecklist = checklistText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    setIsSubmittingReply(true);
+    try {
+      const res = await submitReply(thought.id, {
+        message: replyMessage.trim(),
+        responderType: activeUser?.role === 'admin' ? 'admin' : 'consultant',
+        actionChecklist,
+      });
+      if (res) {
+        setReplyMessage('');
+        setChecklistText('');
+      }
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  };
+
+  const handleTriggerAI = async () => {
+    if (isTriggeringAI) return;
+    setIsTriggeringAI(true);
+    try {
+      await triggerAIFallback(thought.id);
+    } finally {
+      setIsTriggeringAI(false);
+    }
   };
 
   return (
@@ -64,10 +122,10 @@ export default function ThoughtDetailModal() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {activeUser?.role === 'consultant' && isPending && (
+            {isConsultantOrAdmin && isPending && (
               <button
-                onClick={() => {
-                  acceptThink(thought.id);
+                onClick={async () => {
+                  await acceptThink(thought.id);
                   setSelectedThoughtId(null);
                 }}
                 className="px-3.5 py-1.5 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
@@ -123,7 +181,7 @@ export default function ThoughtDetailModal() {
                   Awaiting Consultant Acceptance
                 </h4>
                 <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                  This OverThink is saved locally and listed in the Consultant Panel under <strong>Available OverThinks</strong>.
+                  This OverThink is live and listed in the Consultant Panel under <strong>Available OverThinks</strong>.
                   A consultant can claim it to start the shared consultation chat.
                 </p>
               </div>
@@ -140,25 +198,31 @@ export default function ThoughtDetailModal() {
                 />
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                    Consultant: {thought.assignedConsultantName}
+                    {thought.assignedConsultantName
+                      ? `Consultant: ${thought.assignedConsultantName}`
+                      : 'OverThink Solution Active'}
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.2 rounded-full bg-[#0891b2] text-white">
-                      Accepted
+                      {thought.status}
                     </span>
                   </h4>
                   <p className="text-xs text-slate-600 mt-0.5">
-                    Direct 1-on-1 consultation chat is active between client and consultant.
+                    {thought.assignedConsultantName
+                      ? 'Direct 1-on-1 consultation chat is active between client and consultant.'
+                      : 'Review the submitted solution details below.'}
                   </p>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleOpenChat}
-                className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
-                <span>Open Chat Room</span>
-              </button>
+              {thought.assignedConsultantName && (
+                <button
+                  type="button"
+                  onClick={handleOpenChat}
+                  className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer self-start sm:self-auto"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#0891b2]" />
+                  <span>Open Chat Room</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -214,6 +278,124 @@ export default function ThoughtDetailModal() {
               </div>
             )}
           </div>
+
+          {solutions.length > 0 && (
+            <div className="bg-white rounded-2xl border border-emerald-200/90 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Delivered Solutions & Roadmaps ({solutions.length})</span>
+                </h3>
+              </div>
+
+              <div className="space-y-3">
+                {solutions.map((sol, idx) => (
+                  <div
+                    key={sol.id || idx}
+                    className={`p-4 rounded-xl border space-y-2.5 ${
+                      sol.isAIGenerated
+                        ? 'bg-violet-50/60 border-violet-200'
+                        : 'bg-emerald-50/50 border-emerald-200/80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900">
+                          {sol.author?.name || thought.assignedConsultantName || 'OverThink Specialist'}
+                        </span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            sol.isAIGenerated
+                              ? 'bg-violet-100 text-violet-800'
+                              : 'bg-emerald-100 text-emerald-800'
+                          }`}
+                        >
+                          {sol.isAIGenerated ? 'AI Fallback' : 'Consultant Solution'}
+                        </span>
+                      </div>
+                      {sol.createdAt && (
+                        <span className="text-[10px] text-slate-400">
+                          {timeAgo(sol.createdAt)}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {sol.executiveSummary || sol.message}
+                    </p>
+
+                    {sol.actionPlan && sol.actionPlan.length > 0 && (
+                      <div className="pt-2 border-t border-slate-200/60 space-y-1.5">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                          Action Checklist
+                        </span>
+                        {sol.actionPlan.map((step, sIdx) => (
+                          <div key={sIdx} className="text-xs text-slate-700 flex items-start gap-2">
+                            <span className="font-bold text-[#0891b2]">{step.step || sIdx + 1}.</span>
+                            <span>
+                              <strong>{step.title || step}</strong>
+                              {step.details ? ` — ${step.details}` : ''}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isConsultantOrAdmin && (
+            <form
+              onSubmit={handleSubmitReply}
+              className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-3"
+            >
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Deliver Official Solution Reply
+                </h3>
+                {thought.status !== 'ai_fallback' && (
+                  <button
+                    type="button"
+                    disabled={isTriggeringAI}
+                    onClick={handleTriggerAI}
+                    className="px-3 py-1.5 rounded-xl border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>{isTriggeringAI ? 'Running AI Triage...' : 'Trigger AI Fallback'}</span>
+                  </button>
+                )}
+              </div>
+
+              <textarea
+                rows={3}
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+                placeholder="Write a clear, actionable solution for the client (marks this thought as Answered and notifies the client)..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
+              />
+
+              <textarea
+                rows={2}
+                value={checklistText}
+                onChange={(e) => setChecklistText(e.target.value)}
+                placeholder="Optional action checklist (one step per line)..."
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
+              />
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmittingReply || replyMessage.trim().length < 2}
+                  className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  <Send className="w-3.5 h-3.5 text-[#0891b2]" />
+                  <span>{isSubmittingReply ? 'Delivering Reply...' : 'Submit Solution Reply'}</span>
+                </button>
+              </div>
+            </form>
+          )}
 
           <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
             <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between">

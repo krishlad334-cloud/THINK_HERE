@@ -4,6 +4,7 @@ import UserAvatar from '../common/UserAvatar';
 import StatusBadge from '../common/StatusBadge';
 import VerifiedBadge from '../common/VerifiedBadge';
 import { isConsultantThought } from '../../utils/thoughtFilters';
+import { doesCategoryMatchFilter } from '../../utils/normalizers';
 import { timeAgo, formatDate } from '../../utils/formatters';
 import {
   FileSearch,
@@ -31,6 +32,7 @@ export default function BrowseClientThoughts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('Pending');
   const [sortBy, setSortBy] = useState('latest');
+  const [acceptingId, setAcceptingId] = useState(null);
 
   const categories = [
     'All',
@@ -38,11 +40,12 @@ export default function BrowseClientThoughts() {
     'Technology & IT',
     'Business & Startups',
     'Product & Innovation',
-    'Marketing & Growth'
+    'Marketing & Growth',
+    'General Consultation'
   ];
 
   const filtered = allThinks.filter((t) => {
-    if (selectedCategory !== 'All' && t.category !== selectedCategory) return false;
+    if (!doesCategoryMatchFilter(t, selectedCategory)) return false;
 
     if (filterStatus === 'Pending') {
       if (t.status !== 'pending' && t.status !== 'pending_human') return false;
@@ -50,8 +53,12 @@ export default function BrowseClientThoughts() {
       if (t.status !== 'accepted') return false;
     } else if (filterStatus === 'In Progress') {
       if (t.status !== 'in_progress') return false;
+    } else if (filterStatus === 'Answered') {
+      if (t.status !== 'answered') return false;
     } else if (filterStatus === 'Resolved') {
       if (t.status !== 'resolved') return false;
+    } else if (filterStatus === 'AI Fallback') {
+      if (t.status !== 'ai_fallback') return false;
     } else if (filterStatus === 'Closed') {
       if (t.status !== 'closed') return false;
     } else if (filterStatus === 'My Accepted') {
@@ -83,8 +90,14 @@ export default function BrowseClientThoughts() {
     return timeB - timeA;
   });
 
-  const handleAccept = (thought) => {
-    acceptThink(thought.id);
+  const handleAccept = async (thought) => {
+    if (acceptingId) return;
+    setAcceptingId(thought.id);
+    try {
+      await acceptThink(thought.id);
+    } finally {
+      setAcceptingId(null);
+    }
   };
 
   const handleOpenChat = (thought) => {
@@ -145,7 +158,9 @@ export default function BrowseClientThoughts() {
               <option value="All">All Submissions</option>
               <option value="Accepted">Accepted OverThinks</option>
               <option value="In Progress">In Progress</option>
+              <option value="Answered">Answered</option>
               <option value="Resolved">Resolved</option>
+              <option value="AI Fallback">AI Fallback</option>
               <option value="Closed">Closed</option>
               <option value="My Accepted">My Accepted OverThinks</option>
             </select>
@@ -164,7 +179,7 @@ export default function BrowseClientThoughts() {
 
         <div className="flex items-center gap-2 overflow-x-auto pt-1 scrollbar-none">
           {categories.map((cat) => {
-            const count = cat === 'All' ? allThinks.length : allThinks.filter(t => t.category === cat).length;
+            const count = cat === 'All' ? allThinks.length : allThinks.filter(t => doesCategoryMatchFilter(t, cat)).length;
             const isSelected = selectedCategory === cat;
             return (
               <button
@@ -202,7 +217,7 @@ export default function BrowseClientThoughts() {
               <h3 className="text-sm font-bold text-slate-800">No client submissions available</h3>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
                 {filterStatus === 'Pending'
-                  ? 'All submitted OverThinks have been accepted, or no OverThinks have been submitted yet. Switch to Demo Client in the profile menu to submit a new OverThink, and it will appear here instantly!'
+                  ? 'All submitted OverThinks have been accepted, or no OverThinks have been submitted yet. New client submissions will appear here automatically!'
                   : 'No OverThinks match your search keywords or filter.'}
               </p>
               <button
@@ -301,11 +316,12 @@ export default function BrowseClientThoughts() {
                       {isPending ? (
                         <button
                           onClick={() => handleAccept(thought)}
-                          className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-md shadow-[#020617]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98"
+                          disabled={acceptingId === thought.id}
+                          className="px-4 py-2 rounded-xl bg-[#020617] hover:bg-[#091528] text-white text-xs font-bold shadow-md shadow-[#020617]/25 flex items-center gap-1.5 transition-all cursor-pointer transform active:scale-98 disabled:opacity-60"
                           title="Accept this OverThink and start direct consultation"
                         >
                           <CheckCircle className="w-3.5 h-3.5 text-[#0891b2]" />
-                          <span>Accept OverThink</span>
+                          <span>{acceptingId === thought.id ? 'Accepting...' : 'Accept OverThink'}</span>
                         </button>
                       ) : isClaimedByMe ? (
                         <button

@@ -39,7 +39,11 @@ export default function NotificationDropdown() {
   const getIcon = (type) => {
     switch (type) {
       case 'consultant_accepted':
+      case 'thought_accepted':
       case 'solution_received':
+      case 'thought_answered':
+      case 'thought_reply':
+      case 'reply_received':
         return <CheckCircle className="w-4 h-4 text-[#0891b2]" />;
       case 'new_message':
         return <MessageSquare className="w-4 h-4 text-[#0891b2]" />;

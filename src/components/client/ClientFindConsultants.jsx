@@ -20,8 +20,8 @@ export default function ClientFindConsultants() {
     if (filterSkill !== 'All' && !c.skills?.includes(filterSkill)) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      const matchName = c.name.toLowerCase().includes(q);
-      const matchTitle = c.title.toLowerCase().includes(q);
+      const matchName = c.name?.toLowerCase().includes(q);
+      const matchTitle = (c.title || c.headline || '').toLowerCase().includes(q);
       const matchSkill = c.skills?.some(s => s.toLowerCase().includes(q));
       if (!matchName && !matchTitle && !matchSkill) return false;
     }
@@ -85,8 +85,23 @@ export default function ClientFindConsultants() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((c) => (
+      {filtered.length === 0 ? (
+        <div className="bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center">
+          <ShieldCheck className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <h3 className="text-sm font-bold text-slate-800">
+            {consultants.length === 0
+              ? 'No verified consultants available yet'
+              : 'No consultants match your filters'}
+          </h3>
+          <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+            {consultants.length === 0
+              ? 'Consultants appear here automatically once they complete qualification. You can still submit your OverThink now and get matched as soon as one comes online.'
+              : 'Try clearing your skill filter or searching a different specialization.'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map((c) => (
           <div
             key={c.id}
             className="p-4 sm:p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#020617]/40 hover:shadow-lg transition-all flex flex-col justify-between"
@@ -156,7 +171,8 @@ export default function ClientFindConsultants() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

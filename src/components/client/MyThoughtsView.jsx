@@ -3,6 +3,7 @@ import { useApp } from '../../context/useApp';
 import UserAvatar from '../common/UserAvatar';
 import StatusBadge from '../common/StatusBadge';
 import { isClientThought } from '../../utils/thoughtFilters';
+import { doesCategoryMatchFilter } from '../../utils/normalizers';
 import { timeAgo } from '../../utils/formatters';
 import {
   MessageSquare,
@@ -11,7 +12,7 @@ import {
   X
 } from 'lucide-react';
 
-export default function MyThoughtsView() {
+export default function MyThoughtsView({ filterMode = 'all' }) {
   const {
     thinks,
     thoughts,
@@ -30,10 +31,18 @@ export default function MyThoughtsView() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['All', 'Career & Jobs', 'Product & Innovation', 'Business & Startups', 'Technology & IT', 'Marketing & Growth'];
+  const categories = ['All', 'Career & Jobs', 'Product & Innovation', 'Business & Startups', 'Technology & IT', 'Marketing & Growth', 'General Consultation'];
 
   const filtered = myThinks.filter((t) => {
-    if (activeCategory !== 'All' && t.category !== activeCategory) {
+    if (filterMode === 'consultant_responses') {
+      const hasHuman = (t.solutions || []).some((s) => !s.isAIGenerated) || t.status === 'answered' || t.status === 'resolved';
+      if (!hasHuman) return false;
+    } else if (filterMode === 'ai_responses') {
+      const hasAI = (t.solutions || []).some((s) => s.isAIGenerated) || t.status === 'ai_fallback';
+      if (!hasAI) return false;
+    }
+
+    if (!doesCategoryMatchFilter(t, activeCategory)) {
       return false;
     }
 
@@ -189,9 +198,9 @@ export default function MyThoughtsView() {
 
                     <StatusBadge status={thought.status} variant="pill" pendingLabel="Pending Review" />
 
-                    {thought.urgency === 'High (Urgent)' && (
+                    {(thought.urgency === 'High (Urgent)' || thought.urgency === 'Urgent' || thought.urgency === 'Priority') && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
-                        Urgent
+                        {thought.urgency === 'Priority' ? 'Priority' : 'Urgent'}
                       </span>
                     )}
                   </div>

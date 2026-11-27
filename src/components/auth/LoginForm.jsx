@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   AlertCircle,
   ArrowRight,
@@ -12,7 +12,6 @@ import {
   Users,
 } from 'lucide-react';
 import { useApp } from '../../context/useApp';
-import { getUsers } from '../../utils/thinkStorage';
 import UserAvatar from '../common/UserAvatar';
 
 const QUICK_DEMO_PROFILES = [
@@ -39,7 +38,7 @@ const QUICK_DEMO_PROFILES = [
 ];
 
 export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotModal }) {
-  const { login, quickRegister } = useApp();
+  const { login, quickRegister, DEMO_USERS = [] } = useApp();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -49,19 +48,12 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
   const [isNotFound, setIsNotFound] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showOtherAccounts, setShowOtherAccounts] = useState(false);
-  const authTimerRef = useRef(null);
 
-  useEffect(() => {
-    return () => {
-      if (authTimerRef.current) clearTimeout(authTimerRef.current);
-    };
-  }, []);
-
-  const additionalUsers = getUsers().filter(
+  const additionalUsers = DEMO_USERS.filter(
     (u) => !u.email?.includes('alex.morgan') && !u.email?.includes('elena.vance')
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setError('');
     setIsNotFound(false);
@@ -75,49 +67,55 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
       return;
     }
 
-    if (authTimerRef.current) clearTimeout(authTimerRef.current);
     setIsLoggingIn(true);
-    authTimerRef.current = setTimeout(() => {
-      const res = login(identifier.trim(), password);
-      setIsLoggingIn(false);
-      if (!res.success) {
-        setError(res.error || 'Authentication failed. Please verify your details.');
-        setIsNotFound(!!res.notFound);
+    try {
+      const res = await login(identifier.trim(), password);
+      if (!res?.success) {
+        setError(res?.error || 'Authentication failed. Please verify your details.');
+        setIsNotFound(Boolean(res?.notFound));
       } else if (onSuccess) {
         onSuccess(res.user, false);
       }
-    }, 300);
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
-  const handleQuickLogin = (targetIdentifier, targetPassword = 'password123') => {
+  const handleQuickLogin = async (targetIdentifier, targetPassword = 'password123') => {
     setIdentifier(targetIdentifier);
     setPassword(targetPassword);
     setError('');
     setIsNotFound(false);
-    if (authTimerRef.current) clearTimeout(authTimerRef.current);
     setIsLoggingIn(true);
-    authTimerRef.current = setTimeout(() => {
-      const res = login(targetIdentifier, targetPassword);
-      setIsLoggingIn(false);
-      if (!res.success) {
-        setError(res.error || 'Authentication failed. Please verify your details.');
+    try {
+      const res = await login(targetIdentifier, targetPassword, { allowDemoProvision: true });
+      if (!res?.success) {
+        setError(res?.error || 'Authentication failed. Please verify your details.');
       } else if (onSuccess) {
         onSuccess(res.user, false);
       }
-    }, 250);
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
-  const handleQuickCreate = (roleType) => {
-    const res = quickRegister(identifier.trim(), password, roleType);
-    if (res?.success) {
-      if (onSuccess) onSuccess(res.user || { role: roleType }, roleType === 'consultant');
-    } else {
-      setError(
-        res?.error ||
-          (roleType === 'client'
-            ? 'Unable to create client account.'
-            : 'Unable to create consultant account.')
-      );
+  const handleQuickCreate = async (roleType) => {
+    setError('');
+    setIsLoggingIn(true);
+    try {
+      const res = await quickRegister(identifier.trim(), password, roleType);
+      if (res?.success) {
+        if (onSuccess) onSuccess(res.user || { role: roleType }, roleType === 'consultant');
+      } else {
+        setError(
+          res?.error ||
+            (roleType === 'client'
+              ? 'Unable to create client account.'
+              : 'Unable to create consultant account.')
+        );
+      }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 

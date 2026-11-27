@@ -1,12 +1,5 @@
-import {
-  STORAGE_KEYS,
-  getUsers,
-  getUserById,
-  setActiveUser,
-  getAuthSession,
-  setAuthSession,
-  clearAuthSession
-} from './thinkStorage';
+import { apiRequest, clearAuthToken, getAuthToken, setAuthToken } from './apiClient';
+import { normalizeUser } from './normalizers';
 
 const OTP_STORE = {};
 const OTP_EXPIRY_SECONDS = 120;
@@ -22,29 +15,66 @@ export function normalizeIdentifier(val) {
 }
 
 export function isAuthenticated() {
-  const session = getAuthSession();
-  if (!session || !session.isAuthenticated || !session.userId) {
-    return false;
+  return Boolean(getAuthToken());
+}
+
+export async function getCurrentUser() {
+  if (!getAuthToken()) return null;
+  try {
+    const res = await apiRequest('/auth/me');
+    return normalizeUser(res.data?.user);
+  } catch (err) {
+    if (err.status === 401) {
+      clearAuthToken();
+    }
+    return null;
   }
-  const user = getUserById(session.userId);
-  return !!user;
 }
 
-export function getCurrentUser() {
-  const session = getAuthSession();
-  if (!session || !session.userId) return null;
-  return getUserById(session.userId);
-}
+export async function updateCurrentUserProfile(updates = {}) {
+  const payload = {};
 
-export function getUserRole() {
-  const user = getCurrentUser();
-  if (user) return user.role;
-  const session = getAuthSession();
-  return session?.role || null;
+  if (updates.name !== undefined) payload.name = updates.name;
+  if (updates.mobile !== undefined) {
+    const digits = String(updates.mobile).replace(/\D/g, '');
+    if (digits) payload.mobile = digits;
+  }
+  if (updates.avatar !== undefined || updates.profileImage !== undefined) {
+    payload.avatar = updates.avatar ?? updates.profileImage;
+  }
+  if (updates.headline !== undefined || updates.title !== undefined) {
+    payload.headline = updates.headline ?? updates.title;
+  }
+  if (updates.bio !== undefined) payload.bio = updates.bio;
+  if (updates.hourlyRate !== undefined) {
+    payload.hourlyRate = String(updates.hourlyRate);
+  }
+  if (updates.skills !== undefined) payload.skills = updates.skills;
+  if (updates.services !== undefined) {
+    payload.services = (updates.services || []).map((srv) =>
+      typeof srv === 'string' ? srv : srv.title || String(srv)
+    );
+  }
+  if (updates.assessmentPassed !== undefined) {
+    payload.assessmentPassed = Boolean(updates.assessmentPassed);
+  }
+  if (updates.assessmentScore !== undefined) {
+    payload.assessmentScore = String(updates.assessmentScore);
+  }
+  if (updates.isVerified !== undefined) {
+    payload.isVerified = Boolean(updates.isVerified);
+  }
+
+  const res = await apiRequest('/auth/me', {
+    method: 'PATCH',
+    body: payload,
+  });
+
+  return normalizeUser(res.data?.user);
 }
 
 export function redirectByRole(role) {
-  if (role === 'consultant') {
+  if (role === 'consultant' || role === 'admin') {
     return 'browse_thoughts';
   }
   return 'chat';
@@ -61,13 +91,13 @@ export function generateOTP(emailOrMobile) {
   OTP_STORE[key] = {
     otp,
     expiresAt,
-    resendCount: prev.resendCount
+    resendCount: prev.resendCount,
   };
 
   return {
     otp,
     expiresAt,
-    expiresInSeconds: OTP_EXPIRY_SECONDS
+    expiresInSeconds: OTP_EXPIRY_SECONDS,
   };
 }
 
@@ -81,7 +111,7 @@ export function resendOTP(emailOrMobile) {
   if (current && current.resendCount >= MAX_RESEND_LIMIT) {
     return {
       success: false,
-      error: 'OTP resend limit reached. Please wait or continue with your existing code.'
+      error: 'OTP resend limit reached. Please wait or continue with your existing code.',
     };
   }
 
@@ -93,7 +123,7 @@ export function resendOTP(emailOrMobile) {
     otp: otpData.otp,
     expiresAt: otpData.expiresAt,
     resendCount: OTP_STORE[key].resendCount,
-    remainingResends: MAX_RESEND_LIMIT - OTP_STORE[key].resendCount
+    remainingResends: MAX_RESEND_LIMIT - OTP_STORE[key].resendCount,
   };
 }
 
@@ -124,8 +154,7 @@ export function verifyRegistrationOTP(emailOrMobile, inputOtp) {
   return { success: true };
 }
 
-export function registerUser(userData) {
-  const users = getUsers();
+export async function registerUser(userData) {
   const normalizedEmail = (userData.email || '').trim().toLowerCase();
   const cleanMobile = (userData.mobile || '').trim().replace(/\D/g, '');
 
@@ -135,80 +164,89 @@ export function registerUser(userData) {
   if (!normalizedEmail || !normalizedEmail.includes('@')) {
     return { success: false, error: 'A valid email address is required.' };
   }
-  if (!cleanMobile || cleanMobile.length < 10) {
-    return { success: false, error: 'A valid 10-digit mobile number is required.' };
+  if (cleanMobile && (cleanMobile.length < 10 || cleanMobile.length > 15)) {
+    return { success: false, error: 'Mobile number must be between 10 and 15 digits.' };
   }
-  if (!userData.password || userData.password.length < 8) {
-    return { success: false, error: 'Password must be at least 8 characters in length.' };
+  if (!userData.password || userData.password.length < 6) {
+    return { success: false, error: 'Password must be at least 6 characters in length.' };
   }
-  if (!userData.role || (userData.role !== 'client' && userData.role !== 'consultant')) {
+  const role = userData.role || 'client';
+  if (!['user', 'client', 'consultant'].includes(role)) {
     return { success: false, error: 'Please select an account type (Client or Consultant).' };
   }
 
-  const existingEmail = users.find(u => u.email && u.email.toLowerCase() === normalizedEmail);
-  if (existingEmail) {
-    return { success: false, error: 'This email address is already registered. Please sign in instead.' };
-  }
-
-  const existingMobile = users.find(u => u.mobile && u.mobile.replace(/\D/g, '') === cleanMobile);
-  if (existingMobile) {
-    return { success: false, error: 'This mobile number is already registered. Please sign in instead.' };
-  }
-
-  const id = `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-  const isConsultant = userData.role === 'consultant';
-  const newUser = {
-    id,
+  const payload = {
     name: userData.name.trim(),
     email: normalizedEmail,
-    mobile: cleanMobile,
     password: userData.password,
-    role: userData.role,
-    isVerified: !isConsultant,
-    assessmentPassed: isConsultant ? false : undefined,
-    title: userData.title || (isConsultant ? 'Consultant Candidate' : 'Client Member'),
-    hourlyRate: userData.hourlyRate ? Number(userData.hourlyRate) : (isConsultant ? 120 : undefined),
-    responseTime: isConsultant ? '< 2 hours' : undefined,
-    location: userData.location || 'Remote',
-    bio: userData.bio || '',
-    skills: userData.skills || [],
-    services: isConsultant ? (userData.services || []) : undefined,
-    experience: isConsultant ? (userData.experience || []) : undefined,
-    education: isConsultant ? (userData.education || []) : undefined,
-    certifications: isConsultant ? (userData.certifications || []) : undefined,
-    portfolio: isConsultant ? (userData.portfolio || []) : undefined,
-    avatar: userData.avatar || userData.profileImage || null,
-    profileImage: userData.profileImage || userData.avatar || null,
-    label: isConsultant ? 'Consultant' : 'Client',
-    createdAt: new Date().toISOString()
+    role,
   };
 
-  const updatedUsers = [...users, newUser];
-  try {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(updatedUsers));
-    window.dispatchEvent(new CustomEvent('think_storage_updated', { detail: { key: STORAGE_KEYS.USERS, data: updatedUsers } }));
-  } catch (err) {
-    console.error('Error saving user in storage:', err);
+  if (cleanMobile) payload.mobile = cleanMobile;
+  if (userData.headline || userData.title) {
+    payload.headline = userData.headline || userData.title;
+  }
+  if (userData.bio) payload.bio = userData.bio;
+  if (Array.isArray(userData.skills) && userData.skills.length > 0) {
+    payload.skills = userData.skills;
+  }
+  if (Array.isArray(userData.services) && userData.services.length > 0) {
+    payload.services = userData.services.map((srv) =>
+      typeof srv === 'string' ? srv : srv.title || String(srv)
+    );
+  }
+  if (userData.avatar || userData.profileImage) {
+    payload.avatar = userData.avatar || userData.profileImage;
   }
 
-  setActiveUser(newUser.id);
-  const session = {
-    userId: newUser.id,
-    role: newUser.role,
-    isAuthenticated: true,
-    createdAt: new Date().toISOString()
-  };
-  setAuthSession(session);
+  try {
+    const res = await apiRequest('/auth/register', {
+      method: 'POST',
+      body: payload,
+      skipAuth: true,
+    });
 
-  return {
-    success: true,
-    user: newUser,
-    role: newUser.role,
-    redirectTo: redirectByRole(newUser.role)
-  };
+    const token = res.data?.token;
+    if (token) {
+      setAuthToken(token);
+    }
+
+    let user = normalizeUser(res.data?.user);
+
+    if (
+      user &&
+      (userData.assessmentPassed !== undefined ||
+        userData.isVerified !== undefined ||
+        userData.hourlyRate !== undefined)
+    ) {
+      try {
+        user = await updateCurrentUserProfile({
+          hourlyRate: userData.hourlyRate,
+          assessmentPassed: userData.assessmentPassed,
+          assessmentScore: userData.assessmentScore,
+          isVerified: userData.isVerified,
+        });
+      } catch (patchErr) {
+        console.warn('[thinkAuth] Post-register profile patch failed:', patchErr);
+      }
+    }
+
+    return {
+      success: true,
+      token,
+      user,
+      role: user?.role || role,
+      redirectTo: redirectByRole(user?.role || role),
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.message || 'Registration failed. Please try again.',
+    };
+  }
 }
 
-export function loginUser(identifier, password) {
+export async function loginUser(identifier, password) {
   if (!identifier || !identifier.trim()) {
     return { success: false, error: 'Please enter your registered email address or mobile number.' };
   }
@@ -216,88 +254,65 @@ export function loginUser(identifier, password) {
     return { success: false, error: 'Please enter your password.' };
   }
 
-  const users = getUsers();
-  const rawId = identifier.trim();
-  const isEmail = rawId.includes('@');
-  const normalizedEmail = isEmail ? rawId.toLowerCase() : null;
-  const cleanMobile = !isEmail ? rawId.replace(/\D/g, '') : null;
+  try {
+    const res = await apiRequest('/auth/login', {
+      method: 'POST',
+      body: {
+        identifier: identifier.trim(),
+        password,
+      },
+      skipAuth: true,
+    });
 
-  const user = users.find(u => {
-    if (normalizedEmail && u.email) {
-      const uEmail = u.email.toLowerCase();
-      if (uEmail === normalizedEmail) return true;
-      if (normalizedEmail.replace('@overthink.platform', '') === uEmail.replace('@think.platform', '')) return true;
-      if (normalizedEmail.replace('@think.platform', '') === uEmail.replace('@overthink.platform', '')) return true;
+    const token = res.data?.token;
+    if (token) {
+      setAuthToken(token);
     }
-    if (rawId && u.email && u.email.toLowerCase().startsWith(rawId.toLowerCase() + '@')) {
-      return true;
-    }
-    if (rawId && (u.id === rawId || u.name?.toLowerCase() === rawId.toLowerCase())) {
-      return true;
-    }
-    if (cleanMobile && u.mobile && u.mobile.replace(/\D/g, '') === cleanMobile) {
-      return true;
-    }
-    return false;
-  });
 
-  if (!user) {
+    const user = normalizeUser(res.data?.user);
+
+    return {
+      success: true,
+      token,
+      user,
+      role: user?.role || 'client',
+      redirectTo: redirectByRole(user?.role || 'client'),
+    };
+  } catch (err) {
     return {
       success: false,
-      notFound: true,
-      error: 'No account found with this email address or mobile number.'
+      notFound: err.status === 404,
+      error: err.message || 'Authentication failed. Please check your credentials.',
     };
   }
-
-  if (user.password && user.password !== password) {
-    return {
-      success: false,
-      error: 'Incorrect password. Please verify and try again.'
-    };
-  }
-
-  if (user.role !== 'consultant' && user.isVerified === false) {
-    return {
-      success: false,
-      error: 'Your account is not verified yet. Please complete verification.'
-    };
-  }
-
-  setActiveUser(user.id);
-  const session = {
-    userId: user.id,
-    role: user.role,
-    isAuthenticated: true,
-    createdAt: new Date().toISOString()
-  };
-  setAuthSession(session);
-
-  return {
-    success: true,
-    user,
-    role: user.role,
-    redirectTo: redirectByRole(user.role)
-  };
 }
 
-export function quickRegisterUser(identifier, password, role = 'client') {
+export async function quickRegisterUser(identifier, password, role = 'client') {
   const cleanId = (identifier || '').trim();
   const isEmail = cleanId.includes('@');
-  const email = isEmail ? cleanId.toLowerCase() : `${cleanId.toLowerCase()}@overthink.platform`;
-  const mobile = !isEmail ? cleanId.replace(/\D/g, '') : `987${Math.floor(1000000 + Math.random() * 9000000)}`;
+  const email = isEmail
+    ? cleanId.toLowerCase()
+    : `${cleanId.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user'}@overthink.platform`;
+  const digits = cleanId.replace(/\D/g, '');
+  const mobile =
+    !isEmail && digits.length >= 10 && digits.length <= 15
+      ? digits
+      : `987${Math.floor(1000000 + Math.random() * 9000000)}`;
   const prefix = isEmail ? cleanId.split('@')[0] : 'User';
-  const name = prefix.charAt(0).toUpperCase() + prefix.slice(1).replace(/[^a-zA-Z0-9]/g, ' ');
+  const name =
+    prefix.charAt(0).toUpperCase() +
+    prefix.slice(1).replace(/[^a-zA-Z0-9]/g, ' ').trim();
 
   return registerUser({
-    name,
+    name: name.length >= 2 ? name : 'OverThink Member',
     email,
-    mobile: mobile.length >= 10 ? mobile : `98765432${Math.floor(10 + Math.random() * 89)}`,
-    password: password || 'password123',
-    role: role || 'client'
+    mobile,
+    password: password && password.length >= 6 ? password : 'password123',
+    role: role || 'client',
   });
 }
 
 export function logoutUser() {
-  clearAuthSession();
+  clearAuthToken();
   return { success: true };
 }

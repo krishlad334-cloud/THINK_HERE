@@ -46,6 +46,7 @@ export default function ClientChatView() {
   const [inputVal, setInputVal] = useState('');
   const [attachments, setAttachments] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const [activeMsgMenuId, setActiveMsgMenuId] = useState(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [copiedMsgId, setCopiedMsgId] = useState(null);
@@ -154,23 +155,31 @@ export default function ClientChatView() {
     e.target.value = '';
   };
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (!inputVal.trim() && attachments.length === 0) return;
+    if ((!inputVal.trim() && attachments.length === 0) || isSending) return;
 
-    if (!activeThought) {
-      submitThink({
-        title: inputVal.trim(),
-        description: inputVal.trim(),
-        category: null,
-        attachments,
-      });
-    } else {
-      sendMessage(activeThought.id, inputVal.trim(), attachments);
+    setIsSending(true);
+    try {
+      let ok = null;
+      if (!activeThought) {
+        ok = await submitThink({
+          title: inputVal.trim(),
+          description: inputVal.trim(),
+          category: null,
+          attachments,
+        });
+      } else {
+        ok = await sendMessage(activeThought.id, inputVal.trim(), attachments);
+      }
+
+      if (ok) {
+        setInputVal('');
+        setAttachments([]);
+      }
+    } finally {
+      setIsSending(false);
     }
-
-    setInputVal('');
-    setAttachments([]);
   };
 
   const openFullChatRoom = () => {
@@ -266,8 +275,8 @@ export default function ClientChatView() {
 
             <div className="flex gap-3 sm:gap-4 items-start flex-row-reverse">
               <UserAvatar
-                src={activeThought.clientAvatar || currentUser.profileImage || currentUser.avatar}
-                name={activeThought.clientName || currentUser.name}
+                src={activeThought.clientAvatar || currentUser?.profileImage || currentUser?.avatar}
+                name={activeThought.clientName || currentUser?.name}
                 role="client"
                 size="md"
                 className="ring-2 ring-white shadow-xs flex-shrink-0"
@@ -278,7 +287,7 @@ export default function ClientChatView() {
                     {timeAgo(activeThought.createdAt)}
                   </span>
                   <span className="text-xs font-bold text-slate-900">
-                    {activeThought.clientName || currentUser.name}
+                    {activeThought.clientName || currentUser?.name}
                   </span>
                 </div>
                 <div className="p-3.5 sm:p-4 rounded-2xl rounded-tr-none bg-[#e8f7fb] border border-[#0891b2]/25 text-slate-900 text-xs sm:text-sm leading-relaxed shadow-xs space-y-1">
@@ -309,8 +318,41 @@ export default function ClientChatView() {
               </div>
             </div>
 
+            {activeThought.solutions && activeThought.solutions.length > 0 && (
+              <div className="space-y-3">
+                {activeThought.solutions.map((sol, idx) => (
+                  <div
+                    key={sol.id || idx}
+                    className="p-4 sm:p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 shadow-xs space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-extrabold text-emerald-900 uppercase tracking-wider">
+                        {sol.isAIGenerated ? 'AI Diagnostic Roadmap' : `Official Solution by ${sol.author?.name || assignedConsName || 'Consultant'}`}
+                      </span>
+                      <span className="text-[10px] text-emerald-700 font-semibold">
+                        {timeAgo(sol.createdAt)}
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                      {sol.executiveSummary || sol.message}
+                    </p>
+                    {sol.actionPlan && sol.actionPlan.length > 0 && (
+                      <ul className="space-y-1.5 pt-1">
+                        {sol.actionPlan.map((step, sIdx) => (
+                          <li key={sIdx} className="text-xs text-slate-700 flex items-start gap-2">
+                            <span className="font-bold text-emerald-700">{step.step || sIdx + 1}.</span>
+                            <span>{step.title || step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
             {thoughtMessages.map((msg) => {
-              const isMine = msg.senderId === currentUser.id;
+              const isMine = msg.senderId === currentUser?.id;
               const isMenuOpen = activeMsgMenuId === msg.id;
 
               return (
@@ -324,7 +366,7 @@ export default function ClientChatView() {
                     src={
                       msg.senderAvatar ||
                       (isMine
-                        ? currentUser.profileImage || currentUser.avatar
+                        ? currentUser?.profileImage || currentUser?.avatar
                         : assignedConsAvatar || null)
                     }
                     name={msg.senderName}

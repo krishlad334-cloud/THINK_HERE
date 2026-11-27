@@ -35,6 +35,7 @@ export default function ChatHeader({
   onBackToList,
   onStartCall,
   onStatusChange,
+  canChangeStatus = true,
 }) {
   const [copiedThinkId, setCopiedThinkId] = useState(false);
   const statusConfig = getChatStatusConfig(currentStatus);
@@ -122,17 +123,23 @@ export default function ChatHeader({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleStatusMenu();
+                if (canChangeStatus) onToggleStatusMenu();
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:opacity-90 ${statusConfig.badgeClass}`}
-              title="Change Status (Pending, Accepted, In Progress, Completed, Closed)"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs ${
+                canChangeStatus ? 'cursor-pointer hover:opacity-90' : 'cursor-default'
+              } ${statusConfig.badgeClass}`}
+              title={
+                canChangeStatus
+                  ? 'Change Status (Pending, Accepted, In Progress, Answered, Completed, Closed)'
+                  : 'Current Consultation Status'
+              }
             >
               <span className={`w-2 h-2 rounded-full ${statusConfig.dotClass}`} />
               <span>{statusConfig.label}</span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+              {canChangeStatus && <ChevronDown className="w-3.5 h-3.5 opacity-70" />}
             </button>
 
-            {showStatusMenu && (
+            {showStatusMenu && canChangeStatus && (
               <div
                 onClick={(e) => e.stopPropagation()}
                 className="absolute right-0 top-full mt-1.5 z-50 w-44 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 animate-in fade-in zoom-in-95 duration-100"
@@ -187,21 +194,23 @@ export default function ChatHeader({
                       resolvedLabel="Completed"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-1 pt-1">
-                    {CHAT_STATUS_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => {
-                          onStatusChange(option.value);
-                          onCloseMenus();
-                        }}
-                        className={`py-1 px-2 rounded-lg text-[11px] font-semibold text-center transition-colors ${option.pillClass}`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
+                  {canChangeStatus && (
+                    <div className="grid grid-cols-2 gap-1 pt-1">
+                      {CHAT_STATUS_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            onStatusChange(option.value);
+                            onCloseMenus();
+                          }}
+                          className={`py-1 px-2 rounded-lg text-[11px] font-semibold text-center transition-colors ${option.pillClass}`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-1.5 border-b border-slate-100">

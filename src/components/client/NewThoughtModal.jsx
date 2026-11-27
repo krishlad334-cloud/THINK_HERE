@@ -28,6 +28,7 @@ export default function NewThoughtModal() {
   const [urgency, setUrgency] = useState('Standard');
   const [attachments, setAttachments] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
 
   const fileInputRef = useRef(null);
@@ -113,8 +114,9 @@ export default function NewThoughtModal() {
     setAttachments(prev => prev.filter(a => a.id !== id));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setValidationError('');
 
     if (!title.trim()) {
@@ -127,24 +129,29 @@ export default function NewThoughtModal() {
       return;
     }
 
-    const created = submitThink({
-      title: title.trim(),
-      description: description.trim(),
-      category,
-      attachments,
-      urgency
-    });
+    setIsSubmitting(true);
+    try {
+      const created = await submitThink({
+        title: title.trim(),
+        description: description.trim(),
+        category,
+        attachments,
+        urgency
+      });
 
-    if (created) {
-      setIsNewThoughtModalOpen(false);
-      setTitle('');
-      setDescription('');
-      setCategory('Career & Jobs');
-      setUrgency('Standard');
-      setAttachments([]);
-      setValidationError('');
-      setActiveChatThoughtId(created.id);
-      setActiveTab('my_thoughts');
+      if (created) {
+        setIsNewThoughtModalOpen(false);
+        setTitle('');
+        setDescription('');
+        setCategory('Career & Jobs');
+        setUrgency('Standard');
+        setAttachments([]);
+        setValidationError('');
+        setActiveChatThoughtId(created.id);
+        setActiveTab('my_thoughts');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -257,7 +264,8 @@ export default function NewThoughtModal() {
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#020617]/20 focus:border-[#020617]"
               >
                 <option value="Standard">Standard (24h Window)</option>
-                <option value="High (Urgent)">High (Urgent Expedited)</option>
+                <option value="Priority">Priority (Fast Track)</option>
+                <option value="Urgent">High (Urgent Expedited)</option>
               </select>
             </div>
 
@@ -336,9 +344,10 @@ export default function NewThoughtModal() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-sm shadow-md shadow-[#020617]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+              disabled={isSubmitting}
+              className="w-full py-3 rounded-xl bg-[#020617] hover:bg-[#091528] text-white font-bold text-sm shadow-md shadow-[#020617]/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <span>Submit OverThink & Send to Consultants</span>
+              <span>{isSubmitting ? 'Submitting OverThink...' : 'Submit OverThink & Send to Consultants'}</span>
               <ArrowRight className="w-4 h-4 text-[#0891b2]" />
             </button>
           </div>

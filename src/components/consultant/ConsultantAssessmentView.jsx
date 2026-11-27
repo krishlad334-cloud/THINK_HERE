@@ -63,28 +63,26 @@ export default function ConsultantAssessmentView({
     setCurrentIndex((prev) => Math.min(totalQuestions - 1, prev + 1));
   };
 
-  const handleSubmitTest = () => {
+  const handleSubmitTest = async () => {
     clearAutoAdvance();
     const correctCount = CONSULTANT_QUESTIONS.reduce(
       (sum, q) => (answers[q.id] === q.correctAnswer ? sum + 1 : sum),
       0
     );
 
-    setScore(correctCount);
-    setIsSubmitted(true);
-    setShowReviewModal(false);
-
     const hasPassed = correctCount >= PASSING_THRESHOLD;
 
-    if (currentUser?.id) {
-      updateUserProfile(currentUser.id, {
+    if (currentUser?.id && updateUserProfile) {
+      await updateUserProfile(currentUser.id, {
         assessmentPassed: hasPassed,
         isVerified: hasPassed,
         assessmentScore: `${correctCount}/${totalQuestions}`,
-        assessmentScoreNum: correctCount,
-        assessmentCompletedAt: new Date().toISOString(),
       });
     }
+
+    setScore(correctCount);
+    setIsSubmitted(true);
+    setShowReviewModal(false);
 
     if (hasPassed) {
       showToast(

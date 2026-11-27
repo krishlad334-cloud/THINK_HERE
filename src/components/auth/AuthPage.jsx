@@ -75,7 +75,7 @@ export default function AuthPage({ initialMode = 'login', onBackToLanding, onSuc
 
         <div className="w-full max-w-lg mx-auto text-center pt-6 flex-shrink-0 space-y-1.5">
           <p className="text-[11px] text-slate-400 font-medium">
-            Protected by OverThink Simulated Local Authentication • Zero Server Required
+            Protected by OverThink JWT Authentication
           </p>
           <div className="text-xs text-slate-400 font-medium select-none">
             Developed by <span className="font-semibold text-slate-600">Krish Lad</span>

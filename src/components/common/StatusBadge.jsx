@@ -53,6 +53,20 @@ export default function StatusBadge({
           <span>In Progress</span>
         </span>
       );
+    case 'answered':
+      return (
+        <span className={`${layout.badge} bg-emerald-50 text-emerald-800 border border-emerald-200`}>
+          {layout.showIcon && <CheckCircle className={`${layout.icon} text-emerald-600`} />}
+          <span>Answered</span>
+        </span>
+      );
+    case 'ai_fallback':
+      return (
+        <span className={`${layout.badge} bg-violet-50 text-violet-800 border border-violet-200`}>
+          {layout.showIcon && <CheckCircle className={`${layout.icon} text-violet-600`} />}
+          <span>AI Fallback</span>
+        </span>
+      );
     case 'resolved':
       return (
         <span className={`${layout.badge} bg-sky-50 text-sky-800 border border-sky-200`}>
