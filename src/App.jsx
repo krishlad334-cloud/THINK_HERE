@@ -65,10 +65,28 @@ function AppContent() {
     }
   };
 
+  const [prevAuth, setPrevAuth] = useState(isAuthenticated);
+  const wasAuthRef = React.useRef(isAuthenticated);
+
+  if (isAuthenticated !== prevAuth) {
+    setPrevAuth(isAuthenticated);
+    if (!isAuthenticated && (currentView === 'app' || currentView === 'consultant_test')) {
+      setCurrentView('landing');
+      setIsSidebarOpen(false);
+    }
+  }
+
   const effectiveView =
     !isAuthenticated && (currentView === 'app' || currentView === 'consultant_test')
       ? 'landing'
       : (currentView === 'app' && isConsultantUncertified ? 'consultant_test' : currentView);
+
+  React.useEffect(() => {
+    if (wasAuthRef.current && !isAuthenticated && typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+    wasAuthRef.current = isAuthenticated;
+  }, [isAuthenticated]);
 
   React.useEffect(() => {
     if (!isAuthenticated) return;
@@ -222,7 +240,7 @@ function AppContent() {
           onGoToLanding={() => navigateView('landing')}
         />
 
-        <div className="flex-1 flex w-full h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] overflow-hidden relative">
+        <div className="flex-1 min-h-0 flex w-full overflow-hidden relative">
           <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}

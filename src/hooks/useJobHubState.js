@@ -71,7 +71,7 @@ export function useJobHubState({
   };
 
   const handleSelectSample = (sample) => {
-    handleAnalyzeRawText(sample.text, {
+    return handleAnalyzeRawText(sample.text, {
       fileName: sample.fileName,
       fileSizeLabel: `${Math.max(1, Math.round(sample.text.length / 1024))} KB`,
       warning: '',

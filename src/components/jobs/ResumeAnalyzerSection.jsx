@@ -43,50 +43,77 @@ export default function ResumeAnalyzerSection({
     recStartIndex + RECOMMENDED_PER_PAGE
   );
 
+  const scanIdRef = useRef(0);
+  const scanTimersRef = useRef([]);
+
+  const clearScanTimers = () => {
+    scanTimersRef.current.forEach((id) => clearTimeout(id));
+    scanTimersRef.current = [];
+  };
+
   useEffect(() => {
-    if (activeStep !== 2) return undefined;
+    return () => {
+      scanIdRef.current += 1;
+      clearScanTimers();
+    };
+  }, []);
 
-    const timers = [
-      setTimeout(() => setScanStageIndex(1), 180),
-      setTimeout(() => setScanStageIndex(2), 380),
-      setTimeout(() => setScanStageIndex(3), 580),
-      setTimeout(() => {
-        setScanStageIndex(4);
-        setStep(3);
-      }, 820),
-    ];
-
-    return () => timers.forEach((id) => clearTimeout(id));
-  }, [activeStep]);
-
-  const beginScanTransition = () => {
+  const runScanTransition = async (analyzeTask) => {
+    const runId = ++scanIdRef.current;
+    clearScanTimers();
     setScanStageIndex(0);
     setRecPage(1);
     setStep(2);
+
+    const visualTimer = new Promise((resolve) => {
+      scanTimersRef.current = [
+        setTimeout(() => setScanStageIndex(1), 180),
+        setTimeout(() => setScanStageIndex(2), 380),
+        setTimeout(() => setScanStageIndex(3), 580),
+        setTimeout(() => {
+          setScanStageIndex(4);
+          resolve();
+        }, 820),
+      ];
+    });
+
+    try {
+      const [profile] = await Promise.all([
+        Promise.resolve().then(analyzeTask),
+        visualTimer,
+      ]);
+      if (scanIdRef.current !== runId) return;
+      setStep(profile ? 3 : 1);
+    } catch {
+      if (scanIdRef.current !== runId) return;
+      setStep(1);
+    }
   };
 
-  const handleFilePick = async (file) => {
+  const handleFilePick = (file) => {
     if (!file) return;
     setShowPasteBox(false);
-    beginScanTransition();
-    await onUploadFile(file);
+    runScanTransition(() => onUploadFile(file));
   };
 
   const handlePasteSubmit = (rawText) => {
     setShowPasteBox(false);
-    onAnalyzeText(rawText, {
-      fileName: resumeProfile?.fileName || 'Custom_Resume.txt',
-      fileSizeLabel: `${Math.max(1, Math.round(rawText.length / 1024))} KB`,
-    });
-    beginScanTransition();
+    runScanTransition(() =>
+      onAnalyzeText(rawText, {
+        fileName: resumeProfile?.fileName || 'Custom_Resume.txt',
+        fileSizeLabel: `${Math.max(1, Math.round(rawText.length / 1024))} KB`,
+      })
+    );
   };
 
   const handleSampleChange = (sampleId) => {
     setSelectedSampleId(sampleId);
     const sample = SAMPLE_RESUMES.find((item) => item.id === sampleId);
     if (!sample) return;
-    onSelectSample(sample);
-    beginScanTransition();
+    runScanTransition(() => {
+      onSelectSample(sample);
+      return true;
+    });
   };
 
   const handleRecPageChange = (nextPage) => {
@@ -109,6 +136,8 @@ export default function ResumeAnalyzerSection({
         <button
           type="button"
           onClick={() => {
+            scanIdRef.current += 1;
+            clearScanTimers();
             setSelectedSampleId('');
             setStep(1);
             onCloseAndReset();

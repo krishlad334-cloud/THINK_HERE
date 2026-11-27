@@ -2,6 +2,8 @@ import React from 'react';
 import { Award, Briefcase, GraduationCap } from 'lucide-react';
 
 export default function ProfilePortfolioSections({ consultantUser, hourlyRate, isVerified }) {
+  if (!consultantUser) return null;
+
   return (
     <>
       <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4">

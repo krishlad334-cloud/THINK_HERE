@@ -49,10 +49,16 @@ export default function ChatWorkspace() {
   const [showContextDrawer, setShowContextDrawer] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [prevConvId, setPrevConvId] = useState(activeConvId);
   const [mobileView, setMobileView] = useState(currentConversation ? 'chat' : 'list');
   const [activeMsgMenuId, setActiveMsgMenuId] = useState(null);
   const [copiedMsgId, setCopiedMsgId] = useState(null);
   const [attachments, setAttachments] = useState([]);
+
+  if (activeConvId !== prevConvId) {
+    setPrevConvId(activeConvId);
+    setMobileView(activeConvId && currentConversation ? 'chat' : 'list');
+  }
 
   const messagesEndRef = useRef(null);
   const moreMenuRef = useRef(null);
@@ -122,7 +128,7 @@ export default function ChatWorkspace() {
     );
   }
 
-  const isClientRole = activeUser.role === 'client';
+  const isClientRole = activeUser?.role === 'client';
   const partnerName = isClientRole
     ? currentConversation.consultantName
     : currentConversation.clientName;
@@ -183,7 +189,7 @@ export default function ChatWorkspace() {
   };
 
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
     files.forEach((f) => {
       setAttachments((prev) => [
         ...prev,
@@ -194,6 +200,7 @@ export default function ChatWorkspace() {
         },
       ]);
     });
+    e.target.value = '';
   };
 
   const baseMessages = currentConversation.messages || [];
@@ -228,7 +235,7 @@ export default function ChatWorkspace() {
       <ConversationList
         conversations={filteredConversations}
         activeConvId={activeConvId}
-        activeUserId={activeUser.id}
+        activeUserId={activeUser?.id}
         isClientRole={isClientRole}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -309,7 +316,7 @@ export default function ChatWorkspace() {
                 <MessageBubble
                   key={msg.id}
                   msg={msg}
-                  isMine={msg.senderId === activeUser.id}
+                  isMine={msg.senderId === activeUser?.id}
                   activeUser={activeUser}
                   partnerAvatar={partnerAvatar}
                   isMenuOpen={activeMsgMenuId === msg.id}

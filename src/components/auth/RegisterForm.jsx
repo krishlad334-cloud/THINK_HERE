@@ -70,6 +70,13 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const otpInputRefs = useRef([]);
+  const registerTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (registerTimerRef.current) clearTimeout(registerTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (step !== 4 || otpTimer <= 0 || otpExpired) return undefined;
@@ -235,8 +242,9 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       return;
     }
 
+    if (registerTimerRef.current) clearTimeout(registerTimerRef.current);
     setIsRegistering(true);
-    setTimeout(() => {
+    registerTimerRef.current = setTimeout(() => {
       const regRes = register({
         role,
         name: name.trim(),

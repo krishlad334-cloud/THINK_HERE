@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useApp } from '../../context/useApp';
 import {
   X,
@@ -32,6 +32,18 @@ export default function NewThoughtModal() {
 
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
+  const voiceTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
+    };
+  }, []);
 
   const categories = [
     'Career & Jobs',
@@ -72,7 +84,7 @@ export default function NewThoughtModal() {
       setIsRecording(true);
     } else {
       setIsRecording(true);
-      setTimeout(() => {
+      voiceTimerRef.current = setTimeout(() => {
         setDescription(prev => (prev ? prev + ' ' : '') + "I am launching an innovative platform and need advice on go-to-market strategy.");
         setIsRecording(false);
       }, 2500);
@@ -80,7 +92,7 @@ export default function NewThoughtModal() {
   };
 
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
     files.forEach(file => {
       const isImg = file.type.startsWith('image/');
       const isVid = file.type.startsWith('video/');
@@ -89,12 +101,12 @@ export default function NewThoughtModal() {
         id: 'att-' + Date.now() + Math.random().toString(36).substring(2, 6),
         name: file.name,
         type: isImg ? 'image' : (isVid ? 'video' : 'document'),
-        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        url: isImg ? URL.createObjectURL(file) : null
+        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
       };
 
       setAttachments(prev => [...prev, newAtt]);
     });
+    e.target.value = '';
   };
 
   const removeAttachment = (id) => {
@@ -128,7 +140,9 @@ export default function NewThoughtModal() {
       setTitle('');
       setDescription('');
       setCategory('Career & Jobs');
+      setUrgency('Standard');
       setAttachments([]);
+      setValidationError('');
       setActiveChatThoughtId(created.id);
       setActiveTab('my_thoughts');
     }

@@ -35,7 +35,8 @@ export default function UserAvatar({
   rounded = 'full',
   onClick
 }) {
-  const [imgError, setImgError] = useState(false);
+  const [failedSrc, setFailedSrc] = useState(null);
+  const imgError = failedSrc === src;
 
   const trimmedName = (name || '').trim();
   const initial = trimmedName.length > 0
@@ -78,7 +79,7 @@ export default function UserAvatar({
         <img
           src={src}
           alt={trimmedName || 'Profile'}
-          onError={() => setImgError(true)}
+          onError={() => setFailedSrc(src)}
           className={`${selectedSizeClass} ${roundedClass} object-cover`}
         />
       ) : (

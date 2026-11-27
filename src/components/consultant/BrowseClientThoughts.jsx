@@ -68,6 +68,19 @@ export default function BrowseClientThoughts() {
       if (!matchId && !matchTitle && !matchDesc && !matchCat && !matchClient) return false;
     }
     return true;
+  }).sort((a, b) => {
+    const timeA = new Date(a.createdAt || 0).getTime() || 0;
+    const timeB = new Date(b.createdAt || 0).getTime() || 0;
+    if (sortBy === 'oldest') return timeA - timeB;
+    if (sortBy === 'urgent') {
+      const isUrgent = (val) => {
+        const str = String(val || '').toLowerCase();
+        return str.includes('urgent') || str.includes('high') ? 1 : 0;
+      };
+      const diff = isUrgent(b.urgency) - isUrgent(a.urgency);
+      if (diff !== 0) return diff;
+    }
+    return timeB - timeA;
   });
 
   const handleAccept = (thought) => {
@@ -143,6 +156,8 @@ export default function BrowseClientThoughts() {
               className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:border-[#020617] cursor-pointer"
             >
               <option value="latest">Sort: Latest</option>
+              <option value="oldest">Sort: Oldest</option>
+              <option value="urgent">Sort: Urgent First</option>
             </select>
           </div>
         </div>

@@ -13,20 +13,30 @@ import {
 
 export default function CallModal() {
   const { activeCall, endCall, currentUser } = useApp();
+  if (!activeCall) return null;
+
+  return (
+    <ActiveCallSession
+      key={activeCall.startTime || activeCall.thoughtId || 'call'}
+      activeCall={activeCall}
+      endCall={endCall}
+      currentUser={currentUser}
+    />
+  );
+}
+
+function ActiveCallSession({ activeCall, endCall, currentUser }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(activeCall?.callType === 'audio');
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
 
   useEffect(() => {
-    if (!activeCall) return;
     const interval = setInterval(() => {
       setCallDuration(prev => prev + 1);
     }, 1000);
     return () => clearInterval(interval);
-  }, [activeCall]);
-
-  if (!activeCall) return null;
+  }, []);
 
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60);

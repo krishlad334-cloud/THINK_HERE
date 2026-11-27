@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const openThoughtsCount = thoughts.filter(
     (t) => t.status === 'pending' || t.status === 'pending_human'
   ).length;
-  const savedCount = thoughts.filter((t) => t.isSaved).length;
+  const savedCount = myRecentThoughts.filter((t) => t.isSaved).length;
   const consultationsCount = thoughts.filter((t) => isConsultantThought(t, currentUser)).length;
 
   const isConsultantVerified = Boolean(currentUser?.assessmentPassed || currentUser?.isVerified);

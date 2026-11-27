@@ -18,6 +18,13 @@ export default function ConsultantProfileView() {
   const { consultantUser, updateConsultantProfile } = useApp();
 
   const fileInputRef = useRef(null);
+  const saveTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, []);
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [headline, setHeadline] = useState(consultantUser?.title || '');
@@ -43,7 +50,7 @@ export default function ConsultantProfileView() {
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && (!file.type || file.type.startsWith('image/'))) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result;
@@ -57,6 +64,7 @@ export default function ConsultantProfileView() {
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
   };
 
   const handleSave = () => {
@@ -73,7 +81,8 @@ export default function ConsultantProfileView() {
     }
     setIsEditing(false);
     setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3500);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3500);
   };
 
   const addSkill = () => {
@@ -88,6 +97,8 @@ export default function ConsultantProfileView() {
   };
 
   const isVerified = Boolean(consultantUser?.isVerified || consultantUser?.assessmentPassed);
+
+  if (!consultantUser) return null;
 
   return (
     <div className="space-y-6 w-full pb-16">
@@ -296,6 +307,12 @@ export default function ConsultantProfileView() {
                   type="text"
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addSkill();
+                    }
+                  }}
                   placeholder="Add new skill..."
                   className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs flex-1"
                 />

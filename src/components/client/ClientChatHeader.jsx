@@ -4,6 +4,7 @@ import {
   ChevronDown,
   MessageSquare,
   PhoneCall,
+  Trash2,
   Video,
 } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
@@ -12,6 +13,8 @@ import VerifiedBadge from '../common/VerifiedBadge';
 export default function ClientChatHeader({
   activeThought,
   hasConversation,
+  hasMessages = false,
+  onClearChat,
   onOpenChatRoom,
   onStartCall,
   onToggleSave,
@@ -156,6 +159,18 @@ export default function ClientChatHeader({
         >
           <Bookmark className="w-3.5 h-3.5 fill-current" />
         </button>
+
+        {hasMessages && onClearChat && (
+          <button
+            type="button"
+            onClick={onClearChat}
+            className="p-2 rounded-xl border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors cursor-pointer"
+            title="Clear chat messages"
+            aria-label="Clear chat messages"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );

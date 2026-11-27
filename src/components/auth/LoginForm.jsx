@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   AlertCircle,
   ArrowRight,
@@ -49,6 +49,13 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
   const [isNotFound, setIsNotFound] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showOtherAccounts, setShowOtherAccounts] = useState(false);
+  const authTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (authTimerRef.current) clearTimeout(authTimerRef.current);
+    };
+  }, []);
 
   const additionalUsers = getUsers().filter(
     (u) => !u.email?.includes('alex.morgan') && !u.email?.includes('elena.vance')
@@ -68,8 +75,9 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
       return;
     }
 
+    if (authTimerRef.current) clearTimeout(authTimerRef.current);
     setIsLoggingIn(true);
-    setTimeout(() => {
+    authTimerRef.current = setTimeout(() => {
       const res = login(identifier.trim(), password);
       setIsLoggingIn(false);
       if (!res.success) {
@@ -86,8 +94,9 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onOpenForgotM
     setPassword(targetPassword);
     setError('');
     setIsNotFound(false);
+    if (authTimerRef.current) clearTimeout(authTimerRef.current);
     setIsLoggingIn(true);
-    setTimeout(() => {
+    authTimerRef.current = setTimeout(() => {
       const res = login(targetIdentifier, targetPassword);
       setIsLoggingIn(false);
       if (!res.success) {

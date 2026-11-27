@@ -18,6 +18,13 @@ export default function ClientSettings() {
   const { currentUser, updateUserProfile, thoughts, role } = useApp();
 
   const fileInputRef = useRef(null);
+  const saveTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, []);
   const [name, setName] = useState(currentUser?.name || '');
   const [email, setEmail] = useState(currentUser?.email || '');
   const [bio, setBio] = useState(currentUser?.bio || '');
@@ -44,13 +51,14 @@ export default function ClientSettings() {
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && (!file.type || file.type.startsWith('image/'))) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatar(reader.result);
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
   };
 
   const handleSave = (e) => {
@@ -67,7 +75,8 @@ export default function ClientSettings() {
       });
     }
     setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => setSavedSuccess(false), 3000);
   };
 
   const userThoughts = (thoughts || []).filter((t) =>

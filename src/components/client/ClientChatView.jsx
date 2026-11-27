@@ -51,6 +51,19 @@ export default function ClientChatView() {
   const [copiedMsgId, setCopiedMsgId] = useState(null);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const voiceTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
+    };
+  }, []);
 
   const activeThought = allThinks.find((t) => t.id === activeChatThoughtId) || null;
   const currentConversation = conversations.find(
@@ -92,6 +105,12 @@ export default function ClientChatView() {
   const toggleVoice = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (isRecording) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
       setIsRecording(false);
       return;
     }
@@ -105,11 +124,12 @@ export default function ClientChatView() {
       };
       recognition.onerror = () => setIsRecording(false);
       recognition.onend = () => setIsRecording(false);
+      recognitionRef.current = recognition;
       recognition.start();
       setIsRecording(true);
     } else {
       setIsRecording(true);
-      setTimeout(() => {
+      voiceTimerRef.current = setTimeout(() => {
         setInputVal(
           (prev) => (prev ? prev + ' ' : '') + "How can I improve my product's go-to-market strategy?"
         );
@@ -119,7 +139,7 @@ export default function ClientChatView() {
   };
 
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const files = Array.from(e.target.files || []);
     files.forEach((f) => {
       setAttachments((prev) => [
         ...prev,
@@ -131,6 +151,7 @@ export default function ClientChatView() {
         },
       ]);
     });
+    e.target.value = '';
   };
 
   const handleSend = (e) => {
@@ -169,6 +190,8 @@ export default function ClientChatView() {
         <ClientChatHeader
           activeThought={activeThought}
           hasConversation={Boolean(currentConversation)}
+          hasMessages={thoughtMessages.length > 0}
+          onClearChat={() => setShowClearConfirm(true)}
           onOpenChatRoom={openFullChatRoom}
           onStartCall={(callType) =>
             startCall({
@@ -185,7 +208,7 @@ export default function ClientChatView() {
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
         {!activeThought ? (
           <ClientTopicStarters
-            firstName={currentUser.name.split(' ')[0]}
+            firstName={(currentUser?.name || 'there').split(' ')[0]}
             onSelectPrompt={setInputVal}
           />
         ) : (

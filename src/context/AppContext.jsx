@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AppContext } from './useApp';
 import {
   initializeThinkStorage,
@@ -423,13 +423,14 @@ export function AppProvider({ children }) {
     if (activeUser?.id === targetId) {
       setActiveUserState(prev => ({ ...prev, ...updates }));
     }
+    setConsultants(prev => prev.map(c => (c.id === targetId ? { ...c, ...updates } : c)));
     reloadFromStorage();
     showToast('Profile Updated', 'Profile changes have been saved successfully.', 'success');
     return updated;
   };
 
   const setClientUser = (updaterOrObj) => {
-    const targetId = 'client_001';
+    const targetId = activeUser?.id || 'client_001';
     const current = getUserById(targetId) || clientUser;
     const nextVal = typeof updaterOrObj === 'function' ? updaterOrObj(current) : { ...current, ...updaterOrObj };
     storageUpdateUser(targetId, nextVal);
@@ -445,6 +446,7 @@ export function AppProvider({ children }) {
     if (activeUser?.id === userId) {
       setActiveUserState(prev => ({ ...prev, ...updates }));
     }
+    setConsultants(prev => prev.map(c => (c.id === userId ? { ...c, ...updates } : c)));
     reloadFromStorage();
     showToast('Profile Saved', 'Profile details have been updated.', 'success');
     return updated;
@@ -500,6 +502,9 @@ export function AppProvider({ children }) {
     setActiveChatThoughtId(null);
     setActiveConversationId(null);
     setSelectedThoughtId(null);
+    setIsNewThoughtModalOpen(false);
+    setPrivacyAlert(null);
+    setActiveCall(null);
     setActiveUserState(DEMO_USERS[0]);
     closeToast();
   };
@@ -602,6 +607,8 @@ export function AppProvider({ children }) {
     return res;
   };
 
+  const syncedJobs = useMemo(() => syncJobsCatalog(jobs), [jobs]);
+
   const value = {
     activeUser,
     currentUser,
@@ -671,7 +678,7 @@ export function AppProvider({ children }) {
     mutedThoughtIds,
     setMutedThoughtIds,
     consultants,
-    jobs: syncJobsCatalog(jobs),
+    jobs: syncedJobs,
     auditLogs,
     logoutUser,
     loginUser,

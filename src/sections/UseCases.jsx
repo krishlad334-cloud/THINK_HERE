@@ -59,26 +59,28 @@ export default function UseCases({ isMobile = false, reducedMotion = false }) {
       const getScrollAmount = () =>
         Math.max(0, track.scrollWidth - window.innerWidth + 180);
 
-      gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: () => `+=${getScrollAmount()}`,
-          pin: true,
-          scrub: 0.85,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const idx = Math.min(
-              USE_CASES.length - 1,
-              Math.floor(self.progress * USE_CASES.length)
-            );
-            setActiveIdx(idx);
+      if (getScrollAmount() > 0) {
+        gsap.to(track, {
+          x: () => -getScrollAmount(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: () => `+=${getScrollAmount()}`,
+            pin: true,
+            scrub: 0.85,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const idx = Math.min(
+                USE_CASES.length - 1,
+                Math.floor(self.progress * USE_CASES.length)
+              );
+              setActiveIdx(idx);
+            },
           },
-        },
-      });
+        });
+      }
 
       gsap.utils.toArray('.usecase-parallax-inner').forEach((el, idx) => {
         gsap.fromTo(

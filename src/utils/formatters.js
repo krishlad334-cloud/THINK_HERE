@@ -1,5 +1,15 @@
 export function calculateTimeRemaining(createdAtTimestamp, deadlineHours = 24) {
   const createdDate = new Date(createdAtTimestamp).getTime();
+  if (Number.isNaN(createdDate)) {
+    return {
+      isExpired: false,
+      hours: deadlineHours,
+      minutes: 0,
+      seconds: 0,
+      formatted: `${deadlineHours.toString().padStart(2, '0')}h 00m 00s`,
+      percentRemaining: 100
+    };
+  }
   const deadlineDate = createdDate + deadlineHours * 60 * 60 * 1000;
   const now = Date.now();
   const diff = deadlineDate - now;
@@ -35,6 +45,7 @@ export function calculateTimeRemaining(createdAtTimestamp, deadlineHours = 24) {
 export function formatDate(timestamp) {
   if (!timestamp) return '';
   const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return '';
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
@@ -46,7 +57,9 @@ export function formatDate(timestamp) {
 
 export function timeAgo(timestamp) {
   if (!timestamp) return '';
-  const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
+  const parsed = new Date(timestamp).getTime();
+  if (Number.isNaN(parsed)) return '';
+  const seconds = Math.max(0, Math.floor((Date.now() - parsed) / 1000));
 
   let interval = seconds / 31536000;
   if (interval > 1) return Math.floor(interval) + 'y ago';
